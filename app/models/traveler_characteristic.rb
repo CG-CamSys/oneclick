@@ -1,11 +1,12 @@
 class TravelerCharacteristic < ActiveRecord::Base
+  include XmlSource
 
   attr_accessible :id, :code, :name, :note, :datatype, :active, :characteristic_type
 
   has_many :user_traveler_characteristics_maps
   has_many :user_profiles, through: :user_traveler_characteristics_maps
 
-  has_many :service_traveler_characteristics_maps
+  has_many :service_traveler_characteristics_maps, foreign_key: :characteristic_id
   has_many :services, through: :service_traveler_characteristics_maps
 
   # set the default scope

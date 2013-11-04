@@ -29,6 +29,7 @@ guard :rspec, all_on_start: true do
   watch(%r{app/models/.+traveler.+.rb})               { 'spec/models/user_profile_spec.rb' }
   watch('app/models/user.rb')                         { 'spec/models/user_profile_spec.rb' }
   watch('lib/eligibility_helpers.rb')                 { 'spec/models/user_profile_spec.rb' }
+  watch('lib/xml_source.rb')                          { 'spec/lib/service_adapters/iandr_adapter_spec.rb' }
   
   # Capybara features specs
   watch(%r{^app/views/(.+)/.*\.(erb|haml)$})          { |m| ["spec/features/#{m[1]}_spec.rb", 'spec/features/localization_spec.rb'] }
@@ -47,8 +48,10 @@ guard 'cucumber', all_on_start: true do
   watch(%r{^features/step_definitions/(.+)_steps\.rb$}) { |m| Dir[File.join("**/#{m[1]}.feature")][0] || 'features' }
 end
 
-guard 'rails' do
-  watch('Gemfile.lock')
-  watch(%r{^(config|lib)/.*})
-  watch('app/models/ability.rb')
+unless ENV['GUARD_SKIP_RAILS']
+  guard 'rails' do
+    watch('Gemfile.lock')
+    watch(%r{^(config|lib)/.*})
+    watch('app/models/ability.rb')
+  end
 end

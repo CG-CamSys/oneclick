@@ -1,4 +1,5 @@
 class Service < ActiveRecord::Base
+  include XmlSource
 
   #associations
   belongs_to :provider
