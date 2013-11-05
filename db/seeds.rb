@@ -255,20 +255,24 @@ end
       active: 1,
       sort_order: 2)
 
+contact = 'For more information, call 404-555-1212.'
+url = 'http://example.com/info'
 
 providers = [
-    {name: 'BC CS Mass Transit', contact: '', external_id: "1"},
-    {name: 'City of Tamarac', contact: '', external_id: "2"},
-    {name: 'City of Wilton Manners', contact: ' ', external_id: "3"},
-    {name: 'Cooper City Community Services', contact: ' ', external_id: "4"},
-    {name: 'City of Miramar', contact: ' ', external_id: "5"},
-    {name: 'Southeast Focal Point', contact: ' ', external_id: "6"},
-    {name: 'American Cancer Society', contact: ' ', external_id: "7"},
-    {name: 'City of Sunrise', contact: ' ', external_id: "8"},
-    {name: 'Northwest Focal Point', contact: ' ', external_id: "9"},
-    {name: 'City of Lauderdale Lakes', contact: ' ', external_id: "10"}
+    {name: 'BC CS Mass Transit', contact: contact, external_id: "1", url: url},
+    {name: 'City of Tamarac', contact: contact, external_id: "2", url: url},
+    {name: 'City of Wilton Manners', contact: contact, external_id: "3", url: url},
+    {name: 'Cooper City Community Services', contact: contact, external_id: "4", url: url},
+    {name: 'City of Miramar', contact: contact, external_id: "5", url: url},
+    {name: 'Southeast Focal Point', contact: contact, external_id: "6", url: url},
+    {name: 'American Cancer Society', contact: contact, external_id: "7", url: url},
+    {name: 'City of Sunrise', contact: contact, external_id: "8", url: url},
+    {name: 'Northwest Focal Point', contact: contact, external_id: "9", url: url},
+    {name: 'City of Lauderdale Lakes', contact: contact, external_id: "10", url: url}
 
 ]
+
+puts "SEEDS.RB providers"
 
 #Create providers and services with custom schedules, eligibility, and accommodations
 providers.each do |provider|
@@ -310,6 +314,8 @@ providers.each do |provider|
         ServiceTravelerAccommodationsMap.create(service: service, traveler_accommodation: n, value: 'true')
       end
 
+      service.fare = Fare.create(fare_type: Fare::TYPE_FLAT, amount: 1.0, description: 'Sample fare for BC Paratransit')
+
 
     when "2" #Tamarac
 
@@ -344,6 +350,9 @@ providers.each do |provider|
         ServiceTravelerAccommodationsMap.create(service: service, traveler_accommodation: n, value: 'true')
       end
 
+      service.fare = Fare.create(fare_type: Fare::TYPE_MILEAGE, amount: 0.3, description: 'Sample fare for Tamarac',
+        base_cost: 10.00, base_units: 5, unit: Fare::UNIT_MILES)
+
     when "3"   #Wilton Manors
 
       service = Service.create(name: 'Social Services', provider: p, service_type: paratransit, advanced_notice_minutes: 24*60)
@@ -373,6 +382,8 @@ providers.each do |provider|
       [folding_wheelchair_accessible, door_to_door].each do |n|
         ServiceTravelerAccommodationsMap.create(service: service, traveler_accommodation: n, value: 'true')
       end
+
+      service.fare = Fare.create(fare_type: Fare::TYPE_FLAT, amount: 5.0, description: 'Wilton Manors', voluntary: true)      
 
     when "4" #Cooper City
 
@@ -406,6 +417,8 @@ providers.each do |provider|
         ServiceTravelerAccommodationsMap.create(service: service, traveler_accommodation: n, value: 'true')
       end
 
+      service.fare = Fare.create(fare_type: Fare::TYPE_CONTACT, description: 'Contact Senior Services Transportation for fare details.')      
+
     when "5" #City of Miramar
              #
       service = Service.create(name: 'Senior Center', provider: p, service_type: paratransit, advanced_notice_minutes: 24*60)
@@ -438,6 +451,8 @@ providers.each do |provider|
         ServiceTravelerAccommodationsMap.create(service: service, traveler_accommodation: n, value: 'true')
       end
 
+      service.fare = Fare.create(fare_type: Fare::TYPE_COMPLEX, description: 'Fare is $2.00 on weekdays, $6.00 on weekends, unless you have a pass card.')      
+
     when "6" # SE Focal Point
              #
       service = Service.create(name: 'Joseph Meyerhoff Senior Center', provider: p, service_type: paratransit, advanced_notice_minutes: 7*24*60)
@@ -469,6 +484,8 @@ providers.each do |provider|
       [curb_to_curb, folding_wheelchair_accessible].each do |n|
         ServiceTravelerAccommodationsMap.create(service: service, traveler_accommodation: n, value: 'true')
       end
+
+      service.fare = Fare.create(fare_type: Fare::TYPE_FLAT, amount: 2.0, description: 'Sample fare for SE Focal Point')
 
     when "7" #American Cancer Society
 
@@ -503,6 +520,8 @@ providers.each do |provider|
         ServiceTravelerAccommodationsMap.create(service: service, traveler_accommodation: n, value: 'true')
       end
 
+      service.fare = Fare.create(fare_type: Fare::TYPE_FLAT, amount: 3.0, description: 'Sample fare.')
+
     when "8" #City of Sunrise
 
       service = Service.create(name: 'Special & Community Support Services', provider: p, service_type: paratransit, advanced_notice_minutes: 24*60)
@@ -536,6 +555,8 @@ providers.each do |provider|
         ServiceTravelerAccommodationsMap.create(service: service, traveler_accommodation: n, value: 'true')
       end
 
+      service.fare = Fare.create(fare_type: Fare::TYPE_FLAT, amount: 3.0, description: 'Sample fare.')
+
     when "9" #Northwest Focal Center
 
       service = Service.create(name: 'Senior Medical Transportation', provider: p, service_type: paratransit, advanced_notice_minutes: 2*24*60)
@@ -567,6 +588,8 @@ providers.each do |provider|
       [curb_to_curb, folding_wheelchair_accessible].each do |n|
         ServiceTravelerAccommodationsMap.create(service: service, traveler_accommodation: n, value: 'true')
       end
+
+      service.fare = Fare.create(fare_type: Fare::TYPE_FLAT, amount: 3.0, description: 'Sample fare.')
 
     when "10" #City of Luaderdale Lakes
 
@@ -631,6 +654,7 @@ providers.each do |provider|
         ServiceTravelerAccommodationsMap.create(service: service, traveler_accommodation: n, value: 'true')
       end
 
+      service.fare = Fare.create(fare_type: Fare::TYPE_FLAT, amount: 3.0, description: 'Sample fare.')
 
   end
 

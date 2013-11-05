@@ -1,4 +1,5 @@
 class ServiceCoverageMap < ActiveRecord::Base
+  include XmlSource
 
   #associations
   belongs_to :service

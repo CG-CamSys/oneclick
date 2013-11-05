@@ -1,5 +1,6 @@
 class ServiceTripPurposeMap < ActiveRecord::Base
-
+  include XmlSource
+  
   #associations
   belongs_to :service
   belongs_to :trip_purpose

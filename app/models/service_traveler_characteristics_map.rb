@@ -7,4 +7,8 @@ class ServiceTravelerCharacteristicsMap < ActiveRecord::Base
 
   attr_accessible :service, :service_id, :traveler_characteristic, :characteristic_id, :value, :value_relationship_id
 
+  def to_xml(options = {})
+    super(options)
+  end
+
 end

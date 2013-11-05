@@ -16,27 +16,38 @@ module ServiceAdapters
         b.updated_at Time.now
         new_options = {
           builder: b, skip_instruct: true, skip_types: true,
-          include: {
+          :include => {
             services: {
-              include: {
+              :include => {
+                fare: {},
                 schedules: {},
                 service_traveler_characteristics_maps: {
-                  include: {
+                  :include => {
                     traveler_characteristic: {}
                   }
-                  },
-                  service_traveler_accommodations_maps: {
-                    include: {
-                      traveler_accommodation: {}
-                    }
+                },
+                service_traveler_accommodations_maps: {
+                  :include => {
+                    traveler_accommodation: {}
+                  }
+                },
+                service_coverage_maps: {
+                  include: {
+                    geo_coverage: {}
+                  }
+                },
+                service_trip_purpose_maps: {
+                  include: {
+                    trip_purpose: {}
                   }
                 }
-              }
+              } 
             }
-            }.merge(options)
-            @providers.to_xml(new_options)
-          end
-        end
-
+          }
+        }.merge(options)
+        @providers.to_xml(new_options)
       end
     end
+
+  end
+end

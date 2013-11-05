@@ -30,6 +30,7 @@ guard :rspec, all_on_start: true do
   watch('app/models/user.rb')                         { 'spec/models/user_profile_spec.rb' }
   watch('lib/eligibility_helpers.rb')                 { 'spec/models/user_profile_spec.rb' }
   watch('lib/xml_source.rb')                          { 'spec/lib/service_adapters/iandr_adapter_spec.rb' }
+  watch(%r{app/models/.+})                            { 'spec/lib/service_adapters/iandr_adapter_spec.rb' }
   
   # Capybara features specs
   watch(%r{^app/views/(.+)/.*\.(erb|haml)$})          { |m| ["spec/features/#{m[1]}_spec.rb", 'spec/features/localization_spec.rb'] }

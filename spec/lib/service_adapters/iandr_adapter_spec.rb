@@ -10,7 +10,10 @@ describe ServiceAdapters::IandrAdapter do
     # s.traveler_characteristics << TravelerCharacteristic.new
     # s.schedules << Schedule.new
     # providers = [p]
-    providers = Provider.all
+
+    # providers = Provider.all
+    providers = Provider.first(2)
+
     i = ServiceAdapters::IandrAdapter.new(providers)
     puts i.to_xml(indent: 2)
     # i.to_xml.should eq 'foo'
