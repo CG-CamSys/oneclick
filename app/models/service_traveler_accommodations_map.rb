@@ -1,4 +1,5 @@
 class ServiceTravelerAccommodationsMap < ActiveRecord::Base
+  include XmlSource
 
   #associations
   belongs_to :service

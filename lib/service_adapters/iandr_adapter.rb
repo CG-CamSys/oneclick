@@ -20,14 +20,14 @@ module ServiceAdapters
             services: {
               include: {
                 schedules: {},
-                traveler_characteristics: {
+                service_traveler_characteristics_maps: {
                   include: {
-                    service_traveler_characteristics_maps: {}
+                    traveler_characteristic: {}
                   }
                   },
-                  traveler_accommodations: {
+                  service_traveler_accommodations_maps: {
                     include: {
-                      service_traveler_accommodations_maps: {}
+                      traveler_accommodation: {}
                     }
                   }
                 }

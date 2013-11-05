@@ -1,0 +1,48 @@
+<fare>
+  <type>flat</type>
+  <amount>2.00</amount>
+  <description>Fee is sliding scale based on income.</description>
+  <voluntary>false</voluntary>
+</fare>
+<fare>
+  <type>flat</type>
+  <amount>0.00</amount>
+  <description>No fee.</description>
+  <voluntary>false</voluntary>
+</fare>
+<fare>
+  <type>flat</type>
+  <amount>5.00</amount>
+  <description>Suggested donation.</description>
+  <voluntary>true</voluntary>
+</fare>
+
+<fare>
+  <type>per-unit</type>
+  <unit>mile</unit>
+  <amount>1.50</amount>
+  <description>$1.50 per mile</description>
+</fare>
+
+<fare>
+  <type>per-unit</type>
+  <unit>mile</unit>
+  <amount>0.30</amount>
+  <allowance>
+    <units>10</units>
+    <cost>1.50</cost>
+  </allowance>
+  <description>$1.50 first 10 miles, $0.30 per mile after</description>
+</fare>
+
+<fare>
+  <type>per-unit</type>
+  <unit>stop</unit>
+  <amount>4.00</amount>
+  <description>$4.00 per stop</description>
+</fare>
+
+<fare>
+  <type>contact</type>
+  <description>Contact provider for fare details.</description>
+</fare>
