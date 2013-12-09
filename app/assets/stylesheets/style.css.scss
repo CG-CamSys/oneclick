@@ -1293,3 +1293,7 @@ body.sessions.new, body.registrations.new{
 //@media (max-width: 480px) { ... }
 
 
+//hide depart dropdown in tripform view
+.trip_proxy_arrive_depart {
+  display: none;
+}
