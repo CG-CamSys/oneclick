@@ -54,19 +54,29 @@
           .dob.row-fluid
             .dob-breadcrumb
               %ul
-                %li.month.current 
+                %li.year
+                  %span.type  Year
+                  %span.input
+
+                %li.month.current
                   %span.type  Month
                   %span.input
+
                 %li.day
-                  
                   %span.type  Day
-                  %span.input 
-                %li.year 
-                  
-                  %span.type  Year
-                  %span.input 
+                  %span.input
+
           .row-fluid
-            #monthtable.dob-section.hidden{ :data => {:dobindex => 0}}
+            #yeartable.dob-section{ :data => {:dobindex => 0}}
+              .decade-prev.span3
+                .prev-container
+                  .prev-btn
+              #yearlist
+
+              .decade-next.span3
+                .next-container
+                  .next-btn
+            #monthtable.dob-section.hidden{ :data => {:dobindex => 1}}
               %ul
                 %li January
                 %li February
@@ -82,34 +92,8 @@
                 %li October
                 %li November
                 %li December
-            #daytable.dob-section.hidden{ :data => {:dobindex => 1}}
-              
-            #yeartable.dob-section{ :data => {:dobindex => 2}}
-              .decade-prev.span3
-                .prev-container
-                  .prev-btn
-              #yearlist.span6
-                %ul
-                  %li 1960
-                  %li 1961
-                %ul
-                  %li 1962
-                  %li 1963
-                %ul
-                  %li 1964
-                  %li 1965
-                %ul
-                  %li 1966
-                  %li 1967
-                %ul
-                  %li 1968
-                  %li 1969
-              .decade-next.span3
-                .next-container
-                  .next-btn
+            #daytable.dob-section.hidden{ :data => {:dobindex => 2}}
 
-
-        
         - if inline
           = button_tag :type => 'submit', :class => "btn btn-primary hidden" do
             %i.icon.icon-arrow-right
