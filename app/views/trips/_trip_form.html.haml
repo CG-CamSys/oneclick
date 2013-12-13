@@ -95,9 +95,8 @@
   #timepicker-one{ :data => {:index => 4}}
     = f.input :trip_time, :wrapper => :append, :label => t(:trip_time) do
       #trip-time
+        = f.label :trip_time
         = f.input_field :trip_time, :as => :string, :label => false
-        %span.add-on
-          %i.icon-time
   
   / TODO: ADD THE DIV WITH THE DATA INDEX
   #purposepicker{ :data => {:index => 5}}
@@ -127,12 +126,10 @@
 
   #timepicker-two{ :data => {:index => 7}}
     = f.input :is_round_trip, :label => false, :wrapper_html => {:class => 'controls controls-row'} do
-      = f.input_field :is_round_trip, :as => :boolean, :inline_label => "Return after"
+      = f.input_field :is_round_trip, :as => :boolean, :inline_label => "Return after", :class => "hidden"
       = f.input :return_trip_time, :label => false, :wrapper => :append do
         #return-trip-time
-          = f.input_field :return_trip_time, :as => :string, :label => false, :style => "width:160px;"
-          %span.add-on
-            %i.icon-time
+          = f.input_field :return_trip_time, :as => :string, :label => false
               
   .form-actions.hidden
     = button_tag :type => 'submit', :class => "btn btn-primary" do
