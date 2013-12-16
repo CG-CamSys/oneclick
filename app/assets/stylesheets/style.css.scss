@@ -1132,13 +1132,21 @@ label.time{
 
 .timetable{
 	margin: 200px 0;
+	//width:96%;
+	//padding-left:2%;
 
 	ul{
-		border-top:1px solid $gray4;
 		margin-bottom:0;
+		margin-left:0;
+
 		li{
+			border-top:1px solid $gray4;
 			@extend %time-selectors;
-			width:16.6666666666666667%;
+			width:16.66666666667%;
+
+			&:first-child, &:last-child{
+				//width:16.68%;
+			}
 
 			&.ampm{
 				border-bottom:1px solid $gray4;
