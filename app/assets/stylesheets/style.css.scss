@@ -1100,7 +1100,6 @@ label.time{
 	}
 }
 
-
 %time-selectors{
 	list-style-type: none;
 	float:left;
@@ -1131,7 +1130,7 @@ label.time{
 }
 
 .timetable{
-	margin: 200px 0;
+	margin: 170px 0;
 	//width:96%;
 	//padding-left:2%;
 
@@ -1144,17 +1143,19 @@ label.time{
 			@extend %time-selectors;
 			width:16.66666666667%;
 
-			&:first-child, &:last-child{
-				//width:16.68%;
+			&.notime{
+				border-top:1px solid $gray4;
+				border-right:0px solid $gray4;
+				border-left:0px solid $gray4;
 			}
 
 			&.ampm{
 				border-bottom:1px solid $gray4;
 				padding-top:26px;
 			}
-
 		}
 	}
+
 }
 
 .dob-breadcrumb{
