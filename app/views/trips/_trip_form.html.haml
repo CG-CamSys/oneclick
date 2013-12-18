@@ -171,6 +171,18 @@
     $('input#trip_proxy_from_place').val('200 Peachtree Street Northeast, Atlanta, GA 30303');
 
     $('.next-step-btn, a#yes, a#no').on('click', tripformView.nextBtnHandler);
+    //DP EDIT
+    $('.next-step-btn, a#yes').on('click', function(){
+      $('input#trip_proxy_from_place').val('200 Peachtree Street Northeast, Atlanta, GA 30303');
+      var addr = $('#trip_proxy_from_place').val().trim();
+      if (addr.length >= geocoder_min_chars) {
+
+        $('#query').val(addr);
+        $('#target').val(1);
+        $('#query_form').submit();
+        $('#to_geocoding_indicator').show();
+      }
+    });
 
     //set calendar to today
     this.calendar.setDate(new Date());
