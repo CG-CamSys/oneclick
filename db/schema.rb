@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131203203453) do
+ActiveRecord::Schema.define(:version => 20131209211910) do
 
   create_table "cms_blocks", :force => true do |t|
     t.integer  "page_id",    :null => false
@@ -423,6 +423,8 @@ ActiveRecord::Schema.define(:version => 20131203203453) do
     t.datetime "created_at",                      :null => false
     t.datetime "updated_at",                      :null => false
     t.string   "user_comments",   :limit => 1000
+    t.boolean  "taken"
+    t.integer  "rating"
   end
 
   create_table "user_mode_preferences", :force => true do |t|

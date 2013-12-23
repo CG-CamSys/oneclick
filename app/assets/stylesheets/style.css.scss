@@ -28,6 +28,12 @@ $kioskfonts: "Avenir Next", "Helvetica Neue", Helvetica, sans-serif;
 
 //FIXES
 
+.span8plus{
+	@extend .span8;
+	//width: ($gridColumnWidth * 8) + ($gridGutterWidth * 8);
+	width: 68.08745% !important;
+}
+
 h1{
 	font-size: 36px;
 	font-weight: 700;
@@ -321,7 +327,7 @@ a{
 		overflow-y: hidden;
 		// TO DO: FIX THIS TERRIBLENESS
 		//height:900px;
-		.span4.description{
+		.info{
 			color: $white;
 			padding: 36px;
 			height: inherit;
@@ -368,7 +374,7 @@ a{
 			position: absolute;
 			border-bottom: 1px solid $gray3;
 			width: 99%;
-			height: 15px;
+			height: 8px;
 			margin: 5px;
 		}
 
@@ -443,7 +449,7 @@ div.trip_proxy_trip_purpose_id{
 	margin-top:40px;
 	li{
 		z-index: 0;
-		padding:30px;
+		padding:24px 30px;
 		list-style-type: none;
 		font-size: 21px;
 		font-weight:700;
@@ -465,7 +471,7 @@ div.trip_proxy_trip_purpose_id{
 			// 	inset 0 0 0 7px $blue;
 			// margin: -6px;
 			@extend %selected;
-			padding: 36px;
+			padding: 30px 36px;
 		}
 
 		&.selected + li{
@@ -489,6 +495,106 @@ div.trip_proxy_trip_purpose_id{
 	}
 }
 
+//RESULTS DETAIL PAGE
+.modal-backdrop{
+	background: rgba(0,0,0,0);// url(../assets/kiosk/bg_black.png);
+	z-index:1;
+	pointer-events:none;
+}
+
+.in{
+	opacity:1.0 !important;
+	top:0% !important;
+}
+
+.modal{
+	margin-left:0;
+	position:absolute;
+	left:0;
+	width:100%;
+	top:0;
+}
+
+.modal-container{
+	@extend .login-container;
+}
+
+.results-header{
+	padding: 36px;
+}
+
+.results-view{
+	padding: 24px 36px 0;
+
+	.span1{
+		//border-right:1px solid $gray4;
+		height:328px;
+		text-align: right;
+
+		p{
+			text-transform: uppercase;
+			font-weight:600;
+			margin-bottom:0;
+		}
+		.prev-btn{
+			@extend %card-btn;
+			margin-top:-20px
+		}
+		.next-btn{
+			@extend %card-btn;
+			float:right;
+			@extend %flip;
+		}
+	}
+	.btn-block{
+		height:73px;
+		border: 6px solid $gray3;
+		margin-bottom:10px;
+		font-size:21px;
+		text-transform:uppercase;
+		padding-top:21px;
+		border-radius: 0px;
+		background-color: $white;
+		background-image:none;
+	}
+}
+
+.results-footer{
+	position: fixed;
+	bottom: 0;
+	height:120px;
+	background-color: white;
+	width:100%;
+	margin-bottom: 0;
+	border-top:1px solid $gray3;
+
+	.trip-overview{
+		width: 31.91489%;
+		border-right:1px solid $gray3;
+		font-size: 36px;
+		font-weight:700;
+		text-align:center;
+		height:100%;
+		margin-left:0;
+		line-height: 3.5em;
+		cursor:pointer;
+		color: $gray6;
+
+		&:active{
+			background-color: $gray2;
+		}
+	}
+
+	a{
+		@extend .nav-a;
+		display: block;
+	}
+
+
+
+
+}
+
 
 //NEXT STEP BUTTON
 //TO DO: Place in a bottom footer
@@ -507,7 +613,7 @@ div.trip_proxy_trip_purpose_id{
 			border-radius:0;
 			//TO DO: find the actual Bootstrap in Sass files and add them to this application.
 			//otherwise 
-			width: 103.5%;
+		 	width: 100%;
 			height: 128px;
 			border: 0px solid white;
 			box-shadow: 0px 2px 3px -1px rgba($black, 0.16);
@@ -527,6 +633,7 @@ div.trip_proxy_trip_purpose_id{
 		}
 		//TODO: Fix this atrocity
 		span.extend-me{
+			border:1px red;
 			position: fixed;
 			height: 128px;
 			background-color: white;
@@ -545,6 +652,89 @@ div.trip_proxy_trip_purpose_id{
 	}
 }
 
+#from_place_candidates, #to_place_candidates{
+	@extend .span12;
+	position: absolute;
+	top: 131px;
+	z-index: 100;
+	overflow:auto;
+	background-color:rgba($white, .88);
+	overflow:hidden;
+	//TODO: Fix this for non-kiosk views.
+	height: 765px;
+
+	.search-dropdown-container{
+		padding: 0 20px;
+	}
+	.candidate-list{
+		background-color: $gray1;
+		border: 1px solid $gray4;
+
+	}
+	h6{
+		margin-left:60px;
+	}
+	
+	ul{
+		padding:0;
+		height: 280px;
+		overflow:scroll;
+		li{
+			border-bottom: 1px solid $gray3;
+			font-size: 21px;
+			font-weight:600;
+			height: 69px;
+
+			a, a.address-select{
+				padding: 24px 20px;
+				color: $gray6;
+				width: inherit;
+				margin: 0;
+
+				&:hover{
+					// border-bottom: 1px solid $gray3;
+					// padding-bottom: 17px;
+				}
+			}
+		}
+	}
+}
+
+//scrollbar for location section
+.scroller-container{
+	height: 600px;
+	.scroll-up{
+		height: 84px !important;
+		width: 84px !important;
+		@extend %card-btn;
+		@extend %rotate90;
+	}
+	.scrollbar{
+		height:112px;
+		width:84px;
+		.scrollbar-bar{
+			background-color:$gray2;
+			width:12px;
+			text-align:center;
+			margin:0 auto;
+			padding:2px;
+			height:100%;
+			border-radius:12px;
+			.scrollbar-scroll{
+				border-radius: 8px;
+				background-color: $white;
+				height:50px;
+			}
+		}
+	}
+	.scroll-down{
+		@extend %card-btn;
+		@extend %rotate-90;
+		height: 84px !important;
+		width: 84px !important;
+	}
+}
+
 // EDIT TRIP BUTTON
 .edit-trip-btn{
 	cursor:pointer !important;
@@ -553,7 +743,8 @@ div.trip_proxy_trip_purpose_id{
 	font-size: 21px;
 	border: 3px solid $gray3;
 	color: $gray3;
-	margin-top: -16px;
+	margin: 0 !important;
+	background-color: rgba($gray6, 0.6);
 
 	h3{
 		text-align: center;
@@ -567,9 +758,15 @@ div.trip_proxy_trip_purpose_id{
 	background-color: rgba(0,0,0,0);
 	border: 0px solid white;
 	height: 186px;
+	margin-top:0;
 
 	.container-fluid, .row-fluid{
 		background-color: rgba(0,0,0,0);
+
+		.span4{
+			padding:20px;
+
+		}
 	}
 }
 
@@ -588,6 +785,13 @@ div.trip_proxy_trip_purpose_id{
 		&:active{
 			background-color: lighten($blue, 10%);
 			border-top:1px solid lighten($blue, 15%);
+		}
+		&.stop {
+			background-color: $gray4;
+			border: none;
+			color: rgba($white, .5);
+			outline: 1px solid darken($gray4, 10%);
+			pointer-events: none;
 		}
 
 		h1{
@@ -739,6 +943,25 @@ div.trip_proxy_trip_purpose_id{
 	transform: scaleX(-1);
 }
 
+%rotate-90{
+	transform: rotate(-90deg);
+	-webkit-transform: rotate(-90deg);
+	-moz-transform: rotate(-90deg);
+	-ms-transform: rotate(-90deg);
+	-o-transform: rotate(-90deg);
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+
+}
+
+%rotate90{
+	transform: rotate(90deg);
+	-webkit-transform: rotate(90deg);
+	-moz-transform: rotate(90deg);
+	-ms-transform: rotate(90deg);
+	-o-transform: rotate(90deg);
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+}
+
 //CONTAINER PLACEHOLDER
 %card-btn-container{
 	margin-top: 350px;
@@ -788,47 +1011,229 @@ div.trip_proxy_trip_purpose_id{
 	}
 }
 
+// // DETAIL VIEW -- to replace the modal view.
+// // TO DO - Animate the slide in of the DETAIL VIEW
+// .detail-view{
+// 	position: absolute;
+// 	height:100%;
+// 	width: 100%;
+// 	z-index: 200;
+
+// 	.close-section{
+// 		width: 33.3%;
+// 		background-color: $black;
+// 		height: inherit;
+// 		padding-top: 28%;
+// 		float:left;
+
+// 		.close-btn-container{
+// 			margin-left: 24px;
+// 			display: inline-block;
+// 			text-align: center;
+// 			.close-btn{
+// 				background: url(../assets/kiosk/close-btn-default.png) no-repeat center center;
+// 				height: 84px;
+// 				width: 84px;
+// 			}
+// 			p{
+// 				color: $white;
+// 				display: inline-block;
+// 				text-transform: uppercase;
+// 				border-bottom: 1px solid $blue;
+// 			}
+// 		}
+
+// 	}
+// 	.detail-section{
+// 		width: 66.67%;
+// 		height: inherit;
+// 		background-color: $white;
+// 		float:left;
+
+// 	}
+// }
+
+
 // DETAIL VIEW -- to replace the modal view.
 // TO DO - Animate the slide in of the DETAIL VIEW
-.detail-view{
-	position: absolute;
+.detail-view, #itinerary_modal{
+	position: fixed;
 	height:100%;
 	width: 100%;
-	z-index: 200;
+	z-index: 100;
+	background-color: $black;
 
-	.close-section{
-		width: 33.3%;
-		background-color: $black;
-		height: inherit;
-		padding-top: 28%;
-		float:left;
+	.detail-container{
+		height:inherit;
 
-		.close-btn-container{
-			margin-left: 24px;
-			display: inline-block;
-			text-align: center;
-			.close-btn{
-				background: url(../assets/kiosk/close-btn-default.png) no-repeat center center;
-				height: 84px;
-				width: 84px;
+		&.container-fluid{
+			margin-top:0;
+		}
+		.row-fluid{
+			height:inherit;
+		}
+
+		.close-section{
+			//TODO: Add pattern bg.
+			background-color: $black;
+			background-image: url(../assets/kiosk/bg_black.png);
+			height: inherit;
+			padding-top: 0px;
+			float:left;
+			position: relative;
+			border-right:0px solid black;
+
+			.left-content{
+				text-align: right;
+				position: absolute;
+				top: 50px;
+				right: 22px; 
+
+				h5{
+					color: $gray3;
+				}
+
+				p{
+					font-size: 21px;
+					padding-bottom: 36px;
+					color: $white;
+				}
 			}
-			p{
-				color: $white;
+
+			.close-btn-container{
+				margin-left: 45px;
 				display: inline-block;
-				text-transform: uppercase;
-				border-bottom: 1px solid $blue;
+				text-align: center;
+				margin-top: 450px;
+				cursor:pointer;
+				.close-btn{
+					background: url(../assets/kiosk/close-btn-default.png) no-repeat center center;
+					height: 84px;
+					width: 84px;
+				}
+				p{
+					color: $white;
+					display: inline-block;
+					text-transform: uppercase;
+					border-bottom: 1px solid $blue;
+				}
 			}
+		}
+	}	
+}
+
+.detail-section{
+	height: inherit;
+	background-color: $white;
+	float:left;
+	margin:0 !important;
+	.detail-header{
+		width:100%;
+		height:128px;
+		background-color: $gray6;
+		color: $white;
+		i{
+			float:left;
+			margin-top: 22px;
+			margin-left: 24px;
+			color: $gray4;
+		}
+		h1{
+			float:left;
+			font-size: 60px;
+			line-height: 1.8em;
+			margin-left: 12px;
+			width: 87%;
+			overflow: hidden;
+			height: 108px;
+		}
+	}
+	.detail-main{
+		font-size:18px;
+
+		.thumbnail{
+			border:0px solid $white;
+			box-shadow: none;
+		}
+
+		.tabbable{
+			@extend .dob-breadcrumb;
+			ul{
+				&.nav-tabs{
+					border-bottom:0px solid $white;
+
+				}
+				li{
+					width:49% !important;
+					cursor:pointer;
+
+					&.active{
+						@extend .current;
+					}
+
+					a{
+						border:0px solid $white;
+						color: $gray6;
+						font-size:inherit;
+						padding-bottom: 0;
+						padding-top:20px;
+						font-size:16px;
+						font-weight: 600;
+
+						&:hover{
+							background-color:$white;
+						}
+					}
+				}
+			}
+		}
+		.tab-content{
+			padding-left:40px;
+			padding-right:40px;
+		}
+		.detail-content{
+			.directions{
+				ul{
+					margin-top:30px;
+					li{
+						list-style-type:none;
+						margin-bottom:20px;
+						.icon{
+							height:50px;
+							width:50px;
+							float:left;
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+
+.detail-footer{
+	position: absolute;
+	bottom:0;
+	width: 68.51197%;
+	border-top:1px solid $gray4;
+	.print-me{
+		width:inherit;
+		height:137px;
+		background-color: $gray2;
+		width:100%;
+		font-size: 32px;
+		font-weight: 600;
+		text-align: center;
+		padding-top: 70px;
+
+		&:active{
+			background-color: $gray3;
 		}
 
 	}
-	.detail-section{
-		width: 66.67%;
-		height: inherit;
-		background-color: $white;
-		float:left;
-
-	}
 }
+
+//END OF THE RESULTS DETAIL SECTION
 
 //CALENDAR / DATEPICKER FIRST ONE
 label.date{
@@ -908,9 +1313,11 @@ input#txtDate{
 					&.day{
 						&.old{
 							color: $gray3;
+              pointer-events: none;
 						}
 						&.new{
 							color: $gray3;
+              pointer-events: none;
 						}
 						&.active{
 							@extend %selected;
@@ -928,6 +1335,10 @@ input#txtDate{
 	}
 }
 
+//OVERRIDE TADAAAPICKR'S STYLES
+.datepicker thead tr:first-child th:hover {
+  background: inherit;
+}
 
 //TIME PICKER
 label.time{
@@ -948,6 +1359,25 @@ label.time{
 	}
 }
 
+#trip-time{
+	label{
+		@extend label.date;
+	}
+	#trip_proxy_trip_time, #trip_proxy_return_trip_time{
+
+		@extend input#txtDate;
+	}
+}
+
+.trip_proxy_return_trip_time{
+	label{
+		@extend label.date;
+	}
+
+	input#trip_proxy_return_trip_time{
+		@extend input#txtDate;
+	}
+}
 
 %time-selectors{
 	list-style-type: none;
@@ -982,17 +1412,24 @@ label.time{
 	margin: 200px 0;
 
 	ul{
-		border-top:1px solid $gray4;
 		margin-bottom:0;
+		margin-left:0;
+
 		li{
+			border-top:1px solid $gray4;
 			@extend %time-selectors;
-			width:16.6666666666666667%;
+			width:16.66666666667%;
+
+			&.notime{
+				border-top:1px solid $gray4;
+				border-right:0px solid $gray4;
+				border-left:0px solid $gray4;
+			}
 
 			&.ampm{
 				border-bottom:1px solid $gray4;
 				padding-top:26px;
 			}
-
 		}
 	}
 }
@@ -1001,9 +1438,9 @@ label.time{
 
 	ul{
 		height: 100px;
-		padding: 30px 0 0 35px;
+		padding: 30px 0;
 		li{
-			width:32%;
+			width:33%;
 			list-style-type: none;
 			float:left;
 			border-bottom: 4px solid $gray3;
@@ -1025,7 +1462,6 @@ label.time{
 				font-size:21px;
 				font-weight:300;
 				display: block;
-
 			}
 
 			&:last-child{
@@ -1040,12 +1476,6 @@ label.time{
 					font-size:16px;
 					font-weight: 600;
 					color: $gray6;
-					padding-top:20px;
-					transition: padding-top 100ms linear;
-
-					&.val-added{
-						padding-top:0px;
-					}
 				}
 
 				span.input{
@@ -1063,7 +1493,7 @@ label.time{
 	}
 }
 
-#monthtable{
+.monthtable{
 	padding-bottom:20px;
 	ul{
 		border-top:1px solid $gray4;
@@ -1082,7 +1512,7 @@ label.time{
 	}
 }
 
-#daytable{
+.daytable{
 	padding-bottom:20px;
 	ul{
 		border-top:1px solid $gray4;
@@ -1108,7 +1538,6 @@ label.time{
 		}
 	}
 }
-
 
 
 #yeartable{
@@ -1203,8 +1632,6 @@ $animationTime: 300ms;
 		}
 	}
 }
-
-
 
 
 //LOGIN 
@@ -1357,6 +1784,164 @@ body.sessions.new, body.registrations.new{
 
 }
 
+.loading-indicator{
+	position: absolute;
+	top: 50px;
+	right: 30px;
+}
+
+.alert{
+	margin-bottom:0;
+	border-radius:0;
+	font-size:16px;
+	&.alert-error{
+		color:$red;
+		background-color: lighten($red,30%);
+	}
+	&.alert-success{
+		color:darken($green,10%);
+		background-color: lighten($green,30%);
+	}
+}
+
+.control-group{
+	margin-bottom:3px;
+}
+
+//for future use
+.icon-taxi{
+	height:50px;
+	width: 48px;
+	background: url(../assets/kiosk/icon-taxi.png) no-repeat center center;
+}
+
+//
+#itineraries{
+	height:330px;
+	overflow:hidden;
+	margin-left:0;
+
+	li{
+		width: 20%;
+		margin-left: 1.7%;
+		&:first-child{
+			margin-left:0;
+		}
+	}
+}
+
+#overview-modal{
+	z-index: 1;
+	position: absolute;
+	top:0;
+	width:100%;
+	height: 100%;
+
+	.row-fluid{
+		height:inherit;
+	}
+
+	.info{
+		height:inherit;
+		background-color:$gray6;
+	}
+	.span8plus, .span8{
+		background-color:rgba($white,.88);
+		margin-left:0;
+		padding-left:2.5641%;
+		height:inherit;
+	}
+	
+
+
+	.close-overview{
+		position: fixed;
+		bottom:0;
+		width:inherit;
+		height:120px;
+		left: 0;
+
+		.close-btn{
+			padding-top: 32px;
+			margin: 0 24px;
+			text-align: center;
+			height: 100px;
+			border:6px solid $gray3;
+			font-size:21px;
+			text-transform: uppercase;
+			font-weight: 600;
+
+
+
+
+		}
+
+	}
+
+
+}
+
+.actionbutton{
+	padding: 0px;
+	border-radius: 0;
+	border: 1px solid $gray4;
+	box-shadow: 0px 1px 3px rgba($black, 0.16);
+	background-color: $white;
+	.dialog-title-bar{
+		border-radius: inherit;
+		border:2px solid $white;
+		box-shadow: 0px 1px 0px $gray4;
+		background-color: $gray6;
+		color: $white;
+
+		i{
+			display: block;
+			text-align: center;
+			font-size: 3.3em;
+			margin-top: 5px;
+			color:$gray3;
+		}
+		h3{
+			clear:both;
+			text-align:center;
+			margin:0;
+		}
+	}
+	.dialog-footer{
+		border-radius: inherit;
+		border:2px solid $white;
+		color:$white;
+		box-shadow: 0px -1px 0px $gray4;
+		a{
+			color: $white;
+			font-size:21px;
+			text-align:center;
+			text-transform:uppercase;
+			display: block;
+			font-family:$kioskfonts;
+			font-weight:700;
+			width: 158px;
+			float: left;
+			line-height: 1.9em;
+			text-decoration: none;
+			background-color: $blue;
+
+			&.select{
+				// background-color: $green;
+				// border-right:1px solid $white;
+				border-left:1px solid $white;
+				border-right:3px solid $white;
+			}
+			&.details{
+				// background-color: $blue;
+				border-right:2px solid $white;
+			}
+			&.hide{
+				// background-color: $red;
+			}
+		}
+	}
+}
 
 
 /* Landscape phone to portrait tablet */
@@ -1388,9 +1973,12 @@ body.sessions.new, body.registrations.new{
 		}
 	}
 
+}
 
-
-
+@media (min-width: 1200px){
+	.span8plus{
+		width: 68.37197% !important;
+	}
 }
 
 /* Landscape phones and down */
