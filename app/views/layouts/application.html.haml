@@ -9,7 +9,7 @@
       = stylesheet_link_tag brand, :media => "all"
       = stylesheet_link_tag "http://cdn.leafletjs.com/leaflet-0.4/leaflet.css", :media => "all"
       
-      <script type="text/javascript">L_DISABLE_3D = true;</script>
+      <script type="text/javascript">L_PREFER_CANVAS = true;</script>
       = javascript_include_tag "http://cdn.leafletjs.com/leaflet-0.4/leaflet.js"
       = javascript_include_tag "http://maps.google.com/maps/api/js?v=3.2&sensor=false"
       = javascript_include_tag "application" # TODO This should go in footer
