@@ -68,9 +68,9 @@ h6 { font-size: 12px; line-height: 20px; }
   padding-left: 10px;
   padding-right:10px;
 }
-.one-note {
-  min-height: 210px; // 196px; // 211px;
-}
+// .one-note {
+//   min-height: 210px; // 196px; // 211px;
+// }
 
 // .two-notes {
 //   min-height: 245px; // 217px; // 247px;
@@ -388,7 +388,10 @@ td.left, th.left {
 }
 
 .map {
-  border: 1px solid #E3E3E3;
+  border-top: 0px solid #E3E3E3;
+  border-right: 0px solid #E3E3E3;
+  border-left: 0px solid #E3E3E3;
+  border-bottom: 1px solid #E3E3E3;
 }
 
 .loading-indicator {
@@ -448,3 +451,43 @@ td.left, th.left {
 }
 
 // .trips.show .first-in-row { margin-left: 0 !important; }
+
+.ALTtable{
+  width:100%;
+  border-collapse:collapse;
+}
+.ALTtable td{
+  padding:7px; border:1px solid;
+}
+/* provide some minimal visual accomodation for IE8 and below */
+.ALTtable tr{
+  background: #FFFFFF;
+}
+/*  Define the background color for all the ODD background rows  */
+.ALTtable tr:nth-child(odd){
+  background: whitesmoke;
+}
+/*  Define the background color for all the EVEN background rows  */
+.ALTtable tr:nth-child(even){
+  background: #FFFFFF;
+}
+
+.white-well{
+  background: #FFFFFF;
+}
+
+.warning{
+  color: red;
+}
+
+.service-picker{
+  vertical-position: bottom;
+}
+
+/* Printer Friendly */
+@media print {
+  #publicnav,#footer,#help{
+    display: none;
+  }
+
+}

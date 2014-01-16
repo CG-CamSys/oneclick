@@ -21,12 +21,12 @@
         .bar
         %h3 Start at your current location?
 
-      %a#no{:href => "#", :name => "yesno", :value => "no"} No
       %a#yes{:href => "#", :name => "yesno", :value => "yes"} Yes
+      %a#no{:href => "#", :name => "yesno", :value => "no"} No
   
   / TODO: ADD THE DIV WITH THE DATA INDEX
   #from_input{ :data => {:index => 1}}
-    - if user_signed_in?
+    - if false && user_signed_in?
       = f.input :from_place, :wrapper => :append, :class => "inline", :label => t(:from) do
         = f.text_field :from_place, :placeholder => t(:enter_from), :id => "trip_proxy_from_place", :autocomplete => "off", :class => "no-bottom-margin ajax-typeahead input-large address", :data => {:link => search_user_places_path, :provide => "typeahead"}
         %span.dropdown
@@ -44,6 +44,7 @@
         = image_tag "ajax-loader.gif", :id => "from_geocoding_indicator", :style => "display:none;", :class => "loading-indicator"
 
     - else
+      .fadeout
       = f.input :from_place, :class => "inline", :label => t(:from) do
         = f.text_field :from_place, :placeholder => t(:enter_from), :id => "trip_proxy_from_place", :autocomplete => "off", :class => "no-bottom-margin ajax-typeahead input-large address", :data => {:link => search_user_trips_path, :provide => "typeahead"}
         / = f.input :from_is_home, id: "from_is_home", as: :boolean, :label => false, :inline_label => "This is my home"
@@ -56,7 +57,7 @@
 
 
   #to_input{ :data => {:index => 2}}
-    - if user_signed_in?
+    - if false && user_signed_in?
       = f.input :to_place, :wrapper => :append, :class => "inline", :label => t(:to) do
         = f.text_field :to_place, :placeholder => t(:enter_to), :id => "trip_proxy_to_place", :autocomplete => "off", :class => "no-bottom-margin ajax-typeahead input-large address", :data => {:link => search_user_places_path, :provide => "typeahead"}
         %span.dropdown
@@ -72,7 +73,8 @@
           = f.input :to_is_home, id: "to_is_home", as: :boolean, :label => false, :inline_label => "This is my home"
         = image_tag "ajax-loader.gif", :id => "to_geocoding_indicator", :style => "display:none;", :class => "loading-indicator"
 
-    - else    
+    - else
+      .fadeout    
       = f.input :to_place, :class => "inline", :label => t(:to) do
         = f.text_field :to_place, :placeholder => t(:enter_to), :id => "trip_proxy_to_place", :class => "no-bottom-margin ajax-typeahead input-large address", :autocomplete => "off", :data => {:link => search_user_trips_path, :provide => "typeahead"}
         = f.input :to_is_home, id: "to_is_home", as: :boolean, :label => false, :inline_label => "This is my home"
@@ -95,7 +97,7 @@
   #timepicker-one{ :data => {:index => 4}}
     = f.input :trip_time, :wrapper => :append, :label => t(:trip_time) do
       #trip-time
-        = f.label :trip_time
+        = f.label :departing_at
         = f.input :trip_time, :as => :string, :label => false
 
     .row-fluid
@@ -159,15 +161,16 @@
       .span8.offset2
         .title-container
           .bar
-          %h3 Need a return trip?
-        %a#no{:href => "#", :name => "yesno", :value => "no"} No
+          %h3 Do you need a return trip?
         %a#yes{:href => "#", :name => "yesno", :value => "yes"} Yes
+        %a#no{:href => "#", :name => "yesno", :value => "no"} No
 
   #timepicker-two{ :data => {:index => 7}}
     = f.input :is_round_trip, :label => false, :wrapper_html => {:class => 'controls controls-row'} do
       = f.input_field :is_round_trip, :as => :boolean, :inline_label => "Return after", :class => "hidden"
       = f.input :return_trip_time, :label => false, :wrapper => :append do
         #return-trip-time
+          = f.label :return_trip_time
           = f.input_field :return_trip_time, :as => :string, :label => false
 
     .row-fluid
@@ -245,7 +248,6 @@
     removeMatchingMarkers('stop');
   });
 
-
   ///////////////////////////////////////////////////
   // ACTIONS
   //
@@ -304,8 +306,7 @@
     }
     removeMatchingMarkers(key);
     var marker = create_or_update_marker(key, latlon[0], latlon[1], name, desc, iconStyle);
-    setMapToBounds();
-    selectMarker(marker);
+    zoom_to_marker(marker);
 
     $('#' + t.parents('ul').data('target')).val(name);
   });
@@ -377,7 +378,8 @@
 
         // create marker on the map
         removeMatchingMarkers('start');
-        create_or_update_typeahead_marker(item, 'start', 'startIcon');
+        marker = create_or_update_marker('start', item.lat, item.lon, item.name, item.desc, 'startIcon');
+        zoom_to_marker(marker);
 
         // Update the UI
         $('#from_place_selected_type').attr('value', item.type);
@@ -450,7 +452,8 @@
 
         // create marker on the map
         removeMatchingMarkers('stop');
-        create_or_update_typeahead_marker(item, 'stop', 'stopIcon');
+        marker = create_or_update_marker('stop', item.lat, item.lon, item.name, item.desc, 'stopIcon');
+        zoom_to_marker(marker);
 
         // Update the UI
         $('#to_place_selected_type').attr('value', item.type);
@@ -465,11 +468,14 @@
   //
   //
   ///////////////////////////////////////////////////
-  function create_or_update_typeahead_marker(item, key, iconStyle) {
-    marker = create_or_update_marker(key, item.lat, item.lon, item.name, item.desc, iconStyle);
-    setMapToBounds();
-    selectMarker(marker);
-  };
+
+  function zoom_to_marker(marker) {
+    if (marker) {
+      //setMapToBounds();
+      setMapToMarkerBounds(marker);
+      selectMarker(marker);
+    }
+  }
 
   function create_or_update_marker(key, lat, lon, name, desc, iconStyle) {
     // See if we can find this existing marker
@@ -481,8 +487,10 @@
     addMarkerToMap(marker, true);
     return marker;
   };
+  
   // Add a list of candidate markers to the map
   var alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'Z', 'Y', 'Z'];
+
   function add_candidate_marker(index, lat, lon, addr, desc, type) {
     var iconStyle;
     var key_template;
@@ -568,8 +576,7 @@
     removeMatchingMarkers(key);
     // replace the markers with the end point marker
     marker = create_or_update_marker(key, latlon[0], latlon[1], addr, desc, iconStyle);
-    setMapToBounds();
-    selectMarker(marker);
+    zoom_to_marker(marker);
   };
 
   //Only Allow One Checkbox to Be Checked
@@ -617,23 +624,35 @@
       }
     });
 
-    //create hidden input for TripPurposes
-    //pass selected value into hidden input
-      //which does it need the name, the id, something else?
-    //submit the hidden value
+    //FROM LABEL APPEAR
+    $('input#trip_proxy_from_place').focus(function(){
+        if (window.cocoa)
+          window.cocoa.openKeyboard();
+        $('#from_input').addClass('text-added');
+    });
 
-    $('#current-location a').on('click', function(){
-      //Temporary Address.
-      if($(this).is('#no')){
-        $('input#trip_proxy_from_place').val('');
-      } else if($(this).is('#yes')){
-      
-        //$('input#trip_proxy_from_place').val('');
-        //CURRENTLY NOT WORKING
-        //$('input#trip_proxy_from_place').val('Cemetery Drive, Decatur, GA 30033');
+    $('input#trip_proxy_from_place').blur(function(){
+      if($(this).val().length > 0){
+        //do nothing
+      } else {
+        $('#from_input').removeClass('text-added');
       }
     });
 
+    //TO LABEL APPEAR
+    $('input#trip_proxy_to_place').focus(function(){
+        if (window.cocoa)
+          window.cocoa.openKeyboard();
+        $('#to_input').addClass('text-added');
+    });
+
+    $('input#trip_proxy_to_place').blur(function(){
+      if($(this).val().length > 0){
+        //do nothing
+      } else {
+        $('#to_input').removeClass('text-added');
+      }
+    });
 
     $('.edit-trip-btn').on('click', function(){
       $('*[data-index=1]').removeClass('hidden');
@@ -648,20 +667,12 @@
       tripformView.formEle.trigger('indexChange');
     });
 
-    //If they click no on return trip, jump straight to Overview
-    $('#return-yesno a#no').on('click', function(){
-      //
-      $('#trip_proxy_is_return_trip').prop('checked', false);
-      $('#left-results p.return').hide();
-      $('#left-results p.return').prev('h5').hide();
-      tripformView.indexCounter = 7;
-    });
-
     //END DP CODE
 
     // Hide what we don't need
     $('#from_place_candidates').hide();
     $('#to_place_candidates').hide();
+
     // Install a submit handler on the query form
     ajax_submit_form_handler('query_form');
 

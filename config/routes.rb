@@ -87,6 +87,7 @@ Oneclick::Application.routes.draw do
           post  'admin_comments'
           get   'edit_rating'
           get   'email_feedback'
+          get   'show_printer_friendly'
         end
       end
 
@@ -112,6 +113,12 @@ Oneclick::Application.routes.draw do
       resources :trips, :only => [:index]
       match '/geocode' => 'util#geocode'
       match '/' => 'home#index'
+    end
+
+    resources :services do
+      member do
+        get 'view'
+      end
     end
     
     match '/' => 'home#index'

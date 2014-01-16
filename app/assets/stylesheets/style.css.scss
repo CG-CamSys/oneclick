@@ -26,6 +26,17 @@ $kioskfonts: "Avenir Next", "Helvetica Neue", Helvetica, sans-serif;
 	font-family: 'Avenir Next', Helvetica, sans-serif;
 }
 
+body{
+	overflow: hidden;
+}
+
+*::selection {
+	background: rgba(0,0,0,0); /* Safari */
+}
+*::-moz-selection {
+	background: rgba(0,0,0,0); /* Firefox */
+}
+
 //FIXES
 
 .span8plus{
@@ -45,6 +56,10 @@ h4{
 	text-transform: uppercase;
 }
 
+.pull-right{
+	overflow-x:hidden;
+}
+
 h5{
 	font-size:16px;
 }
@@ -54,6 +69,22 @@ h5{
 		line-height: 1.4;
 		padding: 6px 14px 3px;
 	}
+}
+
+.fadeout{
+	position:absolute;
+	background: -moz-linear-gradient(left,  rgba(255,255,255,0) 0%, rgba(255,255,255,1) 90%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(255,255,255,0)), color-stop(90%,rgba(255,255,255,1))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(left,  rgba(255,255,255,0) 0%,rgba(255,255,255,1) 90%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(left,  rgba(255,255,255,0) 0%,rgba(255,255,255,1) 90%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(left,  rgba(255,255,255,0) 0%,rgba(255,255,255,1) 90%); /* IE10+ */
+	background: linear-gradient(to right,  rgba(255,255,255,0) 0%,rgba(255,255,255,1) 90%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#ffffff',GradientType=1 ); /* IE6-9 */
+	top:0;
+	right:0;
+	width:124px;
+	height:124px;
+
 }
 
 //NAV
@@ -272,39 +303,57 @@ a{
 
 //ATTRACT LOOP
 .penndot-logo{
-	background: url(../assets/kiosk/penndot-logo.svg) no-repeat center center;
-	background-size: 100%;
-
+	background: url(../assets/kiosk/penndot-logo.png) no-repeat center center;
+	//background-size: 100%;
 }
 
-.attract-screen{
-	height:1024px;
-	.attract-top{
-		height: 50%;
-		padding:30px 45px;
+.oneclick-logo{
+	background: url(../assets/kiosk/oneclick-logo.png) no-repeat center center;
+	background-size: 100%;
+}
 
-		.oneclick{
-			@extend .penndot-logo;
+.attract-container{
+	height:1024px;
+	position: fixed;
+	top:0;
+	background-color: $white;
+	width:100%;
+
+	.attract-header{
+		height: 73px;
+		padding:0px 45px;
+		border-bottom:1px solid $gray3;
+
+        .oneclick{
+			@extend .oneclick-logo;
 			height:47px;
 			width: 205px;
+			margin-top:13px;
 
 		}
 		.penndot{
 			@extend .penndot-logo;
 			height:47px;
 			width: 205px;
-		}
-		.title{
-			color: $gray6;
-			font-size: 120px;
-			font-weight:700;
-			text-align: center;
-			clear:left;
-			margin-top: 20%;
-			letter-spacing:-5px;
-		}
-	}
-	.attract-bottom{
+			margin-top:13px;
+        }
+    }
+    a.attract-main{
+    	height:438px;
+    	display:block;
+    	text-decoration: none;
+        .title{
+        	color: $gray6;
+        	font-size: 120px;
+        	font-weight:700;
+        	text-align: center;
+        	clear:left;
+        	margin-top: 173px;
+        	letter-spacing:-5px;
+        }
+    }
+	a.attract-footer{
+		display: block;
 		height:50%;
 		background: $blue url(../assets/kiosk/attract-bottom.jpg) no-repeat center center;
 	}
@@ -338,7 +387,7 @@ a{
 				text-transform: uppercase;
 			}
 			h4{
-				padding-bottom: 40px;
+				padding-bottom: 24px;
 			}
 		}
 	}
@@ -365,7 +414,7 @@ a{
 			margin: 0 auto;
 			text-transform: uppercase;
 			text-align:center;
-			color: $gray4;
+			color: $gray5;
 			background-color: $gray1;
 			//position: absolute;
 		}
@@ -399,21 +448,21 @@ a{
 			border: 4px solid $gray5;
 
 		}
-		&#no{
-			content: "NO";
+		&#yes{
+			content: "Yes";
 			height: 256px;
 			padding-top: 120px;
 
 			&:active{
 				//TO DO: Refactor all of this to make more sense.
-				margin: 8px 8px -8px;
+				margin: 8px 8px -6px;
 				border: 4px solid $blue;
 				height: 268px;
-				padding-top:124px;
+				padding-top:126px;
 			}
 		}
-		&#yes{
-			content: "Yes";
+		&#no{
+			content: "No";
 			height: 128px;
 			padding-top: 50px;
 			margin: 34px 14px 20px 14px;
@@ -491,7 +540,7 @@ div.trip_proxy_trip_purpose_id{
 //LEFT RESULTS PAGE
 #left-results{
 	p{
-		margin-bottom: 36px;
+		margin-bottom: 24px;
 	}
 }
 
@@ -545,17 +594,49 @@ div.trip_proxy_trip_purpose_id{
 			float:right;
 			@extend %flip;
 		}
+		//Undo button as a circle
+		// a{
+		// 	color: white;
+		// 	background-color: $blue;
+		// 	height: 44px;
+		// 	display: inline-block;
+		// 	padding-top: 13px;
+		// 	width: 100%;
+		// 	text-align: center;
+		// 	text-decoration: none;
+		// }
+		a, a:hover, a:active{
+			margin-top:12px;
+			border-bottom: 1px solid $gray3;
+			height: 23px;
+			display: inline-block;
+			text-decoration: none;
+			color: $blue;
+		}
 	}
 	.btn-block{
-		height:73px;
-		border: 6px solid $gray3;
-		margin-bottom:10px;
-		font-size:21px;
-		text-transform:uppercase;
-		padding-top:21px;
+		height:90px;
+		font-size:36px;
+		font-weight:600;
+		padding-top:33px;
 		border-radius: 0px;
-		background-color: $white;
 		background-image:none;
+		color: $white;
+		text-shadow:none;
+		border-top:1px solid lighten($blue, 5%);
+		outline: 1px solid darken($blue, 10%);
+		color: white;
+		background-color: $blue;
+		box-shadow: 0px 2px 8px rgba(0,0,0,0.4);
+		text-align: center;
+		margin:1px 1px 10px 1px;
+		width:99%;
+
+		&:active{
+			background-color: lighten($blue, 10%);
+			border-top:1px solid lighten($blue, 15%);
+		}
+
 	}
 }
 
@@ -570,7 +651,7 @@ div.trip_proxy_trip_purpose_id{
 
 	.trip-overview{
 		width: 31.91489%;
-		border-right:1px solid $gray3;
+		box-shadow: inset 0 0 0 6px white, inset 0 0 0 10px $gray5;
 		font-size: 36px;
 		font-weight:700;
 		text-align:center;
@@ -648,9 +729,29 @@ div.trip_proxy_trip_purpose_id{
 //PLAN A TRIP SPECIFIC FIXES
 #from_input, #to_input{
 	label{
-		display: none;
+		display:none;
+	}
+	input{
+		line-height: 1.7em;
+		padding-top:20px;
+	}
+
+	label.string{
+		position: absolute;
+		z-index: 10;
+		color: $gray4;
+		top: 41px;
+		left:100px;
+		display:block;
+		font-weight:600;
+		abbr{
+			text-decoration: none;
+			display:none;
+		}
 	}
 }
+
+
 
 #from_place_candidates, #to_place_candidates{
 	@extend .span12;
@@ -683,13 +784,13 @@ div.trip_proxy_trip_purpose_id{
 			border-bottom: 1px solid $gray3;
 			font-size: 21px;
 			font-weight:600;
-			height: 69px;
 
 			a, a.address-select{
-				padding: 24px 20px;
+				padding: 18px 20px;
 				color: $gray6;
 				width: inherit;
 				margin: 0;
+				line-height:1.3;
 
 				&:hover{
 					// border-bottom: 1px solid $gray3;
@@ -831,15 +932,32 @@ div.trip_proxy_trip_purpose_id{
 		color: $gray6;
 		font-size: 36px;
 		clear:left;
-		margin-top:16px;
+		margin-top:20px;
 	}
 }
 
 //QUESTIONS CHARACTERISTICS
+//Specific fix for the programs section, which truncates the label by almost 50%
+.programs-section table{
+	width:585px;
+
+	tr{
+		td{
+			&:first-child{
+				label{
+					min-width:240px;
+				}
+			}
+		}
+	}
+}
+
 .questions, .programs-section, .accommodations-section{
 
 	table{
 		margin-top: 30px;
+		margin-left: -30px;
+		float:left;
 		thead{
 			tr{
 				th{
@@ -898,6 +1016,10 @@ div.trip_proxy_trip_purpose_id{
 						}
 					}
 
+					input[type="radio"] + label.disabled{
+						cursor: not-allowed;
+					}
+					
 					input[type="radio"]:checked + label.yes, input[type="radio"]:checked + label.no, input[type="radio"]:checked + label.unsure{
 						box-shadow: inset 0 0 0 4px $gray2,
 									inset 0 0 0 20px $gray6;
@@ -1011,48 +1133,6 @@ div.trip_proxy_trip_purpose_id{
 	}
 }
 
-// // DETAIL VIEW -- to replace the modal view.
-// // TO DO - Animate the slide in of the DETAIL VIEW
-// .detail-view{
-// 	position: absolute;
-// 	height:100%;
-// 	width: 100%;
-// 	z-index: 200;
-
-// 	.close-section{
-// 		width: 33.3%;
-// 		background-color: $black;
-// 		height: inherit;
-// 		padding-top: 28%;
-// 		float:left;
-
-// 		.close-btn-container{
-// 			margin-left: 24px;
-// 			display: inline-block;
-// 			text-align: center;
-// 			.close-btn{
-// 				background: url(../assets/kiosk/close-btn-default.png) no-repeat center center;
-// 				height: 84px;
-// 				width: 84px;
-// 			}
-// 			p{
-// 				color: $white;
-// 				display: inline-block;
-// 				text-transform: uppercase;
-// 				border-bottom: 1px solid $blue;
-// 			}
-// 		}
-
-// 	}
-// 	.detail-section{
-// 		width: 66.67%;
-// 		height: inherit;
-// 		background-color: $white;
-// 		float:left;
-
-// 	}
-// }
-
 
 // DETAIL VIEW -- to replace the modal view.
 // TO DO - Animate the slide in of the DETAIL VIEW
@@ -1129,9 +1209,10 @@ div.trip_proxy_trip_purpose_id{
 	margin:0 !important;
 	.detail-header{
 		width:100%;
-		height:128px;
+		min-height:128px;
 		background-color: $gray6;
 		color: $white;
+		display:inline-block;
 		i{
 			float:left;
 			margin-top: 22px;
@@ -1141,11 +1222,11 @@ div.trip_proxy_trip_purpose_id{
 		h1{
 			float:left;
 			font-size: 60px;
-			line-height: 1.8em;
+			line-height: 1.1em;
 			margin-left: 12px;
+			margin-top: 33px;
+			margin-bottom:28px;
 			width: 87%;
-			overflow: hidden;
-			height: 108px;
 		}
 	}
 	.detail-main{
@@ -1190,6 +1271,20 @@ div.trip_proxy_trip_purpose_id{
 		.tab-content{
 			padding-left:40px;
 			padding-right:40px;
+
+			i{
+				color: $gray3;
+
+				&.start_icon{
+					color: #7ec537;
+				}
+				&.end_icon{
+					color: $red;
+				}
+			}
+			.itinerary_text_small{
+				color: $gray6;
+			}
 		}
 		.detail-content{
 			.directions{
@@ -1202,6 +1297,7 @@ div.trip_proxy_trip_purpose_id{
 							height:50px;
 							width:50px;
 							float:left;
+
 						}
 					}
 				}
@@ -1352,6 +1448,16 @@ label.time{
 .trip_proxy_trip_date{
 	label{
 		@extend label.date;
+		pointer-events:none;
+		z-index: 100;
+		position:absolute;
+		top: 28px;
+		left: 35px;
+		color: $gray4;
+		font-weight:700;
+		abbr{
+			display: none;
+		}
 	}
 
 	input#trip_proxy_trip_date{
@@ -1359,14 +1465,31 @@ label.time{
 	}
 }
 
-#trip-time{
+
+
+#trip-time, #return-trip-time{
 	label{
 		@extend label.date;
+		pointer-events:none;
+		z-index: 100;
+		position:absolute;
+		top: 28px;
+		left: 35px;
+		color: $gray4;
+		font-weight:700;
+		abbr{
+			display: none;
+		}
 	}
 	#trip_proxy_trip_time, #trip_proxy_return_trip_time{
 
 		@extend input#txtDate;
 	}
+}
+
+input#trip_proxy_trip_time.string.required,
+input#trip_proxy_return_trip_time.string.optional{
+	pointer-events:none;
 }
 
 .trip_proxy_return_trip_time{
@@ -1539,7 +1662,6 @@ label.time{
 	}
 }
 
-
 #yeartable{
 	position: relative;
 	.decade-prev {
@@ -1632,23 +1754,6 @@ $animationTime: 300ms;
 		}
 	}
 }
-
-
-//LOGIN 
-body.sessions.new, body.registrations.new{
-	background-image: url(../assets/kiosk/bg_black.png);
-	.container-fluid{
-		background-image: url(../assets/kiosk/bg_black.png);
-	}
-	label{
-		text-align: left;
-	}
-
-	.registrations .form-horizontal .control-group {
-	  margin-bottom: 0px;
-	}    
-}
-
 
 .login-container{
 	position: absolute;
@@ -1766,7 +1871,6 @@ body.sessions.new, body.registrations.new{
 		}
 	}
 
-
 	.cancel-container{
 		padding-top: 58px;
 		a.cancel-btn{
@@ -1780,9 +1884,154 @@ body.sessions.new, body.registrations.new{
 			letter-spacing:2px;
 		}
 	}
-
-
 }
+
+/**
+ *------------------------------------------
+ * LOGIN DESIGN 01-14-14
+ *------------------------------------------
+**/
+//LOGIN 
+body.sessions.new, body.registrations.new{
+	.container-fluid{
+		margin-top:0px;
+	}
+	.navbar{
+		margin-bottom:0;
+	}
+	#main{
+		padding-top:0;
+		margin-top:0px;
+	}
+}
+
+#login{
+	.input-container{
+		padding-top:85px;
+	}
+	.info{
+		//margin-top: 20px;
+	}
+
+	.span8login{
+		width: 68.31197%;
+		margin-left: 0;
+		
+		.span12login{
+			//width: 68.11197%;
+			margin-right:0;
+			padding-right:2.5641%;
+			margin-left:0;
+			padding-left:2.5641%;
+		}
+
+	}
+
+	div.control-group{
+		position:relative;
+		height:84px;
+		width: 100%;
+		margin-bottom: 0;
+
+		&.error{
+			&:before{
+				content: url(../assets/kiosk/icon-error.png);
+				position:absolute;
+				top: 24px;
+				left: -50px;
+			}
+			label{
+				color:$red;
+				transition: all 0.2s ease;
+			}
+			input:focus + label, input.hasValue + label{
+				color: desaturate($red, 60%);
+			}
+			input{
+				background-color: lighten($red, 30%);
+				color: darken($red, 40%);
+			}
+
+		}
+
+		label{
+			transition: margin-top 0.2s ease;
+			position: absolute;
+			font-weight: 600;
+			font-size:16px;
+			z-index:100;
+			margin-top:14px;
+			margin-left:35px;
+			color: $gray4;
+			width: 300px;
+			text-align: left;
+
+			abbr{
+				display: none;
+			}
+		}
+		//FIX FOR THEIR CODE
+		div.controls{
+			margin-left:0;
+		}
+
+		div.controls input:focus + label, div.controls input.hasValue + label{
+			margin-top: 18px;
+		}
+		div.controls input{
+			font-family: "Avenir Next", "Helvetica Neue", Helvetica, sans-serif;
+			position: absolute;
+			height: 100%;
+			width: 100%;
+			border-radius: 0;
+			padding-left: 32px;
+			font-size: 32px;
+			padding-top: 24px;
+		}
+	}
+
+	button.login-btn{
+		width:320px;
+		margin-top: 24px;
+		margin-left: 22px;
+		padding: 30px 0;
+		background-color: $white;
+		border: 4px solid $blue;
+		font-family: "Avenir Next", "Helvetica Neue", Helvetica, sans-serif;
+		text-align: center;
+		font-size: 32px;
+		font-weight: 700;
+		color: $black;
+		text-decoration: none;
+		outline:0;
+
+		&:active{
+			margin: 18px -6px 24px 16px;
+			padding:36px 6px;
+			width:332px;
+		}
+	}
+
+	.cancel-container{
+		height: 90px;
+		padding-top: 58px;
+		a.cancel-btn{
+			height:23px;
+			display: inline-block;
+			text-decoration: none;
+			border-bottom: 1px solid $gray5;
+			color: $gray4;
+			text-align: right;
+			font-size: 21px;
+			text-transform: uppercase;
+			font-weight: 600;
+			letter-spacing:2px;
+			margin-right:22px;
+			overflow:hidden;
+		}
+	}
+}
+// END LOGIN DESIGN 01-14-14
 
 .loading-indicator{
 	position: absolute;
@@ -1858,15 +2107,15 @@ body.sessions.new, body.registrations.new{
 		position: fixed;
 		bottom:0;
 		width:inherit;
-		height:120px;
+		height:108px;
 		left: 0;
 
 		.close-btn{
-			padding-top: 32px;
-			margin: 0 24px;
+			padding-top: 38px;
+			margin: 0 20px 0 18px;
 			text-align: center;
 			height: 100px;
-			border:6px solid $gray3;
+			border:4px solid $gray3;
 			font-size:21px;
 			text-transform: uppercase;
 			font-weight: 600;
@@ -1893,7 +2142,7 @@ body.sessions.new, body.registrations.new{
 		box-shadow: 0px 1px 0px $gray4;
 		background-color: $gray6;
 		color: $white;
-
+		height:93px;
 		i{
 			display: block;
 			text-align: center;
@@ -1906,6 +2155,9 @@ body.sessions.new, body.registrations.new{
 			text-align:center;
 			margin:0;
 		}
+	}
+	.dialog-content{
+		height:175px !important;
 	}
 	.dialog-footer{
 		border-radius: inherit;
