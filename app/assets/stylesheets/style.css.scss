@@ -306,7 +306,7 @@ a{
 //ATTRACT LOOP
 .penndot-logo{
 	background: url(../assets/kiosk/penndot-logo.png) no-repeat center center;
-	background-size: 100%;
+	//background-size: 100%;
 }
 
 .oneclick-logo{
@@ -389,7 +389,7 @@ a{
 				text-transform: uppercase;
 			}
 			h4{
-				padding-bottom: 40px;
+				padding-bottom: 24px;
 			}
 		}
 	}
@@ -397,7 +397,7 @@ a{
 
 // RETURN TRIP
 
-#step2, #eligibility, #current-location, #return-trip{
+#step2, #eligibility, #current-location, #return-trip, #purposepicker{
 
 	.title-container{
 		position:relative;
@@ -416,7 +416,7 @@ a{
 			margin: 0 auto;
 			text-transform: uppercase;
 			text-align:center;
-			color: $gray4;
+			color: $gray5;
 			background-color: $gray1;
 			//position: absolute;
 		}
@@ -431,7 +431,7 @@ a{
 
 	}
 
-	a{
+	a {
 		display: block;
 		cursor: pointer;  
 	    position: relative;  
@@ -450,21 +450,21 @@ a{
 			border: 4px solid $gray5;
 
 		}
-		&#no{
-			content: "NO";
+		&#yes{
+			content: "Yes";
 			height: 256px;
 			padding-top: 120px;
 
 			&:active{
 				//TO DO: Refactor all of this to make more sense.
-				margin: 8px 8px -8px;
+				margin: 8px 8px -6px;
 				border: 4px solid $blue;
 				height: 268px;
-				padding-top:124px;
+				padding-top:126px;
 			}
 		}
-		&#yes{
-			content: "Yes";
+		&#no{
+			content: "No";
 			height: 128px;
 			padding-top: 50px;
 			margin: 34px 14px 20px 14px;
@@ -497,7 +497,7 @@ div.trip_proxy_trip_purpose_id{
 .purpose{
 	position:absolute;
 	top:0;
-	margin-top:40px;
+	margin-top:80px;
 	li{
 		z-index: 0;
 		padding:24px 30px;
@@ -542,7 +542,7 @@ div.trip_proxy_trip_purpose_id{
 //LEFT RESULTS PAGE
 #left-results{
 	p{
-		margin-bottom: 36px;
+		margin-bottom: 24px;
 	}
 }
 
@@ -596,17 +596,49 @@ div.trip_proxy_trip_purpose_id{
 			float:right;
 			@extend %flip;
 		}
+		//Undo button as a circle
+		// a{
+		// 	color: white;
+		// 	background-color: $blue;
+		// 	height: 44px;
+		// 	display: inline-block;
+		// 	padding-top: 13px;
+		// 	width: 100%;
+		// 	text-align: center;
+		// 	text-decoration: none;
+		// }
+		a, a:hover, a:active{
+			margin-top:12px;
+			border-bottom: 1px solid $gray3;
+			height: 23px;
+			display: inline-block;
+			text-decoration: none;
+			color: $blue;
+		}
 	}
 	.btn-block{
-		height:73px;
-		border: 6px solid $gray3;
-		margin-bottom:10px;
-		font-size:21px;
-		text-transform:uppercase;
-		padding-top:21px;
+		height:90px;
+		font-size:36px;
+		font-weight:600;
+		padding-top:33px;
 		border-radius: 0px;
-		background-color: $white;
 		background-image:none;
+		color: $white;
+		text-shadow:none;
+		border-top:1px solid lighten($blue, 5%);
+		outline: 1px solid darken($blue, 10%);
+		color: white;
+		background-color: $blue;
+		box-shadow: 0px 2px 8px rgba(0,0,0,0.4);
+		text-align: center;
+		margin:1px 1px 10px 1px;
+		width:99%;
+
+		&:active{
+			background-color: lighten($blue, 10%);
+			border-top:1px solid lighten($blue, 15%);
+		}
+
 	}
 }
 
@@ -621,7 +653,7 @@ div.trip_proxy_trip_purpose_id{
 
 	.trip-overview{
 		width: 31.91489%;
-		border-right:1px solid $gray3;
+		box-shadow: inset 0 0 0 6px white, inset 0 0 0 10px $gray5;
 		font-size: 36px;
 		font-weight:700;
 		text-align:center;
@@ -699,7 +731,25 @@ div.trip_proxy_trip_purpose_id{
 //PLAN A TRIP SPECIFIC FIXES
 #from_input, #to_input{
 	label{
-		display: none;
+		display:none;
+	}
+	input{
+		line-height: 1.7em;
+		padding-top:20px;
+	}
+
+	label.string{
+		position: absolute;
+		z-index: 10;
+		color: $gray4;
+		top: 41px;
+		left:100px;
+		display:block;
+		font-weight:600;
+		abbr{
+			text-decoration: none;
+			display:none;
+		}
 	}
 }
 
@@ -716,10 +766,26 @@ div.trip_proxy_trip_purpose_id{
 	//TODO: Fix this for non-kiosk views.
 	height: 765px;
 
-	.search-dropdown-container{
+	.search-dropdown-container {
 		padding: 0 20px;
+
+		.candidate-list {
+			height: 280px;
+			overflow: hidden;
+		}
+
+		.js-candidate-list-inner {
+			height: 9999px;
+			-webkit-transition: margin-top 0.2s ease;
+			        transition: margin-top 0.2s ease;
+		}
+
+		.candidate-list .js-candidate-list-inner ul.nav.nav-list {
+			height: auto;
+		}
 	}
-	.candidate-list{
+
+	.candidate-list {
 		background-color: $gray1;
 		border: 1px solid $gray4;
 
@@ -773,6 +839,7 @@ div.trip_proxy_trip_purpose_id{
 			padding:2px;
 			height:100%;
 			border-radius:12px;
+			visibility: hidden;
 			.scrollbar-scroll{
 				border-radius: 8px;
 				background-color: $white;
@@ -884,7 +951,7 @@ div.trip_proxy_trip_purpose_id{
 		color: $gray6;
 		font-size: 36px;
 		clear:left;
-		margin-top:16px;
+		margin-top:20px;
 	}
 }
 
@@ -1319,6 +1386,7 @@ input#txtDate{
 				th{
 					border-radius: 0;
 					&.month{
+						&.next, &.prev { text-indent: -999em }
 
 						&.prev{
 							@extend %card-btn;
@@ -1358,8 +1426,8 @@ input#txtDate{
 					font-weight:700;
 					color: $gray6;
 					border:1px solid $gray3;
-					&.day{
-						&.old{
+					&.day {
+						&.old, &.disabled {
 							color: $gray3;
               pointer-events: none;
 						}
@@ -1481,6 +1549,11 @@ input#trip_proxy_return_trip_time.string.optional{
 		background-image:none;
 		border:0px solid $black;
 	}
+
+	&:hover {
+		background: #eee;
+		cursor: pointer;
+	}
 }
 
 .timetable{
@@ -1568,26 +1641,33 @@ input#trip_proxy_return_trip_time.string.optional{
 	}
 }
 
-.monthtable{
+#monthtable{
 	padding-bottom:20px;
-	ul{
+
+	ul {
 		border-top:1px solid $gray4;
 		clear:left;
 		display: flex;
 		margin-bottom:0;
 
+		&:after {
+		  content: "";
+		  display: table;
+		  clear: both;
+		}
+
 		&:last-child{
 			border-bottom:1px solid $gray4;
 		}
 
-		li{
+		li {
 			@extend %time-selectors;
 			width: 25%;
 		}
 	}
 }
 
-.daytable{
+#daytable{
 	padding-bottom:20px;
 	ul{
 		border-top:1px solid $gray4;
@@ -1614,22 +1694,108 @@ input#trip_proxy_return_trip_time.string.optional{
 	}
 }
 
+#yeartable {
+	position: relative;
+	padding-bottom:20px;
 
-//LOGIN 
-body.sessions.new, body.registrations.new{
-	background-image: url(../assets/kiosk/bg_black.png);
-	.container-fluid{
-		background-image: url(../assets/kiosk/bg_black.png);
-	}
-	label{
-		text-align: left;
+	.decade-prev {
+	  left: 0;
 	}
 
-	.registrations .form-horizontal .control-group {
-	  margin-bottom: 0px;
-	}    
+	.decade-next {
+	  right: 0;
+	}
+
+	.decade-prev, .decade-next{
+		position: absolute;
+		top: 0;
+		.prev-container{
+			@extend %card-btn-container;
+			float:right;
+			background-position: right center;
+			margin-top:147px;
+
+			.prev-btn{
+				@extend %card-btn;
+			}
+		}
+		.next-container{
+			@extend %card-btn-container;
+			float:left;
+			background-position: left center;
+			margin-top:147px;
+			.next-btn{
+				@extend %card-btn;
+				float:right;
+				@extend %flip;
+			}
+		}
+	}
+
+
+	ul {
+		border:1px solid $gray4;
+		//clear:left;
+		//display: flex;
+		margin-bottom:0;
+
+		&:last-child{
+			//border-bottom:1px solid $gray4;
+		}
+
+		li {
+			@extend %time-selectors;
+			width: 50%;
+			border-left-width: 0;
+
+			&.bottom {
+				border-right-width: 0;
+			}
+		}
+	}
 }
 
+$ulWidth: 387px;
+$numOfGroups: 12;
+$animationTime: 300ms;
+
+#yearContainer {
+	height: inherit;
+	left: 0;
+	width: ($ulWidth * $numOfGroups);
+	position: relative;
+	-webkit-transition: left $animationTime ease-out;
+	-moz-transition: left $animationTime ease-out;
+	-o-transition: left $animationTime ease-out;
+	transition: left $animationTime ease-out;
+	-webkit-transform: translate3d(0, 0, 0)
+}
+
+#yearlist {
+	height: 372px;
+	width: 412px;
+	overflow: hidden;
+	position: relative;
+	margin: 0 auto;
+	ul {
+		float: left;
+		overflow: inherit;
+		width: $ulWidth;
+		height: inherit;
+	}
+	li {
+		border-bottom: 1px solid $gray4;
+		&:nth-child(2n) {
+			border-left: 1px solid $gray4;
+		}
+		&.soloYear {
+			border-right: 1px solid $gray4;
+		}
+		&.bottom {
+			border-bottom: none;
+		}
+	}
+}
 
 .login-container{
 	position: absolute;
@@ -1747,7 +1913,6 @@ body.sessions.new, body.registrations.new{
 		}
 	}
 
-
 	.cancel-container{
 		padding-top: 58px;
 		a.cancel-btn{
@@ -1761,9 +1926,154 @@ body.sessions.new, body.registrations.new{
 			letter-spacing:2px;
 		}
 	}
-	
-
 }
+
+/**
+ *------------------------------------------
+ * LOGIN DESIGN 01-14-14
+ *------------------------------------------
+**/
+//LOGIN 
+body.sessions.new, body.registrations.new{
+	.container-fluid{
+		margin-top:0px;
+	}
+	.navbar{
+		margin-bottom:0;
+	}
+	#main{
+		padding-top:0;
+		margin-top:0px;
+	}
+}
+
+#login{
+	.input-container{
+		padding-top:85px;
+	}
+	.info{
+		//margin-top: 20px;
+	}
+
+	.span8login{
+		width: 68.31197%;
+		margin-left: 0;
+		
+		.span12login{
+			//width: 68.11197%;
+			margin-right:0;
+			padding-right:2.5641%;
+			margin-left:0;
+			padding-left:2.5641%;
+		}
+
+	}
+
+	div.control-group{
+		position:relative;
+		height:84px;
+		width: 100%;
+		margin-bottom: 0;
+
+		&.error{
+			&:before{
+				content: url(../assets/kiosk/icon-error.png);
+				position:absolute;
+				top: 24px;
+				left: -50px;
+			}
+			label{
+				color:$red;
+				transition: all 0.2s ease;
+			}
+			input:focus + label, input.hasValue + label{
+				color: desaturate($red, 60%);
+			}
+			input{
+				background-color: lighten($red, 30%);
+				color: darken($red, 40%);
+			}
+
+		}
+
+		label{
+			transition: margin-top 0.2s ease;
+			position: absolute;
+			font-weight: 600;
+			font-size:16px;
+			z-index:100;
+			margin-top:14px;
+			margin-left:35px;
+			color: $gray4;
+			width: 300px;
+			text-align: left;
+
+			abbr{
+				display: none;
+			}
+		}
+		//FIX FOR THEIR CODE
+		div.controls{
+			margin-left:0;
+		}
+
+		div.controls input:focus + label, div.controls input.hasValue + label{
+			margin-top: 18px;
+		}
+		div.controls input{
+			font-family: "Avenir Next", "Helvetica Neue", Helvetica, sans-serif;
+			position: absolute;
+			height: 100%;
+			width: 100%;
+			border-radius: 0;
+			padding-left: 32px;
+			font-size: 32px;
+			padding-top: 24px;
+		}
+	}
+
+	button.login-btn{
+		width:320px;
+		margin-top: 24px;
+		margin-left: 22px;
+		padding: 30px 0;
+		background-color: $white;
+		border: 4px solid $blue;
+		font-family: "Avenir Next", "Helvetica Neue", Helvetica, sans-serif;
+		text-align: center;
+		font-size: 32px;
+		font-weight: 700;
+		color: $black;
+		text-decoration: none;
+		outline:0;
+
+		&:active{
+			margin: 18px -6px 24px 16px;
+			padding:36px 6px;
+			width:332px;
+		}
+	}
+
+	.cancel-container{
+		height: 90px;
+		padding-top: 58px;
+		a.cancel-btn{
+			height:23px;
+			display: inline-block;
+			text-decoration: none;
+			border-bottom: 1px solid $gray5;
+			color: $gray4;
+			text-align: right;
+			font-size: 21px;
+			text-transform: uppercase;
+			font-weight: 600;
+			letter-spacing:2px;
+			margin-right:22px;
+			overflow:hidden;
+		}
+	}
+}
+// END LOGIN DESIGN 01-14-14
 
 .loading-indicator{
 	position: absolute;
@@ -1839,15 +2149,15 @@ body.sessions.new, body.registrations.new{
 		position: fixed;
 		bottom:0;
 		width:inherit;
-		height:120px;
+		height:108px;
 		left: 0;
 
 		.close-btn{
-			padding-top: 32px;
-			margin: 0 24px;
+			padding-top: 38px;
+			margin: 0 20px 0 18px;
 			text-align: center;
 			height: 100px;
-			border:6px solid $gray3;
+			border:4px solid $gray3;
 			font-size:21px;
 			text-transform: uppercase;
 			font-weight: 600;
@@ -1969,3 +2279,7 @@ body.sessions.new, body.registrations.new{
 //@media (max-width: 480px) { ... }
 
 
+//hide depart dropdown in tripform view
+.trip_proxy_arrive_depart {
+  display: none;
+}
