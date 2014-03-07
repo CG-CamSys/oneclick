@@ -17,8 +17,6 @@ $yellow: #fdd73e;
 
 $kioskfonts: "Avenir Next", "Helvetica Neue", Helvetica, sans-serif;
 
-
-
 // FONT AVENIR NEXT
 //@import url(assets/fonts/?family=Avenir+Next:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800);
 *{
@@ -84,7 +82,6 @@ h5{
 	right:0;
 	width:124px;
 	height:124px;
-
 }
 
 //NAV
@@ -157,8 +154,6 @@ h5{
 			width:66px;
 			border: 2px solid $gray4;
 			background: $white image-url("kiosk/arrow.png") no-repeat center;
-
-
 		}
 		span{
 			//Pulling from .nav > li > a // TO DO: find a way of extending this, make it a variable.
@@ -174,7 +169,6 @@ h5{
 			margin-left: 80px;
 			border-bottom: 1px solid $gray2;
 			width: 50px;
-
 		}
 	}
 }
@@ -229,10 +223,7 @@ a{
 			&:hover, &:focus{
 				background-color: $gray2;
 			}
-
 		}
-
-
 		&.active{
 			a{
 				background-color: $blue;
@@ -240,7 +231,6 @@ a{
 			}
 		}
 	}
-
 }
 
 .label, .badge{
@@ -266,7 +256,6 @@ a{
 	margin: 0 auto;
 	height:inherit;
 }
-
 
 .footer{
 	height:136px;
@@ -304,7 +293,6 @@ a{
 //ATTRACT LOOP
 .penndot-logo{
 	background: image-url("kiosk/penndot-logo.png") no-repeat center center;
-	//background-size: 100%;
 }
 
 .oneclick-logo{
@@ -383,8 +371,6 @@ a{
 	margin: 24px auto 0;
 	padding-top: 31px;
 	&:active{
-		//TO DO: Refactor all of this to make more sense.
-		//margin: 8px 8px -6px;
 		margin: 20px auto 0;
 		border: 4px solid $blue;
 		height: 100px;
@@ -408,8 +394,6 @@ a{
 	// TO DO: FIX THIS TERRIBLENESS
 	.row, .row-fluid{
 		overflow-y: hidden;
-		// TO DO: FIX THIS TERRIBLENESS
-		//height:900px;
 		.info{
 			color: $white;
 			padding: 36px;
@@ -547,12 +531,6 @@ div.trip_proxy_trip_purpose_id{
 		&.selected{
 			z-index: 200;
 			background: $white image-url("kiosk/checkmark.png") no-repeat center right;
-			// box-shadow: 0px 4px 10px rgba(0,0,0,0.2),
-			// 	0px 8px 24px rgba(0,0,0,0.04),
-			// 	inset 0 0 0 2px $gray4,
-			// 	inset 0 0 0 3px $white,
-			// 	inset 0 0 0 7px $blue;
-			// margin: -6px;
 			@extend %selected;
 			padding: 30px 36px;
 		}
@@ -614,7 +592,6 @@ div.trip_proxy_trip_purpose_id{
 	}
 
 	.span1, .span2{
-		//border-right:1px solid $gray4;
 		height:328px;
 		text-align: right;
 
@@ -632,17 +609,7 @@ div.trip_proxy_trip_purpose_id{
 			float:right;
 			@extend %flip;
 		}
-		//Undo button as a circle
-		// a{
-		// 	color: white;
-		// 	background-color: $blue;
-		// 	height: 44px;
-		// 	display: inline-block;
-		// 	padding-top: 13px;
-		// 	width: 100%;
-		// 	text-align: center;
-		// 	text-decoration: none;
-		// }
+		
 		a, a:hover, a:active{
 			margin-top:12px;
 			border-bottom: 1px solid $gray3;
@@ -674,7 +641,6 @@ div.trip_proxy_trip_purpose_id{
 			background-color: lighten($blue, 10%);
 			border-top:1px solid lighten($blue, 15%);
 		}
-
 	}
 }
 
@@ -710,10 +676,6 @@ div.trip_proxy_trip_purpose_id{
 	}
 }
 
-//NEXT STEP BUTTON
-//TO DO: Place in a bottom footer
-
-
 .inputs{
 	margin:0px !important;
 
@@ -725,16 +687,11 @@ div.trip_proxy_trip_purpose_id{
 	form{
 		input.address{
 			border-radius:0;
-			//TO DO: find the actual Bootstrap in Sass files and add them to this application.
-			//otherwise
 		 	width: 100%;
 			height: 128px;
 			border: 0px solid white;
 			box-shadow: 0px 2px 3px -1px rgba($black, 0.16);
 			margin-right:-20px!important;
-			//background-color: rgba(255,255,255,.88);
-			//margin-left:-20px !important;
-			//webkit-tap-highlight-color:rgba(0,0,0,0);
 			background: $white image-url("kiosk/icon-address.png") no-repeat 60px 44px;
 			padding-left: 100px;
 			font-family: $kioskfonts;
@@ -745,7 +702,7 @@ div.trip_proxy_trip_purpose_id{
 			}
 
 		}
-		//TODO: Fix this atrocity
+		//TODO: Fix this 
 		span.extend-me{
 			border:1px red;
 			position: fixed;
@@ -783,8 +740,6 @@ div.trip_proxy_trip_purpose_id{
 		}
 	}
 }
-
-
 
 #from_place_candidates, #to_place_candidates{
 	@extend .span12;
@@ -832,7 +787,6 @@ div.trip_proxy_trip_purpose_id{
 		padding: 0;
 		overflow: scroll;
 		background-color:$white;
-
 
 		li {
 			border-bottom: 1px solid $gray3;
@@ -967,9 +921,6 @@ div.trip_proxy_trip_purpose_id{
 			height: 166px;
 			background: rgba(255,255,255,.24) image-url("kiosk/arrow-next-step.png") no-repeat center center;
 			border-left: 1px solid rgba(255,255,255,.44);
-			.arrow{
-				//background: image-url(kiosk/arrow-next-step.png) no-repeat center center;
-			}
 		}
 	}
 }
@@ -1021,13 +972,6 @@ div.trip_proxy_trip_purpose_id{
 		margin-top: 30px;
 		margin-left: -30px;
 		float:left;
-		thead{
-			tr{
-				th{
-
-				}
-			}
-		}
 		tbody{
 			tr{
 				td{
@@ -1087,11 +1031,6 @@ div.trip_proxy_trip_purpose_id{
 						box-shadow: inset 0 0 0 4px $gray2,
 									inset 0 0 0 20px $gray6;
 					}
-
-					// input[type="radio"] + label.disabled{
-					// 	border: 2px solid rgba($gray6, .5);
-					// 	background-color: rgba($gray2, .5);
-					// }
 				}
 			}
 		}
@@ -1117,7 +1056,6 @@ div.trip_proxy_trip_purpose_id{
 				inset 0 0 0 2px $gray4,
 				inset 0 0 0 3px $white,
 				inset 0 0 0 7px $blue;
-	//remember to adjust your padding accordingly.
 }
 
 //
@@ -1135,7 +1073,6 @@ div.trip_proxy_trip_purpose_id{
 	-ms-transform: rotate(-90deg);
 	-o-transform: rotate(-90deg);
 	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
-
 }
 
 %rotate90{
@@ -1198,7 +1135,6 @@ div.trip_proxy_trip_purpose_id{
 
 
 // DETAIL VIEW -- to replace the modal view.
-// TO DO - Animate the slide in of the DETAIL VIEW
 .detail-view, #itinerary_modal{
 	position: fixed;
 	height:100%;
@@ -1314,7 +1250,6 @@ div.trip_proxy_trip_purpose_id{
 					&.active{
 						@extend .current;
 					}
-
 					a{
 						border:0px solid $white;
 						color: $gray6;
@@ -1369,7 +1304,6 @@ div.trip_proxy_trip_purpose_id{
 	}
 }
 
-
 .detail-footer{
 	position: absolute;
 	bottom:0;
@@ -1388,7 +1322,6 @@ div.trip_proxy_trip_purpose_id{
 		&:active{
 			background-color: $gray3;
 		}
-
 	}
 }
 
@@ -2244,8 +2177,6 @@ body.sessions.new, body.registrations.new{
 		height:inherit;
 	}
 
-
-
 	.close-overview{
 		position: fixed;
 		bottom:0;
@@ -2262,15 +2193,8 @@ body.sessions.new, body.registrations.new{
 			font-size:21px;
 			text-transform: uppercase;
 			font-weight: 600;
-
-
-
-
 		}
-
 	}
-
-
 }
 
 .actionbutton{
@@ -2322,17 +2246,11 @@ body.sessions.new, body.registrations.new{
 			background-color: $blue;
 
 			&.select{
-				// background-color: $green;
-				// border-right:1px solid $white;
 				border-left:1px solid $white;
 				border-right:3px solid $white;
 			}
 			&.details{
-				// background-color: $blue;
 				border-right:2px solid $white;
-			}
-			&.hide{
-				// background-color: $red;
 			}
 		}
 	}
@@ -2370,7 +2288,6 @@ body.sessions.new, body.registrations.new{
 		margin-bottom: 1px;
 	}
 
-
 	hr{
 		border-top:1px solid black;
 		margin-top: 10px;
@@ -2404,49 +2321,11 @@ body.sessions.new, body.registrations.new{
 	}
 }
 
-
-
-
-/* Landscape phone to portrait tablet */
-@media (max-width: 767px) {
-
-	body{
-		padding:0;
-	}
-
-	.responsive-mbp{
-		height:auto;
-	}
-
-	.next-footer-container{
-		height: 150px;
-	}
-
-	.next-step-container{
-		padding:0;
-		.next-step-btn{
-			height:100px;
-			h1{
-				margin-top:30px;
-			}
-			.arrow-container{
-				width: 150px;
-				height: 100px;
-			}
-		}
-	}
-
-}
-
 @media (min-width: 1200px){
 	.span8plus{
 		width: 68.37197% !important;
 	}
 }
-
-/* Landscape phones and down */
-//@media (max-width: 480px) { ... }
-
 
 //hide depart dropdown in tripform view
 .trip_proxy_arrive_depart {
