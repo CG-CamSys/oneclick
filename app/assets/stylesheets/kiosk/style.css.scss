@@ -674,6 +674,7 @@ div.trip_proxy_trip_purpose_id{
 			background-color: lighten($blue, 10%);
 			border-top:1px solid lighten($blue, 15%);
 		}
+
 	}
 }
 
@@ -724,11 +725,16 @@ div.trip_proxy_trip_purpose_id{
 	form{
 		input.address{
 			border-radius:0;
+			//TO DO: find the actual Bootstrap in Sass files and add them to this application.
+			//otherwise
 		 	width: 100%;
 			height: 128px;
 			border: 0px solid white;
 			box-shadow: 0px 2px 3px -1px rgba($black, 0.16);
 			margin-right:-20px!important;
+			//background-color: rgba(255,255,255,.88);
+			//margin-left:-20px !important;
+			//webkit-tap-highlight-color:rgba(0,0,0,0);
 			background: $white image-url("kiosk/icon-address.png") no-repeat 60px 44px;
 			padding-left: 100px;
 			font-family: $kioskfonts;
@@ -739,7 +745,7 @@ div.trip_proxy_trip_purpose_id{
 			}
 
 		}
-		//TODO: Fix this 
+		//TODO: Fix this atrocity
 		span.extend-me{
 			border:1px red;
 			position: fixed;
@@ -826,6 +832,7 @@ div.trip_proxy_trip_purpose_id{
 		padding: 0;
 		overflow: scroll;
 		background-color:$white;
+
 
 		li {
 			border-bottom: 1px solid $gray3;
@@ -960,6 +967,9 @@ div.trip_proxy_trip_purpose_id{
 			height: 166px;
 			background: rgba(255,255,255,.24) image-url("kiosk/arrow-next-step.png") no-repeat center center;
 			border-left: 1px solid rgba(255,255,255,.44);
+			.arrow{
+				//background: image-url(kiosk/arrow-next-step.png) no-repeat center center;
+			}
 		}
 	}
 }
@@ -1011,6 +1021,13 @@ div.trip_proxy_trip_purpose_id{
 		margin-top: 30px;
 		margin-left: -30px;
 		float:left;
+		thead{
+			tr{
+				th{
+
+				}
+			}
+		}
 		tbody{
 			tr{
 				td{
@@ -1070,6 +1087,11 @@ div.trip_proxy_trip_purpose_id{
 						box-shadow: inset 0 0 0 4px $gray2,
 									inset 0 0 0 20px $gray6;
 					}
+
+					// input[type="radio"] + label.disabled{
+					// 	border: 2px solid rgba($gray6, .5);
+					// 	background-color: rgba($gray2, .5);
+					// }
 				}
 			}
 		}
@@ -1095,6 +1117,7 @@ div.trip_proxy_trip_purpose_id{
 				inset 0 0 0 2px $gray4,
 				inset 0 0 0 3px $white,
 				inset 0 0 0 7px $blue;
+	//remember to adjust your padding accordingly.
 }
 
 //
@@ -1112,6 +1135,7 @@ div.trip_proxy_trip_purpose_id{
 	-ms-transform: rotate(-90deg);
 	-o-transform: rotate(-90deg);
 	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+
 }
 
 %rotate90{
@@ -1174,6 +1198,7 @@ div.trip_proxy_trip_purpose_id{
 
 
 // DETAIL VIEW -- to replace the modal view.
+// TO DO - Animate the slide in of the DETAIL VIEW
 .detail-view, #itinerary_modal{
 	position: fixed;
 	height:100%;
@@ -1289,6 +1314,7 @@ div.trip_proxy_trip_purpose_id{
 					&.active{
 						@extend .current;
 					}
+
 					a{
 						border:0px solid $white;
 						color: $gray6;
@@ -1343,6 +1369,7 @@ div.trip_proxy_trip_purpose_id{
 	}
 }
 
+
 .detail-footer{
 	position: absolute;
 	bottom:0;
@@ -1361,6 +1388,7 @@ div.trip_proxy_trip_purpose_id{
 		&:active{
 			background-color: $gray3;
 		}
+
 	}
 }
 
@@ -2319,34 +2347,19 @@ body.sessions.new, body.registrations.new{
 	h3{
 		font-weight: 600;
 	}
-	p, .details{
-		font-size: 13px;
+	p{
+		font-size: 18px;
 		line-height: 1.2em;
-		padding-bottom:3px;
-
-		h4{
-			font-size: 13px;
-			line-height: 1.2em;
-			padding-bottom:3px;
-			text-transform: none;
-			font-weight: 400;
-		}
-
-		&:empty{
-			display: none;
-		}
+		padding-bottom:5px;
 	}
 	h4{
 		font-weight: 600;
-		font-size:14px;
+		font-size:16px;
 		margin-bottom: 1px;
 	}
 
-
 	hr{
 		border-top:1px solid black;
-		margin-top: 10px;
-		margin-bottom:10px;
 	}
 	a{
 		color:black;
@@ -2354,26 +2367,48 @@ body.sessions.new, body.registrations.new{
 
 	.container-fluid {
 		height:auto;
-		padding: 0;
-		border-right: 10px solid #fff;
-		border-left: 7px solid #fff;
-		background-color:#fff;
 	}
 
 	.details{
 		tr{
-			border-bottom:5px solid white;
-		}
-		td{
-			padding:0;
-
-			&.itinerary_icons{
-				text-align:right;
-				float:left;
-			}
+			border-bottom:30px solid white;
 		}
 
 	}
+}
+
+
+
+
+/* Landscape phone to portrait tablet */
+@media (max-width: 767px) {
+
+	body{
+		padding:0;
+	}
+
+	.responsive-mbp{
+		height:auto;
+	}
+
+	.next-footer-container{
+		height: 150px;
+	}
+
+	.next-step-container{
+		padding:0;
+		.next-step-btn{
+			height:100px;
+			h1{
+				margin-top:30px;
+			}
+			.arrow-container{
+				width: 150px;
+				height: 100px;
+			}
+		}
+	}
+
 }
 
 @media (min-width: 1200px){
@@ -2381,6 +2416,10 @@ body.sessions.new, body.registrations.new{
 		width: 68.37197% !important;
 	}
 }
+
+/* Landscape phones and down */
+//@media (max-width: 480px) { ... }
+
 
 //hide depart dropdown in tripform view
 .trip_proxy_arrive_depart {
