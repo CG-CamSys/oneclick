@@ -17,6 +17,8 @@ $yellow: #fdd73e;
 
 $kioskfonts: "Avenir Next", "Helvetica Neue", Helvetica, sans-serif;
 
+
+
 // FONT AVENIR NEXT
 //@import url(assets/fonts/?family=Avenir+Next:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800);
 *{
@@ -82,6 +84,7 @@ h5{
 	right:0;
 	width:124px;
 	height:124px;
+
 }
 
 //NAV
@@ -154,6 +157,8 @@ h5{
 			width:66px;
 			border: 2px solid $gray4;
 			background: $white image-url("kiosk/arrow.png") no-repeat center;
+
+
 		}
 		span{
 			//Pulling from .nav > li > a // TO DO: find a way of extending this, make it a variable.
@@ -169,6 +174,7 @@ h5{
 			margin-left: 80px;
 			border-bottom: 1px solid $gray2;
 			width: 50px;
+
 		}
 	}
 }
@@ -223,7 +229,10 @@ a{
 			&:hover, &:focus{
 				background-color: $gray2;
 			}
+
 		}
+
+
 		&.active{
 			a{
 				background-color: $blue;
@@ -231,6 +240,7 @@ a{
 			}
 		}
 	}
+
 }
 
 .label, .badge{
@@ -256,6 +266,7 @@ a{
 	margin: 0 auto;
 	height:inherit;
 }
+
 
 .footer{
 	height:136px;
@@ -293,6 +304,7 @@ a{
 //ATTRACT LOOP
 .penndot-logo{
 	background: image-url("kiosk/penndot-logo.png") no-repeat center center;
+	//background-size: 100%;
 }
 
 .oneclick-logo{
@@ -371,6 +383,8 @@ a{
 	margin: 24px auto 0;
 	padding-top: 31px;
 	&:active{
+		//TO DO: Refactor all of this to make more sense.
+		//margin: 8px 8px -6px;
 		margin: 20px auto 0;
 		border: 4px solid $blue;
 		height: 100px;
@@ -394,6 +408,8 @@ a{
 	// TO DO: FIX THIS TERRIBLENESS
 	.row, .row-fluid{
 		overflow-y: hidden;
+		// TO DO: FIX THIS TERRIBLENESS
+		//height:900px;
 		.info{
 			color: $white;
 			padding: 36px;
@@ -531,6 +547,12 @@ div.trip_proxy_trip_purpose_id{
 		&.selected{
 			z-index: 200;
 			background: $white image-url("kiosk/checkmark.png") no-repeat center right;
+			// box-shadow: 0px 4px 10px rgba(0,0,0,0.2),
+			// 	0px 8px 24px rgba(0,0,0,0.04),
+			// 	inset 0 0 0 2px $gray4,
+			// 	inset 0 0 0 3px $white,
+			// 	inset 0 0 0 7px $blue;
+			// margin: -6px;
 			@extend %selected;
 			padding: 30px 36px;
 		}
@@ -592,6 +614,7 @@ div.trip_proxy_trip_purpose_id{
 	}
 
 	.span1, .span2{
+		//border-right:1px solid $gray4;
 		height:328px;
 		text-align: right;
 
@@ -609,7 +632,17 @@ div.trip_proxy_trip_purpose_id{
 			float:right;
 			@extend %flip;
 		}
-		
+		//Undo button as a circle
+		// a{
+		// 	color: white;
+		// 	background-color: $blue;
+		// 	height: 44px;
+		// 	display: inline-block;
+		// 	padding-top: 13px;
+		// 	width: 100%;
+		// 	text-align: center;
+		// 	text-decoration: none;
+		// }
 		a, a:hover, a:active{
 			margin-top:12px;
 			border-bottom: 1px solid $gray3;
@@ -676,6 +709,10 @@ div.trip_proxy_trip_purpose_id{
 	}
 }
 
+//NEXT STEP BUTTON
+//TO DO: Place in a bottom footer
+
+
 .inputs{
 	margin:0px !important;
 
@@ -740,6 +777,8 @@ div.trip_proxy_trip_purpose_id{
 		}
 	}
 }
+
+
 
 #from_place_candidates, #to_place_candidates{
 	@extend .span12;
@@ -2177,6 +2216,8 @@ body.sessions.new, body.registrations.new{
 		height:inherit;
 	}
 
+
+
 	.close-overview{
 		position: fixed;
 		bottom:0;
@@ -2193,8 +2234,15 @@ body.sessions.new, body.registrations.new{
 			font-size:21px;
 			text-transform: uppercase;
 			font-weight: 600;
+
+
+
+
 		}
+
 	}
+
+
 }
 
 .actionbutton{
@@ -2246,11 +2294,17 @@ body.sessions.new, body.registrations.new{
 			background-color: $blue;
 
 			&.select{
+				// background-color: $green;
+				// border-right:1px solid $white;
 				border-left:1px solid $white;
 				border-right:3px solid $white;
 			}
 			&.details{
+				// background-color: $blue;
 				border-right:2px solid $white;
+			}
+			&.hide{
+				// background-color: $red;
 			}
 		}
 	}
@@ -2262,39 +2316,41 @@ body.sessions.new, body.registrations.new{
  *------------------------------------------
 **/
 .show_printer_friendly{
-	* {
-		width:96%;
-	}
 	h3{
 		font-weight: 600;
 	}
 	p, .details{
-		font-size: 12px;
+		font-size: 13px;
 		line-height: 1.2em;
 		padding-bottom:3px;
 
 		h4{
-			font-size: 12px;
+			font-size: 13px;
 			line-height: 1.2em;
 			padding-bottom:3px;
 			text-transform: none;
 			font-weight: 400;
 		}
 
-		&:empty{ display: none; }
+		&:empty{
+			display: none;
+		}
 	}
 	h4{
 		font-weight: 600;
-		font-size:13px;
+		font-size:14px;
 		margin-bottom: 1px;
 	}
+
 
 	hr{
 		border-top:1px solid black;
 		margin-top: 10px;
 		margin-bottom:10px;
 	}
-	a{ color:black; }
+	a{
+		color:black;
+	}
 
 	.container-fluid {
 		height:auto;
@@ -2305,7 +2361,9 @@ body.sessions.new, body.registrations.new{
 	}
 
 	.details{
-		tr{ border-bottom:5px solid white; }
+		tr{
+			border-bottom:5px solid white;
+		}
 		td{
 			padding:0;
 
