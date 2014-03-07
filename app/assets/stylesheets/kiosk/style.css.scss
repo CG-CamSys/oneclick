@@ -2262,29 +2262,30 @@ body.sessions.new, body.registrations.new{
  *------------------------------------------
 **/
 .show_printer_friendly{
+	* {
+		width:96%;
+	}
 	h3{
 		font-weight: 600;
 	}
 	p, .details{
-		font-size: 13px;
+		font-size: 12px;
 		line-height: 1.2em;
 		padding-bottom:3px;
 
 		h4{
-			font-size: 13px;
+			font-size: 12px;
 			line-height: 1.2em;
 			padding-bottom:3px;
 			text-transform: none;
 			font-weight: 400;
 		}
 
-		&:empty{
-			display: none;
-		}
+		&:empty{ display: none; }
 	}
 	h4{
 		font-weight: 600;
-		font-size:14px;
+		font-size:13px;
 		margin-bottom: 1px;
 	}
 
@@ -2293,9 +2294,7 @@ body.sessions.new, body.registrations.new{
 		margin-top: 10px;
 		margin-bottom:10px;
 	}
-	a{
-		color:black;
-	}
+	a{ color:black; }
 
 	.container-fluid {
 		height:auto;
@@ -2306,9 +2305,7 @@ body.sessions.new, body.registrations.new{
 	}
 
 	.details{
-		tr{
-			border-bottom:5px solid white;
-		}
+		tr{ border-bottom:5px solid white; }
 		td{
 			padding:0;
 
