@@ -161,7 +161,7 @@ class PlaceSearchingController < TravelerAwareController
       req.params['location'] = map_center
       req.params['radius']   = 20_000
     end
-    
+
     Rails.logger.info result.status
 
     counter -= 1
