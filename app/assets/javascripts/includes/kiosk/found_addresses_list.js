@@ -1,4 +1,6 @@
 jQuery(function ($) {
+  $('<div>').typeahead.noConflict();
+
   var Typeahead = $('<div>').typeahead().data('typeahead').constructor
     , typeaheadDelay      = + $('meta[name="ui_typeahead_delay"]')       .attr('content')
     , typeaheadMinChars   = + $('meta[name="ui_typeahead_min_chars"]')   .attr('content')
