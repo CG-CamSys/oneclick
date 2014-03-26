@@ -64,7 +64,7 @@ class UserMailer < ActionMailer::Base
     @from_email = from_email
     
     # TODO localize
-    mail(to: @to_email, subject: "1-Click buddy request from #{@from_email}")
+    mail(to: @to_email, subject: t(:one_click_buddy_request_from_from_email))
   end
 
   def traveler_confirmation_email(to_email, from_email)
@@ -72,7 +72,7 @@ class UserMailer < ActionMailer::Base
     @from_email = from_email
     
     # TODO localize
-    mail(to: @to_email, subject: "1-Click buddy request from #{@from_email}")
+    mail(to: @to_email, subject: t(:one_click_buddy_request_from_from_email))
   end
 
   def traveler_decline_email(to_email, from_email)
@@ -80,7 +80,7 @@ class UserMailer < ActionMailer::Base
     @from_email = from_email
     
     # TODO localize
-    mail(to: @to_email, subject: "1-Click buddy request from #{@from_email}")
+    mail(to: @to_email, subject: t(:one_click_buddy_request_from_from_email))
   end
 
   def traveler_revoke_email(to_email, from_email)
@@ -88,7 +88,7 @@ class UserMailer < ActionMailer::Base
     @from_email = from_email
     
     # TODO localize
-    mail(to: @to_email, subject: "1-Click buddy request from #{@from_email}")
+    mail(to: @to_email, subject: t(:one_click_buddy_request_from_from_email))
   end
 
   def feedback_email(to_email, trip, from_email)
@@ -98,6 +98,14 @@ class UserMailer < ActionMailer::Base
 
     # TODO localize
     mail(to: @to_email, from: @from_email, subject: "1-Click Feedback")
+  end
+
+  def agency_helping_email(to_email, from_email, agency)
+    @agency = agency
+    @to_email = to_email
+    @from_email = from_email
+
+    mail(to: @to_email, subject: t(:agency_now_assisting, agency: agency.name), from: @from_email)
   end
 
 end

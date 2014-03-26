@@ -10,7 +10,11 @@ class TripPlanner
   include ServiceAdapters::RideshareAdapter
 
   def get_fixed_itineraries(from, to, trip_datetime, arriveBy)
-
+    Rails.logger.info ""
+    Rails.logger.info "get_fixed_itineraries"
+    Rails.logger.info from.ai
+    Rails.logger.info to.ai
+    Rails.logger.info ""
     #Parameters
     time = trip_datetime.in_time_zone.strftime("%-I:%M%p")
     date = trip_datetime.in_time_zone.strftime("%Y-%m-%d")
@@ -82,7 +86,7 @@ class TripPlanner
       trip_itinerary['end_time'] = Time.at((itinerary['endTime']).to_f/1000)
       trip_itinerary['transfers'] = fixup_transfers_count(itinerary['transfers'])
       trip_itinerary['walk_distance'] = itinerary['walkDistance']
-      trip_itinerary['legs'] = itinerary['legs']
+      trip_itinerary['legs'] = itinerary['legs'].to_yaml
       trip_itinerary['server_status'] = 200
       trip_itinerary['match_score'] = match_score
       match_score += match_score_incr
@@ -129,7 +133,7 @@ class TripPlanner
     #Get providers
     task = 'businesses'
     url = base_url + task + api_key + entity
-    Rails.logger.debug "TripPlanner#get_taxi_itineraries: url: #{url}"
+    Rails.logger.info "TripPlanner#get_taxi_itineraries: url: #{url}"
     begin
       resp = Net::HTTP.get_response(URI.parse(url))
     rescue Exception=>e
@@ -164,7 +168,7 @@ class TripPlanner
     trip_itinerary['walk_distance'] = 0
     trip_itinerary['cost'] = itinerary[0]['total_fare']
     trip_itinerary['server_status'] = 200
-    trip_itinerary['server_message'] = itinerary[1]['businesses']
+    trip_itinerary['server_message'] = itinerary[1]['businesses'].to_yaml
     trip_itinerary['match_score'] = 1.2
     trip_itinerary
   end

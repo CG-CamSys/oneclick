@@ -1,4 +1,5 @@
 class Agency < Organization
+  resourcify
   # include ActiveModel::Validations
 
   # # Validator(s)
@@ -12,6 +13,8 @@ class Agency < Organization
   belongs_to :parent, class_name: 'Agency'
   has_many :sub_agencies, -> {order('name')}, class_name: 'Agency', foreign_key: :parent_id
   has_many :users
+  has_many :agency_user_relationships
+  has_many :customers, :class_name => 'User', :through => :agency_user_relationships, source: :user
 
   def unselected_users
     User.registered - self.users
@@ -19,6 +22,14 @@ class Agency < Organization
 
   def possible_parents
     Agency.all - [self]
+  end
+
+  def name_and_id
+    [name, id]
+  end
+
+  def self.names_and_ids
+    Agency.all.map(&:name_and_id)
   end
 
 end

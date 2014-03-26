@@ -2,7 +2,7 @@
   .span12
     .pull-left
       %h1
-        %i.icon.icon-tags
+        %i.fa.fa-tags
         = t(:trips)
     .pull-right
       = form_tag admin_trips_path, :id => 'time_filter_form', :method => "get", :class => 'navbar-form form-inline pull-right', :style => "margin-top:20px;" do
@@ -29,14 +29,14 @@
         %tr
           - if trip.in_the_future
             %td.center.nowrap          
-              %i.icon-asterisk
+              %i.fa.fa-asterisk
           - else
             %td.center.nowrap          
           %td.nowrap= trip.user.name
           %td.nowrap= format_date(trip.trip_datetime)
           %td= trip.from_place.name
           %td= trip.to_place.name
-          %td= trip.trip_purpose.name
+          %td= t(trip.trip_purpose.name)
           %td
             -if trip.taken == true
               =t(:yes_str)
@@ -48,12 +48,12 @@
             =get_rating_icons(trip)
           %td.center.nowrap
             =link_to '#', {href: '#user_comments_' + trip.id.to_s, class: 'btn btn-block', data: {toggle: 'modal'}} do
-              %i.icon-pencil
+              %i.fa.fa-pencil
 
 
           %td.center.nowrap
             = link_to email_feedback_user_trip_path(trip.user, trip), {:class => "btn btn-block", :alt => t(:plan_trip), :title => t(:plan_trip)} do
-              %i.icon-envelope
+              %i.fa.fa-envelope-o
 
         = render partial: 'user_comments', locals: {trip: trip}
 

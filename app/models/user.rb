@@ -6,14 +6,17 @@ class User < ActiveRecord::Base
     def validate_each(record, attribute, value)
       record.errors.add attribute, "agency org must be of correct type" if !record.agency.nil? and
         !record.agency.agency?
-      record.errors.add attribute, "provider org must be of correct type" if !record.provider.nil? and
-        !record.provider.provider?
+      record.errors.add attribute, "provider org must be of correct type" if !record.provider_org.nil? and
+        !record.provider_org.provider?
     end
   end
 
   # enable roles for this model
   rolify
-  
+
+  # See https://github.com/gonzalo-bulnes/simple_token_authentication
+  acts_as_token_authenticatable
+
   # devise configuration
   devise :database_authenticatable, :registerable, :recoverable, :rememberable, :trackable, :validatable
 
@@ -41,22 +44,26 @@ class User < ActiveRecord::Base
   has_many :delegates, :class_name => 'User', :through => :delegate_relationships
   has_many :travelers, :class_name => 'User', :through => :traveler_relationships
   has_many :confirmed_travelers, :class_name => 'User', :through => :confirmed_traveler_relationships
+  has_many :agency_user_relationships, foreign_key: :user_id
+  has_many :approved_agencies, :class_name => 'Agency', :through => :agency_user_relationships, source: :agency
 
   has_many :buddy_relationships, class_name: 'UserRelationship', foreign_key: :user_id
   has_many :buddies, class_name: 'User', through: :buddy_relationships, source: :delegate
 
   belongs_to :agency, class_name: 'Organization'
-  belongs_to :provider, class_name: 'Organization'
+  belongs_to :provider_org, class_name: 'Organization'
+  # has_one :provider, through: :provider_org
 
   scope :confirmed, -> {where('relationship_status_id = ?', RelationshipStatus::CONFIRMED)}
-  scope :registered, -> {where('first_name != ? and last_name != ?', 'Visitor', 'Guest').order(:email)}
+  scope :registered, -> {with_role(:registered_traveler)}
+  scope :any_role, -> {joins(:roles)}
 
   # Validations
   validates :email, :presence => true
   validates :first_name, :presence => true
   validates :last_name, :presence => true
   validates :agency, organization_type: true
-  validates :provider, organization_type: true
+  validates :provider_org, organization_type: true
 
   before_create :make_user_profile
 
@@ -105,5 +112,23 @@ class User < ActiveRecord::Base
   def email_and_agency
     agency.nil? ? email : "#{email} (#{agency.name})"
   end
+
+  def is_visitor?
+    email.include? "example.com"
+  end
+
+  def is_registered?
+    !is_visitor?
+  end
+
+  def provider
+    provider_org.try(:provider)
+  end
+
+  # # Rolify has global roles and resource-bound roles, but what we need to know here is whether
+  # # the user has the given role for *any* resource
+  # def has_role_for_any_resource? role
+  #   User.with_role(role).exists? self
+  # end
 
 end

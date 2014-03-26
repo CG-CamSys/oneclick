@@ -1,40 +1,70 @@
 module CsHelpers
 
   ACTION_ICONS = {
-    :plan_a_trip => 'icon-share-sign',
-    :log_in => 'icon-key icon-rotate-90',
-    :create_an_account => 'icon-edit',
-    :identify_places =>'icon-map-marker',
-    :travel_profile => 'icon-cogs',
-    :my_travel_profile => 'icon-cogs',
-    :my_trips => 'icon-share-alt icon-flip-horizontal',
-    :my_places => 'icon-map-marker',
-    :help_and_support => 'icon-question-sign',
-    :find_traveler => 'icon-search',
-    :create_traveler =>'icon-user',
-    :agents_agencies => 'icon-sitemap',
-    :providers => 'icon-umbrella',
-    :reports => 'icon-bar-chart',
-    :trips => 'icon-tags',
+    :plan_a_trip => 'fa fa-share-square',
+    :log_in => 'fa fa-key fa-rotate-90',
+    :create_an_account => 'fa fa-edit',
+    :identify_places =>'fa fa-map-marker',
+    :travel_profile => 'fa fa-cogs',
+    :my_travel_profile => 'fa fa-cogs',
+    :my_trips => 'fa fa-share-square fa-flip-horizontal',
+    :my_places => 'fa fa-map-marker',
+    :help_and_support => 'fa fa-question-sign',
+    :find_traveler => 'fa fa-search',
+    :create_traveler =>'fa fa-user',
+    :agents_agencies => 'fa fa-sitemap',
+    :providers => 'fa fa-umbrella',
+    :reports => 'fa fa-bar-chart-o',
+    :trips => 'fa fa-tags',
     :services => 'icon-bus-sign',
-    :users => 'icon-group',
+    :users => 'fa fa-group',
+    :feedback => 'fa fa-thumbs-o-up',
 
   }
 
   def admin_menu
-  [
-    {label: t(:find_traveler), target: error_501_path, icon: ACTION_ICONS[:find_traveler]},
-    {label: t(:create_traveler), target: error_501_path, icon: ACTION_ICONS[:create_traveler]},
-    {label: t(:trips), target: admin_trips_path, icon: ACTION_ICONS[:trips]},
-    {label: t(:agencies), target: admin_agencies_path, icon: ACTION_ICONS[:agents_agencies]},
-    {label: t(:users), target: users_path, icon: ACTION_ICONS[:users]},
-    {label: t(:providers), target: admin_provider_orgs_path, icon: ACTION_ICONS[:providers]},
-    {label: t(:services), target: service_path(Service.first.id), icon: ACTION_ICONS[:services]},
-    {label: t(:reports), target: admin_reports_path, icon: ACTION_ICONS[:reports]},
+    [
+      {label: t(:create_traveler), target: create_travelers_path, icon: ACTION_ICONS[:create_traveler], access: :admin_create_traveler},
+      {label: t(:find_traveler), target: find_travelers_path, icon: ACTION_ICONS[:find_traveler], access: :admin_find_traveler},
+      {label: t(:trips), target: create_trips_path, icon: ACTION_ICONS[:trips], access: :admin_trips},
+      {label: t(:agencies), target: admin_agencies_path, icon: ACTION_ICONS[:agents_agencies], access: :admin_agencies},
+      {label: t(:users), target: admin_users_path, icon: ACTION_ICONS[:users], access: :admin_users},
+      {label: t(:providers), target: admin_provider_orgs_path, icon: ACTION_ICONS[:providers], access: :admin_providers},
+      {label: t(:services), target: services_path, icon: ACTION_ICONS[:services], access: :admin_services},
+      {label: t(:reports), target: admin_reports_path, icon: ACTION_ICONS[:reports], access: :admin_reports},
+      {label: t(:feedback), target: admin_feedback_path, icon: ACTION_ICONS[:feedback], access: :admin_feedback},
+    ]  
+  end
 
-  ]  
-end
-  
+  def has_agency_specific_role?
+    [:agency_administrator, :agent].any? do |r|
+      User.with_role(r, :any).include?(current_user)
+    end
+  end
+
+  def find_travelers_path
+    has_agency_specific_role? ? admin_agency_travelers_path(current_user.agency) : admin_travelers_path
+  end
+
+  def create_travelers_path
+    has_agency_specific_role? ? new_admin_agency_user_path(current_user.agency) : new_admin_user_path
+  end
+
+  def create_trips_path
+    if User.with_role(:provider_staff, :any).include?(current_user)
+      admin_provider_trips_path(current_user.provider)
+    elsif has_agency_specific_role?
+      admin_agency_trips_path(current_user.agency)
+    else
+      admin_trips_path
+    end
+  end
+
+  def show_action action
+    return true unless action.include? :access
+    can? :access, action[:access]
+  end
+
   # Session key for storing the traveler id
   TRAVELER_USER_SESSION_KEY = 'traveler'
 
@@ -69,7 +99,16 @@ end
       if session[TRAVELER_USER_SESSION_KEY].blank?
         @traveler = current_user
       else
-        @traveler = current_user.travelers.find(session[TRAVELER_USER_SESSION_KEY])
+        # Check among all the users the current_user might impersonate.  First the customers if user is an agent, then travelers if user is a buddy
+        if current_user.agency
+          begin
+            @traveler = current_user.agency.customers.find(session[TRAVELER_USER_SESSION_KEY])
+          rescue
+            @traveler = current_user.travelers.find(session[TRAVELER_USER_SESSION_KEY])
+          end
+        else
+          @traveler = current_user.travelers.find(session[TRAVELER_USER_SESSION_KEY])
+        end
       end
     else
       # will always be a guest user
@@ -105,10 +144,10 @@ end
         ]
       end
       if options[:with_logout]
-        a << {label: t(:logout), target: destroy_user_session_path, icon: 'icon-signout', divider_before: true,
-          method: 'delete'}
+        a << {label: t(:logout), target: destroy_user_session_path, icon: 'fa-sign-out', divider_before: true,
+          method: :delete}
         #     = link_to , :method=>'delete' do
-        # %i.icon.icon-signout
+        # %i.fa.fa-sign-out
         # = t(:logout)
       end
       a
@@ -138,45 +177,45 @@ end
   def get_pseudomode_for_itinerary(itinerary)
 
     if itinerary.is_walk
-      mode_name = 'walk'
-    elsif itinerary.mode.name.downcase == 'paratransit'
-      mode_name = itinerary.service.service_type.name.downcase
-    elsif itinerary.mode.name.downcase == 'transit'
-      mode_name = itinerary.transit_type
+      mode_code = 'walk'
+    elsif itinerary.mode.code == 'mode_paratransit'
+      mode_code = itinerary.service.service_type.code.downcase
+    elsif itinerary.mode.code == 'mode_transit'
+      mode_code = itinerary.transit_type
     else
-      mode_name = itinerary.mode.name.downcase unless itinerary.mode.nil?
+      mode_code = itinerary.mode.code.gsub(/^mode_/, '') rescue 'UNKNOWN'
     end
-    return mode_name
+    return mode_code    
   end
 
   # Returns the correct localized title for a trip itinerary
   def get_trip_summary_title(itinerary)
 
     return if itinerary.nil?
-
-    mode_name = get_pseudomode_for_itinerary(itinerary)
-    if mode_name == 'rail'
-      title = "Rail"
-    elsif mode_name == 'railbus'
-      title = "Rail and Bus"
-    elsif mode_name == 'bus'
-      title = "Bus"
-    elsif mode_name == 'transit'
-      title = I18n.t(:transit)
-    elsif mode_name == 'paratransit'
-      title = I18n.t(:specialized_services)
-    elsif mode_name == 'volunteer'
-      title = I18n.t(:volunteer)
-    elsif mode_name == 'non-emergency medical service'
-      title = I18n.t(:nemt)
-    elsif mode_name == 'livery'
-      title = I18n.t(:car_service)
-    elsif mode_name == 'taxi'
-      title = I18n.t(:taxi)
-    elsif mode_name == 'rideshare'
-      title = I18n.t(:rideshare)
-    elsif mode_name == 'walk'
-      title = I18n.t(:walk)
+    
+    mode_code = get_pseudomode_for_itinerary(itinerary)
+    title = if mode_code == 'rail'
+      "Rail"
+    elsif mode_code == 'railbus'
+      "Rail and Bus"
+    elsif mode_code == 'bus'
+      "Bus"
+    elsif mode_code == 'transit'
+      I18n.t(:transit)
+    elsif mode_code == 'paratransit'
+      I18n.t(:specialized_services)      
+    elsif mode_code == 'volunteer'
+      I18n.t(:volunteer)
+    elsif mode_code == 'non-emergency medical service'
+      I18n.t(:nemt)
+    elsif mode_code == 'livery'
+      I18n.t(:car_service)
+    elsif mode_code == 'taxi'
+      I18n.t(:taxi)      
+    elsif mode_code == 'rideshare'
+      I18n.t(:rideshare)
+    elsif mode_code == 'walk'
+      I18n.t(:walk)
     end
     return title
   end
@@ -188,7 +227,7 @@ end
 
     return itinerary.service.name if itinerary.service
 
-    return get_trip_summary_title(itinerary) unless itinerary.mode.name.downcase == 'transit'
+    return get_trip_summary_title(itinerary) unless itinerary.mode.code == 'mode_transit'
 
     name_string = ""
     legs = itinerary.get_legs
@@ -200,7 +239,6 @@ end
     end
     name_string.chop.chop
   end
-
 
   # Kiosk-related helpers
 
@@ -260,4 +298,10 @@ end
     end
   end
 
+end
+
+class String
+  def to_sample_email suffix
+    downcase.gsub(/[^a-z\s]/, '').gsub(/\s/, '_') + '_' + suffix + '@camsys.com'
+  end
 end

@@ -1,5 +1,56 @@
 require 'lorem-ipsum'
 
+#Set up the common CMS tags with non-branded defaults
+text = <<EOT
+<h2 style="text-align: justify;">1-Click helps you find options to get from here to there, using public transit,
+ door-to-door services, and specialized transportation.  Give it a try, and
+ <a href="mailto://OneClick@camsys.com">tell us</a> what you think.</h2>
+EOT
+Translation.find_or_create_by!(:key =>'home-top_html', :locale => :en, :value => text)
+Translation.find_or_create_by!(:key =>'home-top-logged-in_html', :locale => :en, :value => text)
+text = <<EOT
+1-Click was funded by the
+ <a href="http://www.fta.dot.gov/grants/13094_13528.html" target=_blank>Veterans Transportation
+ Community Living Initiative</a>.
+EOT
+Translation.find_or_create_by!(:key =>'home-bottom-left-logged-in_html', :locale => :en, :value => text)
+Translation.find_or_create_by!(:key =>'home-bottom-left_html', :locale => :en, :value => text)
+text = <<EOT
+<span style="float: right;">1-Click is brought to you by 
+<a href="http://www.camsys.com/" target=_blank>Cambridge Systematics, Inc.</a>.</span>
+EOT
+Translation.find_or_create_by!(:key =>'home-bottom-right-logged-in_html', :locale => :en, :value => text)
+Translation.find_or_create_by!(:key =>'home-bottom-right_html', :locale => :en, :value => text)
+text = <<EOT
+Tell us about your trip.  The more information you give us, the more options we can find!
+EOT
+Translation.find_or_create_by(:key =>'plan-a-trip_html', :locale => :en, :value => text)
+Translation.find_or_create_by(:key => 'home-bottom-center_html', locale: :en, complete: true)
+Translation.find_or_create_by(:key => 'home-bottom-center-logged-in_html', locale: :en, complete: true)
+
+text = "In order to personalize the trip results further, would you please tell us about the programs you currently participate in?"
+Translation.find_or_create_by(:key => 'gather-program-info_html', locale: :en, complete: true, value: text)
+
+text= "Registering for One-Click allows you to save your eligibility and needs information for planning future trips, as well as the ability to save and reuse trips, set up a travel buddy, and more."
+Translation.find_or_create_by(:key => 'registration-reasoning', locale: :en, complete: true, value: text)
+
+# Email bodies
+text="Your traveler has revoked your status"
+Translation.find_or_create_by(:key => 'traveler_revoke_email', locale: :en, complete: true, value: text)
+text="Your traveler has declined their status"
+Translation.find_or_create_by(:key => 'traveler_decline_email', locale: :en, complete: true, value: text)
+text="Your traveler has confirmed your status"
+Translation.find_or_create_by(:key => 'traveler_confirm_email', locale: :en, complete: true, value: text)
+text="Your buddy has revoked their status"
+Translation.find_or_create_by(:key => 'buddy_revoke_email', locale: :en, complete: true, value: text)
+text="A traveler has requested that you help them plan trips."
+Translation.find_or_create_by(:key => 'buddy_request_email', locale: :en, complete: true, value: text)
+text="An agency is now helping you plan trips."
+Translation.find_or_create_by(:key => 'agency_helping_email', locale: :en, complete: true, value: text)
+
+
+
+
 #encoding: utf-8
 def update_reports
   reports = [
@@ -139,12 +190,22 @@ def generate_trips
 end
 
 def populate_provider_orgs
+  puts "Will populate provider orgs for #{Provider.count} providers"
   Provider.all.each do |p|
     unless p.provider_org.nil?
+      puts "Skipping #{p.name}, provider_org is not nil"
       next
     end
-    p.create_provider_org! name: p.name
+    po = p.create_provider_org! name: p.name
     p.save!
+
+    puts "Saved #{po.ai}"
+    # provider staff user
+    u = po.users.create! first_name: p.name + ' Provider Staff', last_name: 'Staff',
+      email: p.name.to_sample_email('staff'), password: 'welcome1'
+    up = UserProfile.create! user: u
+    u.add_role :provider_staff, p
+
   end
 end
 

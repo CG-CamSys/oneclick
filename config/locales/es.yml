@@ -22,7 +22,15 @@ es:
   # Agent View strings
   find_traveler: "Encontrar al Viajero"
   create_traveler: "Crear un Viajero"
+  feedback: "[es]Feedback[/es]"
   agencies: "[es21]Agencies[es]"
+  add_new_agency: "[es26]Add a new Agency[/es]"
+  agency_added: "[es27]Agency added[/es]"
+  user_created_and_added_to_agency: "[es29]User %{user} created and added to agency %{agency}[/es]"
+  add_agency: "[es26]Add Agency[/es]"
+  my_agencies: "[es27]My Agencies[/es]"
+  not_any_agencies: "[es28]You haven't approved any agencies to help you[/es]"
+  agency_now_assisting: "[es30]#{@agency} now assisting[/es]"
   parent_agency: "[es26]Parent Agency[/es]"
   parent: "[es27]Parent[/es]"
   subagencies: "[es27]Sub-agencies[/es]"
@@ -64,10 +72,12 @@ es:
   home: "Inicio"
   log_in: 'Entrar'
   sign_up: 'Registrarse'
+  sign_up_and_plan: "[es]Sign up and plan my trip[/es]"
   welcome: 'Bienvenido'
   first_name: 'Nombre'
   last_name: 'Apellido'
   email: 'Correo electrónico'
+  preferred_locale: "[es]Preferred Language[/es]"
   address: "[es47]Address[/es]"
   remember_me: 'Acuérdate de mí *5*'  
   password: 'Contraseña'
@@ -94,6 +104,7 @@ es:
   retract: 'Retraer'  
   revoke: 'Revocar'
   visitor: 'Visitante *12*'
+  include_visitors: "[es]Include Visitors[/es]"
   questions: "[es77]Questions[/es]"
   invalid_dob: 'Valido Fecha de nacimiento *33*'
   plan_with_you_in_mind: "[es77]We'd like to plan a trip with your needs in mind.[/es]"
@@ -130,6 +141,7 @@ es:
   rate_trip: "Valorar este viaje *43*"
   rate_recent: "[es118]Rate your recent trip[/es]"
   plan_trip: "Continuar la planificación de este viaje *44*"
+  max_notes: '[es133]Max notes[/es]'
 
   # Trip planning
   enter_address: 'Introduce la dirección'
@@ -269,9 +281,13 @@ es:
   updated: "[es242]Updated[/es]"
 
   # new ones
+  inactive: "[es]Inactive[/es]"
+  service_id: "[es]Service Id[/es]"
+  back_to_services: "[es]Back to services[/es]"
   service: "[es]Service[/es]"
   services: "[es]Services[/es]"
   active: "[es240]Active[/es]"
+  select_service: "[es276]Select Service[/es]"
   service_is_inactive: "[es219]This service is currently inactive.[/es]"
   service_contact: "[es220]Service Contact Information[/es]"
   specialized_services: "[es]Specialized Services[/es]"
@@ -285,6 +301,8 @@ es:
   name: "Nombre"
   send: "[es]Send[/es]"
   schedule: "[es236]Schedule[/es]"
+  book_ahead: '[es]Book Ahead[/es]'
+  note: "[es]Note[/es]"
   advance_notice_required: "[es237]Advance Notice Required[/es]"
   service_notice_required: "[es238]This service requires[/es]"
   service_notice_str: "[es239]of advance notice to book a trip[/es]"
@@ -297,6 +315,7 @@ es:
   service_notice_not_required: "[es240]This service does not require advanced notice to book a trip[/es]"
   no_cost_for_service:  "[es281]No cost for this service[/es]"
   addl_cost_details: "[es299]Additional Cost Details[/es]"
+  click_for_cost_details: '[es]Click for cost details[es]'
   view_trip_details: "[es298]View trip details so that you can call the provider.[/es]"
   email_trip_details:  "[es299]Email your trip plan.[/es]"
   print_trip_details: "[es299]Print your trip plan.[/es]"
@@ -341,11 +360,12 @@ es:
   return_selected: '[es211]Return option selected.[/es]'
   not_authorized_as_an_administrator: 'No está autorizado como un administrador.'
   n_a: 'n/a'
+  not_available: '[es]Not Available[/es]'
   less_than_1_block: "a menos the 1 cuadra"
   about_2_blocks: "aproximadament 2 cuadras"
   about_4_blocks: "aproximadamente 4 cuadras"
   twof_miles: "%.2f millas"
-  one_click_buddy_request_from_from_email: "1-Click solicitud de amigo de %{from_email}"
+  one_click_buddy_request_from_from_email: "1-Click solicitud de amigo de %{@from_email}"
   you_can_t_be_your_own_buddy: "No puedes ser tu propio amigo."
   you_ve_already_asked_them_to_be_a_buddy: "Ya le has solicitado ser amigo."
   my_buddies: "[es331]My Buddies[/es]"
@@ -434,6 +454,9 @@ es:
   success_feedback_link: "[es430]Click HERE if you made the trip as planned, and everything worked out just fine.[/es]"
   no_trip_taken_feedback_link: "[es431]Click HERE if you decided not to make the trip at all.[/es]"
   more_feedback_link: "[es432]Click HERE if you want to provide more feedback, or if things didn't work out as planned.[/es]"
+  search: "[es439]Search[/es]"
+  aid_user: "[es440]Aid User[/es]"
+  none: "[es]None[/es]"
 
   # Branding
   arc:
@@ -528,6 +551,20 @@ es:
       oneclick_short: ! '%-I:%M %p'
     pm: pm    
   datetime:
+    distance_in_words:
+      about_x_hours:
+            one: '[es]about 1 hour'
+            other: '[es]%{count} hours[/es]'
+      x_days:
+            one: '1 minuto'
+            other: '%{count} dias'
+      x_hours:
+            one: '1 hora'
+            other: '%{count} horas'
+      x_minutes:
+            one: '1 minuto'
+            other: '%{count} minutos'
+
     prompts:
       day: Día
       hour: Hora
@@ -535,12 +572,18 @@ es:
       month: Mes
       second: Segundos
       year: Año
+  unauthorized:
+    default: '[es570]You are not authorized to access that page.[/es]'
           
   activerecord:
     errors:
       models:
         user:
           attributes:
+            first_name:
+              blank: "no puede estar en blanco"
+            last_name:
+              blank: "no puede estar en blanco"
             email:
               blank: "no puede estar en blanco"
               invalid: "no es válido"
@@ -549,4 +592,18 @@ es:
               confirmation: "no coincide con la confirmación"
             current_password:
               blank: "no puede estar en blanco"
-
+  activemodel:
+    errors:
+      models:
+        place_proxy:
+          attributes:
+            name:
+              blank:  "no puede estar en blanco"
+            raw_address:
+              blank: "no puede estar en blanco"
+        trip_proxy:
+          attributes:
+            from_place:
+              blank: "no puede estar en blanco"
+            to_place:
+              blank: "no puede estar en blanco"

@@ -3,7 +3,8 @@ module ApplicationHelper
   METERS_TO_MILES = 0.000621371192
 
   include CsHelpers
-
+  include LocaleHelpers
+  
   ICON_DICTIONARY = {
       TripLeg::WALK => 'travelcon-walk',
       TripLeg::TRAM => 'travelcon-subway',
@@ -64,11 +65,11 @@ module ApplicationHelper
     html = "<span id='stars'>"
     for i in 1..5
       link = rate_rating_url(trip, :user_id => trip.user.id, :stars => i, :size => size)
-      html << "<a title='Rate " + i.to_s + " Stars' href=" + link + " style='color: black; text-decoration: none' data-method='post' data-remote='true'><i id=star" + trip.id.to_s + '_' + i.to_s + " class='icon-" + size.to_s
+      html << "<a title='Rate " + i.to_s + " Stars' href=" + link + " style='color: black; text-decoration: none' data-method='post' data-remote='true'><i id=star" + trip.id.to_s + '_' + i.to_s + " class='fa fa-" + size.to_s
       if i <= rating
-        html << "x icon-star'> </i></a>"
+        html << "x fa-star'> </i></a>"
       else
-        html << "x icon-star-empty'> </i></a>"
+        html << "x fa-star-o'> </i></a>"
       end
     end
     html << "</span>"
@@ -136,7 +137,7 @@ module ApplicationHelper
 
   def get_boolean(val)
     if val
-      return "<i class='icon-ok'></i>".html_safe
+      return "<i class='fa-check'></i>".html_safe
     end
     #return val.nil? ? 'N' : val == true ? 'Y' : 'N'
   end
@@ -163,29 +164,30 @@ module ApplicationHelper
     return l time, :format => :oneclick_short unless time.nil?
   end
 
-# Returns the correct partial for a trip itinerary
+  # TODO These next 2 methods are very similar to methods in CsHelper,should possible be consolidated
+  # Returns the correct partial for a trip itinerary
   def get_trip_partial(itinerary)
 
     return if itinerary.nil?
+    
+    mode_code = get_pseudomode_for_itinerary(itinerary)
 
-    mode_name = get_pseudomode_for_itinerary(itinerary)
-
-    if mode_name.in? ['transit', 'rail', 'bus', 'railbus']
-      partial = 'transit_details'
-    elsif mode_name == 'paratransit'
-      partial = 'paratransit_details'
-    elsif mode_name == 'volunteer'
-      partial = 'paratransit_details'
-    elsif mode_name == 'non-emergency medical service'
-      partial = 'paratransit_details'
-    elsif mode_name == 'livery'
-      partial = 'paratransit_details'
-    elsif mode_name == 'taxi'
-      partial = 'taxi_details'
-    elsif mode_name == 'rideshare'
-      partial = 'rideshare_details'
-    elsif mode_name == 'walk'
-      partial = 'walk_details'
+    partial = if mode_code.in? ['transit', 'rail', 'bus', 'railbus']
+      'transit_details'
+    elsif mode_code == 'paratransit'
+      'paratransit_details'
+    elsif mode_code == 'volunteer'
+      'paratransit_details'
+    elsif mode_code == 'non-emergency medical service'
+      'paratransit_details'
+    elsif mode_code == 'livery'
+      'paratransit_details'
+    elsif mode_code == 'taxi'
+      'taxi_details'
+    elsif mode_code == 'rideshare'
+      'rideshare_details'
+    elsif mode_code == 'walk'
+      'walk_details'
     end
     return partial
   end
@@ -193,36 +195,36 @@ module ApplicationHelper
   # Returns the correct localized title for a trip itinerary
   def get_trip_summary_icon(itinerary)
     return if itinerary.nil?
-
-    mode_name = get_pseudomode_for_itinerary(itinerary)
-    if mode_name == 'rail'
-      icon_name = 'icon-bus-sign'
-    elsif mode_name == 'railbus'
-      icon_name = 'icon-bus-sign'
-    elsif mode_name == 'bus'
-      icon_name = 'icon-bus-sign'
-    elsif mode_name == 'transit'
-      icon_name = 'icon-bus-sign'
-    elsif mode_name == 'paratransit'
-      icon_name = 'icon-truck-sign'
-    elsif mode_name == 'volunteer'
-      icon_name = 'icon-truck-sign'
-    elsif mode_name == 'non-emergency medical service'
-      icon_name = 'icon-user-md'
-    elsif mode_name == 'livery'
-      icon_name = 'icon-taxi-sign'
-    elsif mode_name == 'taxi'
-      icon_name = 'icon-taxi-sign'
-    elsif mode_name == 'rideshare'
-      icon_name = 'icon-group'
-    elsif mode_name == 'walk'
-      icon_name = 'icon-accessibility-sign'
+    
+    mode_code = get_pseudomode_for_itinerary(itinerary)
+    icon_name = if mode_code == 'rail'
+      'icon-bus-sign'
+    elsif mode_code == 'railbus'
+      'icon-bus-sign'
+    elsif mode_code == 'bus'
+      'icon-bus-sign'
+    elsif mode_code == 'transit'
+      'icon-bus-sign'
+    elsif mode_code == 'paratransit'
+      'fa-truck'
+    elsif mode_code == 'volunteer'
+      'fa-truck'
+    elsif mode_code == 'non-emergency medical service'
+      'fa-user-md'
+    elsif mode_code == 'livery'
+      'icon-taxi-sign'
+    elsif mode_code == 'taxi'
+      'icon-taxi-sign'      
+    elsif mode_code == 'rideshare'
+      'fa-group'      
+    elsif mode_code == 'walk'
+      'icon-accessibility-sign'      
     end
     return icon_name
   end
 
   def get_trip_direction_icon(itin_or_trip)
-    (itin_or_trip.is_return_trip ? 'icon-arrow-left' : 'icon-arrow-right')
+    (itin_or_trip.is_return_trip ? 'fa-arrow-left' : 'fa-arrow-right')
   end
 
   def display_base_errors resource

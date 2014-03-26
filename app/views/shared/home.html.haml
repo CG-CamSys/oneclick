@@ -2,37 +2,24 @@
   .span12
     .center.span6
       - if user_signed_in?
-        = cms_snippet_content('home-top-logged-in')
+        = cms_snippet_content('home-top-logged-in_html')
       - else
-        = cms_snippet_content('home-top')
+        = cms_snippet_content('home-top_html')
 .row-fluid
-  .span12
-    %ul.thumbnails
-      - @actions.each do |action|
-        - next if action[:not_on_homepage]
-        %li.center.span3
-          %a.span12.thumbnail.btn.actionbutton{alt: action[:label], title: action[:label], href: action[:target]}
-            .row-fluid
-              .span3
-                %i.center{class: action[:icon], alt: action[:label], style: 'font-size: 3em;'}
-              / .span9.actionlabel{style: 'text-align: left;'}
-              /   = action[:label]
-              .span9.actionlabel.Center-Container.is-Table
-                .Table-Cell
-                  .Center-Block
-                    = action[:label]
+  .span4.offset4
+    = render partial: 'shared/actions_menu', locals: {actions: @actions}
 .row-fluid
   - if user_signed_in?
     .span4
-      = cms_snippet_content('home-bottom-left-logged-in')
+      = cms_snippet_content('home-bottom-left-logged-in_html')
     .span4
-      = cms_snippet_content('home-bottom-center-logged-in')
+      = cms_snippet_content('home-bottom-center-logged-in_html')
     .span4
-      = cms_snippet_content('home-bottom-right-logged-in')
+      = cms_snippet_content('home-bottom-right-logged-in_html')
   - else
     .span4
-      = cms_snippet_content('home-bottom-left')
+      = cms_snippet_content('home-bottom-left_html')
     .span4
-      = cms_snippet_content('home-bottom-center')
+      = cms_snippet_content('home-bottom-center_html')
     .span4
-      = cms_snippet_content('home-bottom-right')
+      = cms_snippet_content('home-bottom-right_html')

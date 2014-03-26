@@ -1,6 +1,8 @@
 source 'https://rubygems.org'
 ruby '1.9.3'
 gem 'rails', '4.0.3'
+# See http://stackoverflow.com/questions/22391116/nomethoderror-in-pageshome-undefined-method-environment-for-nilnilclass
+gem 'sprockets', '2.11.0'
 gem 'sass-rails'
 gem 'coffee-rails'
 gem 'uglifier', '>= 1.0.3'
@@ -25,7 +27,9 @@ gem 'newrelic_rpm'
 gem 'polylines'
 gem 'activemdb'
 gem 'ajaxful_rating', '>= 3.0.0.beta7'
-gem 'comfortable_mexican_sofa', '~> 1.11.0'
+ gem 'i18n-active_record',
+      :git => 'git://github.com/svenfuchs/i18n-active_record.git',
+      :require => 'i18n/active_record'
 gem 'honeybadger'
 gem 'draper'
 gem 'rubyzip'
@@ -33,6 +37,10 @@ gem 'lorem-ipsum-me'
 gem 'faraday_middleware'
 gem 'twilio-ruby'
 gem 'rails_12factor', group: [:integration, :production, :qa, :staging]
+gem 'font-awesome-rails'
+gem 'twitter-typeahead-rails', git: 'https://github.com/Qureana/twitter-typeahead-rails'
+gem 'handlebars_assets'
+gem 'simple_token_authentication'
 
 group :development do
   gem 'activerecord-postgis-adapter'
@@ -61,6 +69,8 @@ group :development do
   gem 'rgeo'
   gem 'rgeo-shapefile'
   gem "letter_opener"
+  gem 'yard'
+  gem 'RedCloth' # Needed by yard
 end
 
 group :test do

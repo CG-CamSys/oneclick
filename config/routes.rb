@@ -44,6 +44,14 @@ Oneclick::Application.routes.draw do
         end
       end
 
+      resources :agency_user_relationships, controller: 'admin/agency_user_relationships', :only => [:create,:destroy] do
+        member do
+          get   'traveler_revoke'
+          get   'traveler_hide'
+        end
+      end
+
+
       # user relationships
       resources :user_relationships, :only => [:new, :create] do
         member do
@@ -236,28 +244,43 @@ Oneclick::Application.routes.draw do
       get '/kiosk/session/destroy' => 'kiosk/sessions#destroy', as: :destroy_kiosk_user_session
     end
 
+    # TODO This should go somewhere else
+    get '/place_search' => 'trips#search'
 
     namespace :admin do
       resources :reports, :only => [:index, :show]
       resources :trips, :only => [:index]
       get '/geocode' => 'util#geocode'
-      get '/' => 'home#index'
+      get '/raise' => 'util#raise'
+      get '/' => 'admin_home#index'
+      resource :feedback
+      resources :travelers, controller: 'agency_user_relationships' do
+        get   'aid_user'
+        get   'agency_revoke'
+      end
       resources :agencies do
+        resources :travelers, controller: 'agency_user_relationships' do
+          get   'aid_user'
+          get   'agency_revoke'
+        end
         get 'select_user'
-        resources :users do
+        resources :users do   #employees, not customers
           post 'add_to_agency', on: :collection
           put 'add_to_agency', on: :collection
         end
+        resources :trips
       end
       resources :provider_orgs do
         resources :users
         resources :services
       end
-      resources :users do
+      resources :users do #admin users
         put 'update_roles', on: :member
       end
-      resources :providers
-    end
+      resources :providers do
+        resources :trips, only: [:index, :show]
+      end
+    end#admin
 
     resources :services do
       member do
@@ -279,18 +302,9 @@ Oneclick::Application.routes.draw do
     get '/422' => 'errors#error_422', as: 'error_422'
     get '/500' => 'errors#error_500', as: 'error_500'
     get '/501' => 'errors#error_501', as: 'error_501'
-
   end
 
-  unless Oneclick::Application.config.ui_mode == 'kiosk'
-    get '*not_found' => 'errors#handle404'
-
-    comfy_route :cms_admin, :path => '/admin'
-    comfy_route :cms, :path => '/', :sitemap => false
-
-    # Make sure this routeset is defined last
-    ComfortableMexicanSofa::Routing.content(:path => '/', :sitemap => false)
-  end
+  resources :translations
 
   get 'heartbeat' => Proc.new { [200, {'Content-Type' => 'text/plain'}, ['ok']] }
 end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140220224403) do
+ActiveRecord::Schema.define(version: 20140318215639) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,6 +25,15 @@ ActiveRecord::Schema.define(version: 20140220224403) do
     t.string  "code"
   end
 
+  create_table "agency_user_relationships", force: true do |t|
+    t.integer  "agency_id",                          null: false
+    t.integer  "user_id",                            null: false
+    t.integer  "relationship_status_id", default: 3, null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "creator",                            null: false
+  end
+
   create_table "characteristics", force: true do |t|
     t.string  "name",                  limit: 64
     t.string  "note",                                              null: false
@@ -35,123 +44,6 @@ ActiveRecord::Schema.define(version: 20140220224403) do
     t.string  "characteristic_type",   limit: 128
     t.string  "desc",                              default: ""
   end
-
-  create_table "cms_blocks", force: true do |t|
-    t.integer  "page_id",    null: false
-    t.string   "identifier", null: false
-    t.text     "content"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "cms_blocks", ["page_id", "identifier"], name: "index_cms_blocks_on_page_id_and_identifier", using: :btree
-
-  create_table "cms_categories", force: true do |t|
-    t.integer "site_id",          null: false
-    t.string  "label",            null: false
-    t.string  "categorized_type", null: false
-  end
-
-  add_index "cms_categories", ["site_id", "categorized_type", "label"], name: "index_cms_categories_on_site_id_and_categorized_type_and_label", unique: true, using: :btree
-
-  create_table "cms_categorizations", force: true do |t|
-    t.integer "category_id",      null: false
-    t.string  "categorized_type", null: false
-    t.integer "categorized_id",   null: false
-  end
-
-  add_index "cms_categorizations", ["category_id", "categorized_type", "categorized_id"], name: "index_cms_categorizations_on_cat_id_and_catd_type_and_catd_id", unique: true, using: :btree
-
-  create_table "cms_files", force: true do |t|
-    t.integer  "site_id",                                    null: false
-    t.integer  "block_id"
-    t.string   "label",                                      null: false
-    t.string   "file_file_name",                             null: false
-    t.string   "file_content_type",                          null: false
-    t.integer  "file_file_size",                             null: false
-    t.string   "description",       limit: 2048
-    t.integer  "position",                       default: 0, null: false
-    t.datetime "created_at",                                 null: false
-    t.datetime "updated_at",                                 null: false
-  end
-
-  add_index "cms_files", ["site_id", "block_id"], name: "index_cms_files_on_site_id_and_block_id", using: :btree
-  add_index "cms_files", ["site_id", "file_file_name"], name: "index_cms_files_on_site_id_and_file_file_name", using: :btree
-  add_index "cms_files", ["site_id", "label"], name: "index_cms_files_on_site_id_and_label", using: :btree
-  add_index "cms_files", ["site_id", "position"], name: "index_cms_files_on_site_id_and_position", using: :btree
-
-  create_table "cms_layouts", force: true do |t|
-    t.integer  "site_id",                    null: false
-    t.integer  "parent_id"
-    t.string   "app_layout"
-    t.string   "label",                      null: false
-    t.string   "identifier",                 null: false
-    t.text     "content"
-    t.text     "css"
-    t.text     "js"
-    t.integer  "position",   default: 0,     null: false
-    t.boolean  "is_shared",  default: false, null: false
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
-  end
-
-  add_index "cms_layouts", ["parent_id", "position"], name: "index_cms_layouts_on_parent_id_and_position", using: :btree
-  add_index "cms_layouts", ["site_id", "identifier"], name: "index_cms_layouts_on_site_id_and_identifier", unique: true, using: :btree
-
-  create_table "cms_pages", force: true do |t|
-    t.integer  "site_id",                        null: false
-    t.integer  "layout_id"
-    t.integer  "parent_id"
-    t.integer  "target_page_id"
-    t.string   "label",                          null: false
-    t.string   "slug"
-    t.string   "full_path",                      null: false
-    t.text     "content"
-    t.integer  "position",       default: 0,     null: false
-    t.integer  "children_count", default: 0,     null: false
-    t.boolean  "is_published",   default: true,  null: false
-    t.boolean  "is_shared",      default: false, null: false
-    t.datetime "created_at",                     null: false
-    t.datetime "updated_at",                     null: false
-  end
-
-  add_index "cms_pages", ["parent_id", "position"], name: "index_cms_pages_on_parent_id_and_position", using: :btree
-  add_index "cms_pages", ["site_id", "full_path"], name: "index_cms_pages_on_site_id_and_full_path", using: :btree
-
-  create_table "cms_revisions", force: true do |t|
-    t.string   "record_type", null: false
-    t.integer  "record_id",   null: false
-    t.text     "data"
-    t.datetime "created_at"
-  end
-
-  add_index "cms_revisions", ["record_type", "record_id", "created_at"], name: "index_cms_revisions_on_rtype_and_rid_and_created_at", using: :btree
-
-  create_table "cms_sites", force: true do |t|
-    t.string  "label",                       null: false
-    t.string  "identifier",                  null: false
-    t.string  "hostname",                    null: false
-    t.string  "path"
-    t.string  "locale",      default: "en",  null: false
-    t.boolean "is_mirrored", default: false, null: false
-  end
-
-  add_index "cms_sites", ["hostname"], name: "index_cms_sites_on_hostname", using: :btree
-  add_index "cms_sites", ["is_mirrored"], name: "index_cms_sites_on_is_mirrored", using: :btree
-
-  create_table "cms_snippets", force: true do |t|
-    t.integer  "site_id",                    null: false
-    t.string   "label",                      null: false
-    t.string   "identifier",                 null: false
-    t.text     "content"
-    t.integer  "position",   default: 0,     null: false
-    t.boolean  "is_shared",  default: false, null: false
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
-  end
-
-  add_index "cms_snippets", ["site_id", "identifier"], name: "index_cms_snippets_on_site_id_and_identifier", unique: true, using: :btree
-  add_index "cms_snippets", ["site_id", "position"], name: "index_cms_snippets_on_site_id_and_position", using: :btree
 
   create_table "coverage_areas", force: true do |t|
     t.integer "service_id", null: false
@@ -207,19 +99,20 @@ ActiveRecord::Schema.define(version: 20140220224403) do
     t.boolean  "selected"
   end
 
-  create_table "kiosk_locations", :force => true do |t|
+  create_table "kiosk_locations", force: true do |t|
     t.string   "name"
     t.integer  "address_type"
     t.string   "addr"
     t.float    "lat"
     t.float    "lon"
-    t.datetime "created_at",   :null => false
-    t.datetime "updated_at",   :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "modes", force: true do |t|
     t.string  "name",   limit: 64, null: false
     t.boolean "active",            null: false
+    t.string  "code"
   end
 
   create_table "organizations", force: true do |t|
@@ -239,7 +132,7 @@ ActiveRecord::Schema.define(version: 20140220224403) do
     t.string   "address1",    limit: 128
     t.string   "address2",    limit: 128
     t.string   "city",        limit: 128
-    t.string   "state",       limit: 2
+    t.string   "state",       limit: 64
     t.string   "zip",         limit: 10
     t.float    "lat"
     t.float    "lon"
@@ -261,7 +154,7 @@ ActiveRecord::Schema.define(version: 20140220224403) do
     t.string   "address1",    limit: 128
     t.string   "address2",    limit: 128
     t.string   "city",        limit: 128
-    t.string   "state",       limit: 2
+    t.string   "state",       limit: 64
     t.string   "zip",         limit: 10
     t.float    "lat"
     t.float    "lon"
@@ -293,7 +186,7 @@ ActiveRecord::Schema.define(version: 20140220224403) do
     t.string  "contact_title",   limit: 100
     t.string  "address",         limit: 100
     t.string  "city",            limit: 100
-    t.string  "state",           limit: 25
+    t.string  "state",           limit: 64
     t.string  "zip",             limit: 10
     t.string  "url"
     t.string  "phone",           limit: 25
@@ -315,6 +208,7 @@ ActiveRecord::Schema.define(version: 20140220224403) do
 
   create_table "relationship_statuses", force: true do |t|
     t.string "name", limit: 64
+    t.string "code"
   end
 
   create_table "reports", force: true do |t|
@@ -406,10 +300,22 @@ ActiveRecord::Schema.define(version: 20140220224403) do
     t.string   "url"
   end
 
+  create_table "translations", force: true do |t|
+    t.string   "key"
+    t.text     "interpolations"
+    t.boolean  "is_proc",        default: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "locale"
+    t.text     "value"
+    t.boolean  "is_html",        default: false
+    t.boolean  "complete",       default: false
+  end
+
   create_table "trip_parts", force: true do |t|
-    t.integer  "trip_id",                            null: false
-    t.integer  "from_trip_place_id",                 null: false
-    t.integer  "to_trip_place_id",                   null: false
+    t.integer  "trip_id"
+    t.integer  "from_trip_place_id"
+    t.integer  "to_trip_place_id"
     t.integer  "sequence",                           null: false
     t.boolean  "is_depart",          default: false
     t.boolean  "is_return_trip",     default: false
@@ -422,34 +328,36 @@ ActiveRecord::Schema.define(version: 20140220224403) do
   add_index "trip_parts", ["trip_id", "sequence"], name: "index_trip_parts_on_trip_id_and_sequence", using: :btree
 
   create_table "trip_places", force: true do |t|
-    t.integer  "trip_id",                 null: false
-    t.integer  "sequence",                null: false
+    t.integer  "trip_id"
+    t.integer  "sequence",                 null: false
     t.integer  "place_id"
     t.integer  "poi_id"
     t.string   "raw_address"
     t.float    "lat"
     t.float    "lon"
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
-    t.string   "address1",    limit: 128
-    t.string   "address2",    limit: 128
-    t.string   "city",        limit: 128
-    t.string   "state",       limit: 2
-    t.string   "zip",         limit: 10
-    t.string   "county",      limit: 128
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+    t.string   "address1",     limit: 128
+    t.string   "address2",     limit: 128
+    t.string   "city",         limit: 128
+    t.string   "state",        limit: 64
+    t.string   "zip",          limit: 10
+    t.string   "county",       limit: 128
+    t.string   "result_types"
   end
 
   create_table "trip_purposes", force: true do |t|
     t.string  "name",       limit: 64,                null: false
     t.string  "note"
     t.boolean "active",                default: true, null: false
-    t.string  "code"
     t.integer "sort_order"
+    t.string  "code"
   end
 
   create_table "trip_statuses", force: true do |t|
     t.string  "name",   limit: 64
     t.boolean "active",            null: false
+    t.string  "code"
   end
 
   create_table "trips", force: true do |t|
@@ -462,7 +370,11 @@ ActiveRecord::Schema.define(version: 20140220224403) do
     t.string   "user_comments",   limit: 1000
     t.boolean  "taken"
     t.integer  "rating"
+    t.date     "scheduled_date"
+    t.time     "scheduled_time"
   end
+
+  add_index "trips", ["scheduled_date", "scheduled_time"], name: "index_trips_on_scheduled_date_and_scheduled_time", using: :btree
 
   create_table "user_accommodations", force: true do |t|
     t.integer  "user_profile_id",                             null: false
@@ -513,11 +425,11 @@ ActiveRecord::Schema.define(version: 20140220224403) do
   create_table "users", force: true do |t|
     t.string   "nickname",               limit: 64
     t.string   "prefix",                 limit: 4
-    t.string   "first_name",             limit: 64,              null: false
-    t.string   "last_name",              limit: 64,              null: false
+    t.string   "first_name",             limit: 64,                 null: false
+    t.string   "last_name",              limit: 64,                 null: false
     t.string   "suffix",                 limit: 4
     t.string   "email",                  limit: 128,             null: false
-    t.string   "encrypted_password",     limit: 64,              null: false
+    t.string   "encrypted_password",     limit: 64
     t.string   "reset_password_token",   limit: 64
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
@@ -526,12 +438,15 @@ ActiveRecord::Schema.define(version: 20140220224403) do
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip",     limit: 16
     t.string   "last_sign_in_ip",        limit: 16
-    t.datetime "created_at",                                     null: false
-    t.datetime "updated_at",                                     null: false
+    t.datetime "created_at",                                        null: false
+    t.datetime "updated_at",                                        null: false
     t.integer  "agency_id"
-    t.integer  "provider_id"
+    t.integer  "provider_org_id"
+    t.string   "authentication_token"
+    t.string   "preferred_locale",                   default: "en"
   end
 
+  add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", using: :btree
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 

@@ -2,12 +2,14 @@ class ApplicationController < ActionController::Base
   include CsHelpers
   include LocaleHelpers
 
+  # acts_as_token_authentication_handler_for User
+
   # include the helper method in any controller which needs to know about guest users
   helper_method :current_or_guest_user
 
   protect_from_forgery
-  before_filter :set_locale
   before_filter :get_traveler
+  before_filter :set_locale
   before_filter :setup_actions
   after_filter :clear_location
 
@@ -24,7 +26,15 @@ class ApplicationController < ActionController::Base
   end
 
   def set_locale
-    I18n.locale = params[:locale] || I18n.default_locale
+    #If set in URL, use that and set it to user's preference
+    #If not, use the user's preference
+    #Fall back to default if that doesn't exist somehow
+    if params[:locale]
+       I18n.locale = params[:locale]
+       current_or_guest_user.update_attributes(preferred_locale: params[:locale])
+    else
+      I18n.locale = current_or_guest_user.preferred_locale
+    end
   end
 
   def default_url_options(options={})
@@ -66,6 +76,9 @@ class ApplicationController < ActionController::Base
   end
 
   def after_sign_in_path_for(resource)
+    if session[:agency]
+      return new_user_registration_path
+    end
     if session[:inline]
       get_traveler
       @trip = Trip.find(session[:current_trip_id])

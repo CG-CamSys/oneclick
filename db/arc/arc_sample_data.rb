@@ -66,7 +66,6 @@ def add_providers_and_services
       {name: 'Cobb Community Transit (CCT)', contact: 'Gary Blackledge', external_id: "esp#15"},
       {name: 'Transportation Services', contact: 'Nell Childers', external_id: "esp#22"},
       {name: 'Volunteer Transportation Service', contact: 'T.J. McGiffert', external_id: "esp#34"}
-
   ]
 
   disabled = Characteristic.find_by_code('disabled')
@@ -560,53 +559,40 @@ end
 def add_companion
   #Add Companion Allowed Accommodation
   companion_allowed = Accommodation.find_or_initialize_by_code('companion_allowed')
-  companion_allowed.name = 'Traveler Companion Permitted'
+  companion_allowed.name = 'traveler_companion_name'
   companion_allowed.note = 'Do you travel with a companion?'
   companion_allowed.datatype = 'bool'
   companion_allowed.save()
 end
 
 def setup_cms
-  Cms::Site.destroy_all
-  site = Cms::Site.where(identifier: 'default').first_or_create(label: 'default', hostname: 'localhost', path: 'content')
-  # site.snippets.create! identifier: 'plan-a-trip', label: 'plan a trip', content: '<div class="well">This is the content for Plan A Trip</div>'
-  # site.snippets.create! identifier: 'home-top-logged-in', label: 'home-top-logged-in', content: '<div class="well">This is content for home-top-logged-in</div>'
-  # site.snippets.create! identifier: 'home-top', label: 'home-top', content: '<div class="well">This is content for home-top</div>'
-  # site.snippets.create! identifier: 'home-bottom-left-logged-in', label: 'home-bottom-left-logged-in', content: '<div class="well">This is content for home-bottom-left-logged-in</div>'
-  # site.snippets.create! identifier: 'home-bottom-center-logged-in', label: 'home-bottom-center-logged-in', content: '<div class="well">This is content for home-bottom-center-logged-in</div>'
-  # site.snippets.create! identifier: 'home-bottom-right-logged-in', label: 'home-bottom-right-logged-in', content: '<div class="well">This is content for home-bottom-right-logged-in</div>'
-  # site.snippets.create! identifier: 'home-bottom-left', label: 'home-bottom-left', content: '<div class="well">This is content for home-bottom-left</div>'
-  # site.snippets.create! identifier: 'home-bottom-center', label: 'home-bottom-center', content: '<div class="well">This is content for home-bottom-center</div>'
-  # site.snippets.create! identifier: 'home-bottom-right', label: 'home-bottom-right', content: '<div class="well">This is content for home-bottom-right</div>'
-  brand = Oneclick::Application.config.brand
-      text = <<EOT
+       text = <<EOT
 <h2 style="text-align: justify;">1-Click/ARC helps you find options to get from here to there, using public transit,
  door-to-door services, and specialized transportation.  Give it a try, and
  <a href="mailto://OneClick@camsys.com">tell us</a> what you think.</h2>
 EOT
-      site.snippets.create! identifier: 'home-top-logged-in', label: 'home-top-logged-in', content: text
-      site.snippets.create! identifier: 'home-top', label: 'home-top', content: text
+      Translation.find_or_create_by(:key => 'home-top_html').update_attributes(:value => text)
+      Translation.find_or_create_by(:key => 'home-top-logged-in_html').update_attributes(:value => text)
       text = <<EOT
 1-Click/ARC was funded by the
  <a href="http://www.fta.dot.gov/grants/13094_13528.html" target=_blank>Veterans Transportation
  Community Living Initiative</a>.
 EOT
-      site.snippets.create! identifier: 'home-bottom-left-logged-in', label: 'home-bottom-left-logged-in', content: text
-      site.snippets.create! identifier: 'home-bottom-left', label: 'home-bottom-left', content: text
+      Translation.find_or_create_by(:key => 'home-bottom-left_html').update_attributes(:value => text)
+      Translation.find_or_create_by(:key => 'home-bottom-left-logged-in_html').update_attributes(:value => text)
       text = <<EOT
-<span style="float: right;">1-Click/ARC is sponsored by the
+<span style="float: right;">1-Click/ARC is sponsored basey the
 <a href="http://www.atlantaregional.com/" target=_blank>Atlanta Regional Commission</a>.</span>
 EOT
-      site.snippets.create! identifier: 'home-bottom-right-logged-in', label: 'home-bottom-right-logged-in', content: text
-      site.snippets.create! identifier: 'home-bottom-right', label: 'home-bottom-right', content: text
+      Translation.find_or_create_by(:key => 'home-bottom-right_html').update_attributes(:value => text)
+      Translation.find_or_create_by(:key => 'home-bottom-right-logged-in_html').update_attributes(:value => text)
       text = <<EOT
 Tell us about your trip.  The more information you give us, the more options we can find!
 EOT
-      site.snippets.create! identifier: 'plan-a-trip', label: 'plan a trip', content: text
-
+      Translation.find_or_create_by(:key  => 'plan-a-trip_html').update_attributes(:value => text)
 end
 
-def create_agencies
+def create_agencies_and_agency_users
   ['Atlanta Regional Commission',
    'ARC Mobility Management',
    'ARC Agewise',
@@ -615,11 +601,27 @@ def create_agencies
    'Disability Link',
    'Cobb County Transit',
    'Goodwill Industries'].each do |a|
-    a = Agency.find_by_name(a)
-    unless a.nil?
+    agency = Agency.find_by_name(a)
+    unless agency.nil?
+      puts "#{a} already exists"
       next
     end
-    Agency.create! name: a
+    puts "Creating #{a.ai}"
+    agency = Agency.create! name: a
+
+    # agency admin
+    u = User.create! first_name: a + ' Agency Admin', last_name: 'Agency Admin',
+      email: a.downcase.gsub(/ /, '_') + '_admin@camsys.com', password: 'welcome1'
+    up = UserProfile.create! user: u
+    agency.users << u
+    u.add_role :agency_administrator, agency
+
+    # agency agent
+    u = User.create! first_name: a + ' Agent', last_name: 'Agent',
+      email: a.downcase.gsub(/ /, '_') + '_agent@camsys.com', password: 'welcome1'
+    up = UserProfile.create! user: u
+    agency.users << u
+    u.add_role :agent, agency
   end
 
 end
@@ -630,7 +632,7 @@ add_users_and_places
 add_providers_and_services
 add_fares
 add_esp_ids
-add_companion
+#add_companion
 setup_cms
-create_agencies
+create_agencies_and_agency_users
 puts 'Done Adding ARC Sample Data'

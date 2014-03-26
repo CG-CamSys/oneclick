@@ -40,7 +40,7 @@ module Oneclick
 
       g.view_specs false
       g.helper_specs false
-    end
+  end
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
@@ -66,6 +66,7 @@ module Oneclick
 
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
+    config.i18n.enforce_available_locales = false
     config.i18n.default_locale = :en
 
     # Configure the default encoding used in templates for Ruby 1.9.
@@ -84,19 +85,24 @@ module Oneclick
 
     # Enable the asset pipeline
     config.assets.enabled = true
+    # For heroku; see http://blog.nathanhumbert.com/2012/01/rails-32-on-heroku-tip.html
+    config.assets.initialize_on_precompile = false
 
-    config.assets.precompile += %w(
-      tadaaapickr.pack.min.js
-      kiosk/_base.css
-      kiosk/style.css
-    )
+    # Add in here any css or js that is *not* specified in application.css.scss or
+    # application.js (e.g. will typically be referenced directly in a view or a
+    # template
+    config.assets.precompile += %w{tadaaapickr.pack.min.js trips.js typeahead.js-bootstrap.css}
+
+    config.assets.paths << Rails.root.join('app', 'assets', 'fonts')
 
     # Version of your assets, change this if you want to expire all your assets
-    config.assets.version = '1.2'
+    config.assets.version = '1.3'
 
     # See http://work.stevegrossi.com/2013/04/06/dynamic-error-pages-with-rails-3-2/
     config.exceptions_app = self.routes
+
   end
+
 end
 
 

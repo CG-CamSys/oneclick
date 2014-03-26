@@ -1,4 +1,4 @@
-%h1= t(:provider_org)
+%h1= t(:provider_orgs)
 
 %table.table.table-condensed.table-striped.table-bordered.table-hover#datatable#admin_provider_orgs_table
   %thead
@@ -10,14 +10,15 @@
       %tr
         %td= provider_org.name
         %td.center
-          = link_to edit_admin_provider_org_path(provider_org), {class: 'btn'} do
-            %i.icon-pencil
-            = t(:edit)
+          - if can? :edit, provider_org
+            = link_to edit_admin_provider_org_path(provider_org), {class: 'btn'} do
+              %i.fa.fa-pencil
+              = t(:edit)
           / = link_to admin_provider_org_users_path(provider_org), {class: 'btn'} do
-          /   %i.icon-group
+          /   %i.fa.fa-group
           /   = t(:users)
           = link_to admin_provider_org_services_path(provider_org), {class: 'btn'} do
-            %i.icon-info-sign
+            %i.fa.fa-info-circle
             = t(:services)
 
 = link_to 'New Provider Organization', new_admin_provider_org_path, {class: 'btn'}

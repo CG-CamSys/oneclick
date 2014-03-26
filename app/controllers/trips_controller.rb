@@ -360,7 +360,9 @@ class TripsController < PlaceSearchingController
     # Get the updated trip proxy from the form params
     @trip_proxy = create_trip_proxy_from_form_params
     # save the id of the trip we are updating
-    @trip_proxy.id = @trip.id
+    if @trip_proxy.valid?
+      @trip_proxy.id = @trip.id
+  end
 
     # Create markers for the map control
     @markers = create_trip_proxy_markers(@trip_proxy).to_json
@@ -425,11 +427,15 @@ class TripsController < PlaceSearchingController
     @trip_proxy = create_trip_proxy_from_form_params
 
     Rails.logger.info "TripsController#create"
-    Rails.logger.info "@trip_proxy #{@trip_proxy.ai}"
+    Rails.logger.info @trip_proxy.ai
     Rails.logger.info "valid? #{@trip_proxy.valid?}"
+    Rails.logger.info "errors #{@trip_proxy.errors.ai}"
+    # TODO If trip_proxy isn't valid, should go back to form right now, before this.
     if @trip_proxy.valid?
-      @trip = create_trip(@trip_proxy)
+      @trip = Trip.create_from_proxy(@trip_proxy, current_or_guest_user, @traveler)
     end
+
+    Rails.logger.info @trip.ai
 
     # Create markers for the map control
     @markers = create_trip_proxy_markers(@trip_proxy).to_json
@@ -452,7 +458,7 @@ class TripsController < PlaceSearchingController
           format.json { render json: @trip, status: :created, location: @trip }
         else
           # TODO Will this get handled correctly?
-          format.html { render action: "new" }
+          format.html { render action: "new", flash[:alert] => t(:correct_errors_to_create_a_trip) }
           format.json { render json: @trip_proxy.errors, status: :unprocessable_entity }
         end
       else
@@ -563,6 +569,12 @@ class TripsController < PlaceSearchingController
 
 protected
 
+  
+  # Set the default travel time/date to x mins from now
+  def default_trip_time
+    return Time.now.in_time_zone.next_interval(DEFAULT_TRIP_TIME_AHEAD_MINS.minutes)    
+  end
+  
   # Safely set the @trip variable taking into account trip ownership
   def get_trip
     # limit trips to trips accessible by the user unless an admin
@@ -615,6 +627,7 @@ private
 
   # creates a trip_proxy object from form parameters
   def create_trip_proxy_from_form_params
+
     trip_proxy = TripProxy.new(params[:trip_proxy])
     trip_proxy.traveler = @traveler
 
@@ -692,8 +705,10 @@ private
   end
 
   # Creates a trip object from a trip proxy
-  def create_trip(trip_proxy)
-
+  def create_trip_old(trip_proxy)
+    Rails.logger.info "TripsController#create_trip"
+    Rails.logger.info trip_proxy.ai
+    
     trip = Trip.new()
     trip.creator = current_or_guest_user
     trip.user = @traveler
@@ -800,6 +815,8 @@ private
       end
     end
 
+    raise "from place not valid: #{from_place.errors.messages}" unless from_place.valid?
+    raise "to place not valid: #{to_place.errors.messages}" unless to_place.valid?
 
     # add the places to the trip
     trip.trip_places << from_place
@@ -820,14 +837,10 @@ private
     trip_part.is_depart = trip_proxy.arrive_depart == t(:departing_at) ? true : false
     trip_part.scheduled_date = trip_date
     trip_part.scheduled_time = Time.zone.parse(trip_proxy.trip_time)
-    Rails.logger.info "create_trip"
-    Rails.logger.info "trip_date #{trip_date}"
-    Rails.logger.info "trip_part.scheduled_date #{trip_part.scheduled_date}"
-    Rails.logger.info "trip_proxy.trip_time #{trip_proxy.trip_time}"
-    Rails.logger.info "trip_part.scheduled_time #{trip_part.scheduled_time}"
     trip_part.from_trip_place = from_place
     trip_part.to_trip_place = to_place
 
+    raise 'TripPart not valid' unless trip_part.valid?
     trip.trip_parts << trip_part
 
     # create the round trip if needed
@@ -836,106 +849,18 @@ private
       trip_part = TripPart.new
       trip_part.trip = trip
       trip_part.sequence = sequence
-      # the return trip is always a depart at
       trip_part.is_depart = true
-      # the return trip time is the arrival time plus
       trip_part.is_return_trip = true
       trip_part.scheduled_date = trip_date
       trip_part.scheduled_time = Time.zone.parse(trip_proxy.return_trip_time)
       trip_part.from_trip_place = to_place
       trip_part.to_trip_place = from_place
 
+      raise 'TripPart not valid' unless trip_part.valid?
       trip.trip_parts << trip_part
     end
 
     return trip
   end
 
-  # Get the selected place for this trip-end based on the type of place
-  # selected and the data for that place
-  def get_preselected_place(place_type, place_id, is_from = false)
-    case place_type
-    when POI_TYPE
-      # the user selected a POI using the type-ahead function
-      poi = Poi.find(place_id)
-      return {
-        :poi_id => poi.id,
-        :name => poi.name,
-        :formatted_address => poi.address,
-        :lat => poi.location.first,
-        :lon => poi.location.last
-        }
-    when CACHED_ADDRESS_TYPE
-      # the user selected an address from the trip-places table using the type-ahead function
-      trip_place = @traveler.trip_places.find(place_id)
-      return {
-        :name => trip_place.raw_address,
-        :lat => trip_place.lat,
-        :lon => trip_place.lon,
-        :formatted_address => trip_place.raw,
-        :street_address => trip_place.address1,
-        :city => trip_place.city,
-        :state => trip_place.state,
-        :zip => trip_place.zip,
-        :county => trip_place.county,
-        :raw => trip_place.raw
-        }
-    when PLACES_TYPE
-      # the user selected a place using the places drop-down
-      place = @traveler.places.find(place_id)
-      return {
-        :place_id => place.id,
-        :name => place.name,
-        :formatted_address => place.address,
-        :lat => place.location.first,
-        :lon => place.location.last
-        }
-    when RAW_ADDRESS_TYPE
-      # the user entered a raw address and possibly selected an alternate from the list of possible
-      # addresses
-      if is_from
-        #puts place_id
-        #puts get_cached_addresses(CACHED_FROM_ADDRESSES_KEY).ai
-        place = get_cached_addresses(CACHED_FROM_ADDRESSES_KEY)[place_id.to_i]
-      else
-        place = get_cached_addresses(CACHED_TO_ADDRESSES_KEY)[place_id.to_i]
-      end
-      Rails.logger.debug "in get_preselected_place"
-      Rails.logger.debug "#{is_from} #{place.ai}"
-      return {
-        :name => place[:name],
-        :lat => place[:lat],
-        :lon => place[:lon],
-        :formatted_address => place[:formatted_address],
-        :street_address => place[:street_address],
-        :city => place[:city],
-        :state => place[:state],
-        :zip => place[:zip],
-        :county => place[:county],
-        :raw => place[:raw]
-        }
-    when PLACES_AUTOCOMPLETE_TYPE
-      result = get_places_autocomplete_details(place_id)
-      place = result.body['result']
-
-      {
-        place_id:          false,
-        name:              place['formatted_address'],
-        formatted_address: place['formatted_address'],
-        lat:               place['geometry']['location']['lat'],
-        lon:               place['geometry']['location']['lng'],
-      }
-    when KIOSK_LOCATION_TYPE
-      place = KioskLocation.find(place_id)
-
-      {
-        name:              place[:name],
-        formatted_address: place[:addr],
-        lat:               place[:lat],
-        lon:               place[:lon]
-      }
-    else
-      return {}
-    end
-  end
 end

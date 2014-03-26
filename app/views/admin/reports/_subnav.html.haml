@@ -1,5 +1,4 @@
 .well
-  - puts @generated_report.inspect
   = simple_form_for @generated_report, url: admin_report_path(Report.all.first.id), html: { method: 'get', id: 'report_form', class: 'form-horizontal' }  do |f|
     .row-fluid
       .span4
@@ -18,7 +17,7 @@
         = f.input :summary_type, collection: Report.summary_types, include_blank: false, label: t(:summary_type)
       .span4
         = button_tag type: :submit, class: 'btn btn-primary controls' do
-          %i.icon.icon-ok
+          %i.fa.fa-check
           =t (:run)
 
 :javascript
