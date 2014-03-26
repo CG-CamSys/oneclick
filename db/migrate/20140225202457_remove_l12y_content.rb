@@ -1,9 +1,14 @@
 class RemoveL12yContent < ActiveRecord::Migration
   def change
 
-    drop_table :l12y_contents
+    execute "DROP TABLE IF EXISTS #{quote_table_name('l12y_contents')}"
 
-    add_column :translations, :locale, :string
-    add_column :translations, :value, :text
+    unless column_exists?(:translations, :locale)
+      add_column :translations, :locale, :string
+    end
+
+    unless column_exists?(:translations, :value)
+      add_column :translations, :value, :text
+    end
   end
 end
