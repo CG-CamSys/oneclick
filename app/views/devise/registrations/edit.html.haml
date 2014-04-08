@@ -1,13 +1,13 @@
 %h1
   %i{class: "icon #{CsHelpers::ACTION_ICONS[:travel_profile]}"}
-  = is_traveler ? "#{@traveler.name}'s #{t(:travel_profile)}" : t(:travel_profile) 
+  = is_assisting ? "#{@traveler.name}'s #{t(:travel_profile)}" : t(:travel_profile)
 
 %h4
 .tabbable
   %ul.nav.nav-tabs
     -# render the first 3 tabs only if the current user is operating as themselves. If they are assisting
     -# another user then we don't render the first 3 tabs
-    - if is_traveler == false
+    - if is_assisting == false
       %li
         %a{href: '#tab1', data: {toggle: 'tab', id: '1'}}
           = t(:my_information)
@@ -17,6 +17,9 @@
       %li
         %a{href: '#tab3', data: {toggle: 'tab', id: '3'}}
           = t(:travelers) + " (" + current_user.travelers.count.to_s + ")"
+      %li
+        %a{href: '#tab7', data: {toggle: 'tab', id: '7'}}
+          = t(:agencies) + " (" + current_user.approved_agencies.count.to_s + ")"
     %li
       %a{href: '#tab4', data: {toggle: 'tab'}}
         = t(:eligibility)
@@ -31,7 +34,7 @@
   .tab-content
     -# render the first 3 tabs only if the current user is operating as themselves. If they are assisting
     -# another user then we don't render the first 3 tabs
-    - if is_traveler == false
+    - if is_assisting == false
       .tab-pane#tab1
         .well#user_info
           = render partial: 'user_info'
@@ -50,13 +53,17 @@
     .tab-pane#tab6
       .well#accommodations
         = render partial: 'accommodations/form',  :locals => {:path => user_accommodation_path(@traveler, @user_accommodations_proxy.id), :inline => false}
+    .tab-pane#tab7
+      .well#agencies
+        = render partial: 'agencies'
 
 :javascript
+  
   // UI variables
   var settings_tab_key = "settings_tab_key";
-  
+
   // Document Ready
-  $(document).ready(function() {
+  $(document).ready(function(){
     // go to the last selected tab if it exists
     var last_tab = get_ui_key_value(settings_tab_key, null);
     var tab_found = false;
@@ -76,6 +83,6 @@
   
   // install an event handler to save the last viewed tab
   $('a[data-toggle="tab"]').on('shown', function (e) {
-    set_ui_key_value(settings_tab_key, $(e.target).attr('href'));
+    set_ui_key_value(settings_tab_key, $(e.target).attr('href'));    
   });
 

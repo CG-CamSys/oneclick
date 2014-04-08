@@ -15,5 +15,7 @@
 //= require bootstrap
 //= require bootstrap-typeahead
 //= require bootstrap-combobox
-//= require_tree .
-
+//= require config
+//= require handlebars
+//= require twitter/typeahead
+//= require_tree ./includes

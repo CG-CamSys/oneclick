@@ -1,86 +1,42 @@
 module ApplicationHelper
 
   METERS_TO_MILES = 0.000621371192
-  
-  include CsHelpers
 
-  ALPHABET = ('A'..'Z').to_a
+  include CsHelpers
+  include LocaleHelpers
   
   ICON_DICTIONARY = {
-      TripLeg::WALK => 'travelcon-walk', 
-      TripLeg::TRAM => 'travelcon-subway', 
-      TripLeg::SUBWAY => 'travelcon-subway', 
-      TripLeg::RAIL => 'travelcon-train', 
-      TripLeg::BUS => 'travelcon-bus', 
+      TripLeg::WALK => 'travelcon-walk',
+      TripLeg::TRAM => 'travelcon-subway',
+      TripLeg::SUBWAY => 'travelcon-subway',
+      TripLeg::RAIL => 'travelcon-rail',
+      TripLeg::BUS => 'travelcon-bus',
       TripLeg::FERRY => 'travelcon-boat'
       }
-  
-  # REturns the name of the logo image based on the oneclick configuration
+
+  # Returns the name of the logo image based on the oneclick configuration
   def get_logo
     return Oneclick::Application.config.ui_logo
   end
-  
+
   # Returns a mode-specific icon
   def get_mode_icon(mode)
     ICON_DICTIONARY.default = 'travelcon-bus'
     ICON_DICTIONARY[mode]
   end
- 
-  # Formats a line in the itinerary
-  def format_itinerary_item(&block)
 
-     # Check to see if there is any content in the block    
+  # Formats a line in the itinerary
+  def format_email_itinerary_item(&block)
+
+    # Check to see if there is any content in the block
     content = capture(&block)
-    if content.nil?      
+    if content.nil?
       content = "&nbsp;"
     end
-
-    html = "<tr>"
-    html << "<td style='border-top:none;'>"
-    html << "<h4 class='itinerary-item'>"
-    
     html << content
-
-    html << "</h4>"
-    html << "</td>"
-    html << "</tr>"
-    
-    return html.html_safe     
+    return html.html_safe
   end
-  
-  # Formats a line in the itinerary
-  def format_itinerary_item_old(&block)
 
-     # Check to see if there is any content in the block    
-    content = capture(&block)
-    if content.nil?      
-      content = "<p>&nbsp;</p>"
-    end
-
-    html = "<div class='row-fluid'>"
-    html << "<div class='span12'>"
-    html << "<h4>"
-    
-    html << content
-
-    html << "</h4>"
-    html << "</div>"
-    html << "</div>"
-    
-    return html.html_safe     
-  end
-  
-  # Returns a formatted string for an alternate address that includes a A,B,C, etc. designator.
-  def get_candidate_list_item_image(index, type)
-    if type == "0"
-      return 'http://maps.google.com/mapfiles/marker_green' + ALPHABET[index] + ".png"
-    elsif type == "1"
-      return 'http://maps.google.com/mapfiles/marker' + ALPHABET[index] + ".png"
-    else
-      return 'http://maps.google.com/mapfiles/marker_yellow' + ALPHABET[index] + ".png"
-    end
-  end
-  
   # Defines an array of filter options for the MyTrips page. The filters combine date range filters
   # with trip purpose filters. To make sure we can identify which is which, we simply add a constant (100)
   # to the time filter id. This assumes thata there are no more than 99 trip purposes
@@ -98,58 +54,59 @@ module ApplicationHelper
       elems << {
         :id => tp.id,
         :value => tp
-      }      
+      }
     end
-    return elems  
+    return elems
   end
-  
+
   # Returns a set of rating icons as a span
-  def get_rating_icons(planned_trip)
-    if planned_trip.in_the_future
-      return ""
-    end
-    rating = planned_trip.rating
-    html = "<span>"
+  def get_rating_icons(trip, size=1)
+    rating = trip.get_rating
+    html = "<span id='stars'>"
     for i in 1..5
+      link = rate_rating_url(trip, :user_id => trip.user.id, :stars => i, :size => size)
+      html << "<a title='Rate " + i.to_s + " Stars' href=" + link + " style='color: black; text-decoration: none' data-method='post' data-remote='true'><i id=star" + trip.id.to_s + '_' + i.to_s + " class='fa fa-" + size.to_s
       if i <= rating
-        html << "<i class='icon icon-star'></i>"
+        html << "x fa-star'> </i></a>"
       else
-        html << "<i class='icon icon-star-empty'></i>"
+        html << "x fa-star-o'> </i></a>"
       end
     end
-    html << "<span>"
+    html << "</span>"
     return html.html_safe
   end
-  
-  # Returns true if the current user is a traveler, false if the current
-  # user is operating as a delegate 
-  def is_traveler
+
+  # Returns true if the current user is assisting the traveler, false if the current
+  # user is the current traveler
+  def is_assisting
+    unless current_user
+      return false
+    end
     if @traveler
       return @traveler.id == current_or_guest_user.id ? false : true
     else
       return false
-    end  
+    end
   end
 
   def distance_to_words(dist_in_meters)
     return t(:n_a) unless dist_in_meters
-    
+
     # convert the meters to miles
     miles = dist_in_meters * METERS_TO_MILES
     if miles < 0.25
       dist_str = t(:less_than_1_block)
     elsif miles < 0.5
-      dist_str = t(:about_2_blocks)      
+      dist_str = t(:about_2_blocks)
     elsif miles < 1
-      dist_str = t(:about_4_blocks)      
+      dist_str = t(:about_4_blocks)
     else
       dist_str = t(:twof_miles) % [miles]
     end
     dist_str
   end
-  
-  def duration_to_words(time_in_seconds)
-    
+
+  def duration_to_words(time_in_seconds, options = {})
     return t(:n_a) unless time_in_seconds
 
     time_in_seconds = time_in_seconds.to_i
@@ -157,11 +114,17 @@ module ApplicationHelper
     minutes = (time_in_seconds - (hours * 3600))/60
 
     time_string = ''
-    if hours > 0
-      time_string << I18n.translate(:hour, count: hours)  + ' '
+
+    if time_in_seconds > 60*60*24 and options[:days_only]
+      return I18n.translate(:day, count: hours / 24)
     end
 
-    if minutes > 0 || hours > 0
+    if hours > 0
+      format = ((options[:suppress_minutes] and minutes==0) ? :hour_long : :hour)
+      time_string << I18n.translate(format, count: hours)  + ' '
+    end
+
+    if minutes > 0 || (hours > 0 and !options[:suppress_minutes])
       time_string << I18n.translate(:minute, count: minutes)
     end
 
@@ -174,128 +137,100 @@ module ApplicationHelper
 
   def get_boolean(val)
     if val
-      return "<i class='icon-ok'></i>".html_safe
+      return "<i class='fa-check'></i>".html_safe
     end
     #return val.nil? ? 'N' : val == true ? 'Y' : 'N'
   end
 
   def format_date_time(datetime)
-    return l datetime, :format => :long unless datetime.nil? 
+    return l datetime, :format => :long unless datetime.nil?
   end
-  
+
   # Standardized date formatter for the app. Use this wherever you need to display a date
   # in the UI. The formatted displays dates as Day of Week, Month Day eg. Tuesday, June 5
-  # if the date is from a previous year, the year is appended eg Tuesday, June 5 2012 
+  # if the date is from a previous year, the year is appended eg Tuesday, June 5 2012
   def format_date(date)
     if date.nil?
       return ""
     end
     if date.year == Date.today.year
-      return l date.to_date, :format => :oneclick_short unless date.nil? 
+      return l date.to_date, :format => :oneclick_short unless date.nil?
     else
-      return l date.to_date, :format => :oneclick_long unless date.nil? 
+      return l date.to_date, :format => :oneclick_long unless date.nil?
     end
   end
-  
+
   def format_time(time)
     return l time, :format => :oneclick_short unless time.nil?
   end
 
-  # Retuens a pseudo-mode for an itineray. The pseudo-mode is used to determine
-  # the correct icon, title, and partial for an itinerary
-  def get_pseudomode_for_itinerary(itinerary)
-
-    if itinerary.is_walk
-      mode_name = 'walk'
-    elsif itinerary.mode.name.downcase == 'paratransit'
-      mode_name = itinerary.service.service_type.name.downcase
-    else
-      mode_name = itinerary.mode.name.downcase
-    end
-    return mode_name    
-  end
-  
+  # TODO These next 2 methods are very similar to methods in CsHelper,should possible be consolidated
   # Returns the correct partial for a trip itinerary
   def get_trip_partial(itinerary)
-    
+
     return if itinerary.nil?
     
-    mode_name = get_pseudomode_for_itinerary(itinerary)
+    mode_code = get_pseudomode_for_itinerary(itinerary)
 
-    if mode_name == 'transit'
-      partial = 'transit_details'
-    elsif mode_name == 'paratransit'
-      partial = 'paratransit_details'
-    elsif mode_name == 'volunteer'
-      partial = 'paratransit_details'
-    elsif mode_name == 'non-emergency medical service'
-      partial = 'paratransit_details'
-    elsif mode_name == 'livery'
-      partial = 'paratransit_details'
-    elsif mode_name == 'taxi'
-      partial = 'taxi_details'
-    elsif mode_name == 'rideshare'
-      partial = 'rideshare_details'
-    elsif mode_name == 'walk'
-      partial = 'walk_details'
+    partial = if mode_code.in? ['transit', 'rail', 'bus', 'railbus']
+      'transit_details'
+    elsif mode_code == 'paratransit'
+      'paratransit_details'
+    elsif mode_code == 'volunteer'
+      'paratransit_details'
+    elsif mode_code == 'non-emergency medical service'
+      'paratransit_details'
+    elsif mode_code == 'nemt'
+      'paratransit_details'
+    elsif mode_code == 'livery'
+      'paratransit_details'
+    elsif mode_code == 'taxi'
+      'taxi_details'
+    elsif mode_code == 'rideshare'
+      'rideshare_details'
+    elsif mode_code == 'walk'
+      'walk_details'
     end
-    return partial    
-  end
-  
-  # Returns the correct localized title for a trip itinerary
-  def get_trip_summary_title(itinerary)
-    
-    return if itinerary.nil?
-    
-    mode_name = get_pseudomode_for_itinerary(itinerary)
-
-    if mode_name == 'transit'
-      title = t(:transit)
-    elsif mode_name == 'paratransit'
-      title = t(:paratransit)      
-    elsif mode_name == 'volunteer'
-      title = t(:volunteer)
-    elsif mode_name == 'non-emergency medical service'
-      title = t(:nemt)
-    elsif mode_name == 'livery'
-      title = t(:car_service)
-    elsif mode_name == 'taxi'
-      title = t(:taxi)      
-    elsif mode_name == 'rideshare'
-      title = t(:rideshare)
-    elsif mode_name == 'walk'
-      title = t(:walk)
-    end
-    return title    
+    return partial
   end
 
-
   # Returns the correct localized title for a trip itinerary
-  def get_trip_summary_icon(itinerary) 
+  def get_trip_summary_icon(itinerary)
     return if itinerary.nil?
     
-    mode_name = get_pseudomode_for_itinerary(itinerary)
-    
-    if mode_name == 'transit'
-      icon_name = 'icon-bus-sign'
-    elsif mode_name == 'paratransit'
-      icon_name = 'icon-truck-sign'
-    elsif mode_name == 'volunteer'
-      icon_name = 'icon-truck-sign'
-    elsif mode_name == 'non-emergency medical service'
-      icon_name = 'icon-user-md'
-    elsif mode_name == 'livery'
-      icon_name = 'icon-taxi-sign'
-    elsif mode_name == 'taxi'
-      icon_name = 'icon-taxi-sign'      
-    elsif mode_name == 'rideshare'
-      icon_name = 'icon-group'      
-    elsif mode_name == 'walk'
-      icon_name = 'icon-accessibility-sign'      
+    mode_code = get_pseudomode_for_itinerary(itinerary)
+    icon_name = if mode_code == 'rail'
+      'icon-bus-sign'
+    elsif mode_code == 'railbus'
+      'icon-bus-sign'
+    elsif mode_code == 'bus'
+      'icon-bus-sign'
+    elsif mode_code == 'transit'
+      'icon-bus-sign'
+    elsif mode_code == 'paratransit'
+      'fa-truck'
+    elsif mode_code == 'volunteer'
+      'fa-truck'
+    elsif mode_code == 'nemt'
+      'fa-truck'
+    elsif mode_code == 'non-emergency medical service'
+      'fa-truck'
+    elsif mode_code == 'livery'
+      'icon-taxi-sign'
+    elsif mode_code == 'taxi'
+      'icon-taxi-sign'      
+    elsif mode_code == 'rideshare'
+      'fa-group'      
+    elsif mode_code == 'walk'
+      'icon-accessibility-sign'
     end
     return icon_name
   end
-  
+
+  def get_trip_direction_icon(itin_or_trip)
+    (itin_or_trip.is_return_trip ? 'fa-arrow-left' : 'fa-arrow-right')
+  end
+
   def display_base_errors resource
     return '' if (resource.errors.empty?) or (resource.errors[:base].empty?)
     messages = resource.errors[:base].map { |msg| content_tag(:p, msg) }.join
@@ -311,13 +246,14 @@ module ApplicationHelper
   def t(key, options={})
     branded_key = [brand, key].join('.')
     begin
-      translate(branded_key, options.merge({raise: true}))
+      I18n.translate(branded_key, options.merge({raise: true}))
     rescue Exception => e
       begin
-        translate(key, options.merge({raise: true}))
+        I18n.translate(key, options.merge({raise: true}))
       rescue Exception => e
-        # Rails.logger.debug "key: #{key} not found: #{e.inspect}"
-      end    
+        Rails.logger.info "key: #{key} not found: #{e.inspect}"
+        # Note we swallow the exception
+      end
     end
   end
 
@@ -348,7 +284,7 @@ module ApplicationHelper
     parts.delete_at(1) if has_locale
     parts = parts.join('/')
     return '/' if parts.empty?
-    parts 
+    parts
   end
 
   def at_root
@@ -361,4 +297,11 @@ module ApplicationHelper
     controller_name
   end
 
+  def tel_link num
+    if num =~ /([0-9]{3})-([0-9]{3})-([0-9]{4})/
+      link_to num, "tel://+1#{$1}#{$2}#{$3}"
+    else
+      num
+    end
+  end
 end

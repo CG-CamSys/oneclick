@@ -1,4 +1,12 @@
-%h4
+%h1
+  %i.fa.fa-key.fa-rotate-90
+  = t(:sign_up)
+
+- if @create_inline
+  .row-fluid
+    .span12
+      = render partial: 'trips/trip_header', locals: {trip: @trip}
+
 .well
   = simple_form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => {:class => 'form-horizontal' }) do |f|
     = f.error_notification
@@ -9,15 +17,13 @@
         .row-fluid
           .span12
             %p
-              Registering for ARC One-Click allows you to save your eligibility and needs information for planning
-              future trips, as well as the ability to save and reuse trips, set up a travel buddy, and more.
+              =cms_snippet_content('registration-reasoning')
             / = t(:to_see_best_options)
         .row-fluid
           .span12
-            %a.btn.btn-success{:alt => 'alt words', :title => 'title here', :href => skip_user_planned_trip_path(@traveler, @planned_trip.id)}
+            %a.btn.btn-success{:alt => 'alt words', :title => 'title here', :href => skip_user_trip_path(@traveler, @trip.id)}
               %i{class: "icon #{CsHelpers::ACTION_ICONS[:plan_a_trip]}"}
-              No thanks, just plan my trip
-              / = t(:no_thanks_just_plan_it)
+              =t(:no_thanks_just_plan_it)
 
     - Rails.logger.debug "In view, I18n: #{I18n.locale}"
     - Rails.logger.debug t(:first_name)
@@ -26,16 +32,16 @@
     = f.input :email, label: t(:email), :required => true
     = f.input :password, label: t(:password), :required => true
     = f.input :password_confirmation, :label => t(:retype_your_password), :required => true
+    = f.hidden :approved_agencies if session[:agency]
     - if @create_inline
       .form-actions
         = button_tag :type => 'submit', :class => "btn btn-primary" do
           %i{class: "icon #{CsHelpers::ACTION_ICONS[:plan_a_trip]}"}
-          Sign up and plan my trip
-          / = t(:plan_it)
+          =t(:sign_up_and_plan)
     - else
       .actions
         = button_tag type: :submit, class: 'btn btn-primary controls' do
-          %i.icon.icon-edit
+          %i.fa.fa-edit
           = t(:sign_up)
         = render "devise/shared/links"
 

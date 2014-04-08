@@ -2,10 +2,17 @@ class ApplicationController < ActionController::Base
   include CsHelpers
   include LocaleHelpers
 
+  # acts_as_token_authentication_handler_for User
+
+  # include the helper method in any controller which needs to know about guest users
+  helper_method :current_or_guest_user
+
   protect_from_forgery
+  before_filter :get_traveler
   before_filter :set_locale
+  before_filter :setup_actions
   after_filter :clear_location
-   
+
   rescue_from CanCan::AccessDenied do |exception|
     redirect_to root_path, :alert => exception.message
   end
@@ -19,7 +26,11 @@ class ApplicationController < ActionController::Base
   end
 
   def set_locale
-    I18n.locale = params[:locale] || I18n.default_locale
+    if params[:locale]
+       I18n.locale = params[:locale]
+    else
+      I18n.locale = current_or_guest_user.preferred_locale
+    end
   end
 
   def default_url_options(options={})
@@ -44,39 +55,46 @@ class ApplicationController < ActionController::Base
     response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
   end
 
-  ######################################################################
-  #
-  # Manage guest users
-  #
-  ######################################################################
-  
-  # if user is logged in, return current_user, else return guest_user
-  def current_or_guest_user
-    if current_user
-      if session[:guest_user_id]
-        logging_in
-        #guest_user.destroy
-        session[:guest_user_id] = nil
+  protected
+
+  def create_random_string(length=16)
+    SecureRandom.urlsafe_base64(length)
+  end
+
+
+  def setup_actions
+    @actions = actions
+  end
+
+  # Update the session variable
+  def set_traveler_id(id)
+    session[TRAVELER_USER_SESSION_KEY] = id
+  end
+
+  def after_sign_in_path_for(resource)
+    if session[:agency]
+      return new_user_registration_path(locale: current_or_guest_user.preferred_locale)
+    end
+    if session[:inline]
+      get_traveler
+      unless Trip.where(id: session[:current_trip_id]).exists?
+        session[:current_trip_id] =  nil
+        return new_user_trip_path(current_or_guest_user, locale: current_or_guest_user.preferred_locale)
       end
-      current_user
+      @trip = Trip.find(session[:current_trip_id])
+      session[:current_trip_id] =  nil
+      @trip.create_itineraries
+      user_trip_path(@traveler, @trip)
     else
-      guest_user
+      if ui_mode_kiosk?
+        new_user_trip_path(current_or_guest_user)
+      else
+        root_path(locale: current_or_guest_user.preferred_locale)
+      end
     end
   end
-  
-  # find guest_user object associated with the current session,
-  # creating one as needed
-  def guest_user
-    # Cache the value the first time it's gotten.
-    @cached_guest_user ||= User.find(session[:guest_user_id] ||= create_guest_user.id)
 
-    rescue ActiveRecord::RecordNotFound # if session[:guest_user_id] invalid
-       session[:guest_user_id] = nil
-       guest_user
- 
-  end
-  
-private
+  private
 
   # called (once) when the user logs in, insert any code your application needs
   # to hand off from guest_user to current_user.
@@ -90,11 +108,12 @@ private
   end
 
   def create_guest_user
+    random_string = create_random_string(16)
     u = User.new
     u.first_name = "Visitor"
     u.last_name = "Guest"
-    u.password = "welcome1"
-    u.email = "guest_#{Time.now.to_i}#{rand(99)}@example.com" 
+    u.password = random_string
+    u.email = "guest_#{random_string}@example.com"
     u.save!(:validate => false)
     session[:guest_user_id] = u.id
     u
@@ -105,5 +124,5 @@ private
   # End of Manage guest users
   #
   ######################################################################
-    
+
 end

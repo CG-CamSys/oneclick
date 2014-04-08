@@ -1,10 +1,13 @@
 .row-fluid
   .span12
     %h1
-      / %i.icon.icon-paper-clip
-      %i.icon.icon-info-sign
+      %i.fa.fa-info-circle
       Your Needs - Step 3 of 3
       / = t(:to_see_best_options)
+
+.row-fluid
+  .span12
+    = render partial: 'trips/trip_header', locals: {trip: @trip}
 
 .row-fluid
   .well

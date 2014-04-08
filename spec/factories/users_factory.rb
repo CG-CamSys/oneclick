@@ -1,10 +1,14 @@
 # Read about factories at https://github.com/thoughtbot/factory_girl
 
 FactoryGirl.define do
+  sequence :email do |n|
+    "email#{n}@factory.com"
+  end
+
   factory :user do
     first_name 'Test'
     last_name 'User'
-    email 'example@example.com'
+    email
     password 'changeme'
     password_confirmation 'changeme'
     # required if the Devise Confirmable module is used
@@ -22,6 +26,11 @@ FactoryGirl.define do
       last_name 'User'
       email 'example2@example.com'
     end
+    factory :spanish_user do
+      first_name 'Spanish'
+      last_name 'user'
+      preferred_locale 'es'
+    end
     factory :admin do
     first_name 'Admin'
     last_name 'User'
@@ -32,4 +41,10 @@ FactoryGirl.define do
       end
     end
   end
+  # factory :agency_admin do
+  #   first_name 'ARC'
+  #   last_name 'Admin'
+  #   email 'ARC_Admin@example.com'
+  #   agency FactoryGirl.create :arc_mobility_mgmt_agency
+  # end
 end

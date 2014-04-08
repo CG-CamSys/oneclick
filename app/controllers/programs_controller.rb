@@ -10,17 +10,20 @@ class ProgramsController < TravelerAwareController
     @user_programs_proxy.update_maps(params[:user_programs_proxy])
 
     if params['inline'] == '1'
-
       if @traveler.has_disability?
-        @path = new_user_accommodation_path(@traveler, inline: 1)
+        @path = new_user_accommodation_path_for_ui_mode(@traveler, inline: 1)
       else
         if user_signed_in?
-          @planned_trip = PlannedTrip.find(session[:current_trip_id])
+          @trip = Trip.find(session[:current_trip_id])
           session[:current_trip_id] =  nil
-          @planned_trip.create_itineraries
-          @path = user_planned_trip_path(@traveler, @planned_trip)
+          @trip.create_itineraries
+          @path = user_trip_path_for_ui_mode(@traveler, @trip)
         else
-          @path = new_user_registration_path(inline: 1)
+          if ui_mode_kiosk?
+            @path = skip_user_trip_path_for_ui_mode(@traveler, session[:current_trip_id])
+          else
+            @path = new_user_registration_path(inline: 1)
+          end
         end
       end
     else
@@ -45,9 +48,10 @@ class ProgramsController < TravelerAwareController
 
     @user_programs_proxy = UserProgramsProxy.new(@traveler)
 
-    @planned_trip_id = session[:current_trip_id]
+    @trip_id = session[:current_trip_id]
+    @trip = Trip.find(@trip_id)
     @total_steps = (@traveler.has_disability? ? 3 : 2)
-    
+
     respond_to do |format|
       format.html
     end

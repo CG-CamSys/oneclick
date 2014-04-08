@@ -1,14 +1,7 @@
 ENV["RAILS_ENV"] ||= 'test'
 
 require 'simplecov'
-SimpleCov.start 'rails'
-
-require 'coveralls'
-# See https://github.com/lemurheavy/coveralls-ruby/issues/22
-# SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
-#   SimpleCov::Formatter::HTMLFormatter
-# ]
-Coveralls.wear_merged!('rails')
+SimpleCov.command_name 'rspec'
 
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require File.expand_path("../../config/environment", __FILE__)
@@ -59,13 +52,14 @@ RSpec.configure do |config|
   config.order = "random"
   
   config.before(:suite) do
-    DatabaseCleaner.strategy = :truncation, {except: %w{traveler_characteristics traveler_accommodations
-      service_types trip_purposes providers services schedules service_trip_purpose_maps
-      service_traveler_characteristics_maps
-      service_traveler_accommodations_maps
-      user_traveler_accommodations_maps
-      user_traveler_characteristics_maps
-      }}
+    DatabaseCleaner.strategy = :transaction
+    # DatabaseCleaner.strategy = :truncation, {except: %w{traveler_characteristics traveler_accommodations
+    #   service_types trip_purposes providers services schedules service_trip_purpose_maps
+    #   service_characteristics
+    #   service_accommodations
+    #   user_accommodations
+    #   user_characteristics
+    #   }}
     DatabaseCleaner.start
   end
 

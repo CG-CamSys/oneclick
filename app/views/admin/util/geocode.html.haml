@@ -1,7 +1,7 @@
 .row-fluid
   .span12
     %h1
-      %i.icon.icon-map-marker
+      %i.fa.fa-map-marker
       Geocode (util only)
 
 .row-fluid
@@ -18,9 +18,10 @@
       = OneclickGeocoder::INCLUDED_TYPES
   .row-fluid
     .span12
-      Jump to: 
+      Jump to:  
+      / This screen is not public, will not internationalize.
       - (1..@results.size).each do |i|
-        %a{href: "##{i}"}= i
+        %a{href: "##{i}"}= i  
       %br
       - @results.each_with_index do |r, i|
         = i + 1
