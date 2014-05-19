@@ -23,22 +23,34 @@ es:
   find_traveler: "Encontrar al Viajero"
   create_traveler: "Crear un Viajero"
   feedback: "[es]Feedback[/es]"
+  agency: "[es]Agency[/es]"
   agencies: "[es21]Agencies[es]"
+  all_agencies: "[es28]All Agencies[/es]"
   add_new_agency: "[es26]Add a new Agency[/es]"
   agency_added: "[es27]Agency added[/es]"
+  specific_agency_added: "[es29]%{agency} added[/es]"
   user_created_and_added_to_agency: "[es29]User %{user} created and added to agency %{agency}[/es]"
+  create_agency: '[es]Create Agency[/es]'
   add_agency: "[es26]Add Agency[/es]"
+  agency_profile: "[es]Agency Profile[/es]"
   edit_agency_name: '[es]Edit %{name}[/es]'
   update_agency: "[es]Update Agency[/es]"
   my_agencies: "[es27]My Agencies[/es]"
   not_any_agencies: "[es28]You haven't approved any agencies to help you[/es]"
+  no_agency_selected: "[es37]You must enter any agency you want to assist you.[/es]"
   agency_now_assisting: "[es30]#{@agency} now assisting[/es]"
   parent_agency: "[es26]Parent Agency[/es]"
   parent: "[es27]Parent[/es]"
   subagencies: "[es27]Sub-agencies[/es]"
   new_agency: "[es29]New Agency[/es]"
+  select_agency: "[es42]Select Agency[/es]"
   provider: "[es25]Provider[/es]"
+  new_provider: "[es]New Provider[/es]"
+  all_providers: "[es]All Providers[/es]"
+  provider_profile: "[es]Provider Profile[/es]"
   providers: "[es22]Providers[es]"
+  select_provider: "[es]Select Provider[/es]"
+  back_to_providers: "[es]Back to providers[/es]"
   editing_org: "[es30]Editing organization[/es]"
   listing_orgs: "[es31]Listing Organizations[/es]"
   provider_orgs: "[es30]Provider Organizations[/es]"
@@ -61,7 +73,13 @@ es:
   summary_type: "[es50]Summary Type[/es]"
   run: "[es51]Run[/es]"
   users: "[es42]Users[/es]"
+  agents: "[es67]Agents[/es]"
+  administrators: "[es71]Administrators[/es]"
+  create_user: "[es]Create User[/es]"
+  user_created: "[es79]User created[/es]"
   admin: '[es42]Admin[/es]'
+  admin_actions: '[es]Admin[/es]'
+  staff_actions: '[es]Staff[/es]'
   send_by_email: 'Enviar por correo electrónico'
   send_itinerary_by_email: "[es32]Send itinerary by email[/es]"
   send_trip_by_email: "[es29]Send trip plan by email[/es]"
@@ -94,9 +112,12 @@ es:
   current_password_hint: "Introduce tu contraseña actual para guardar los cambios."  
   leave_password_blank: "Deja ambas casillas en blanco si no quieres cambiar tu contraseña."
   my_information: 'Mi información'
+  user_information: '[es104]User Info[/es]'
   buddies: 'Amigos'
   travelers: 'Viajeros'
   traveler: 'Viajero'
+  matching_travelers: "[es]Matching Travelers[/es]"
+  authorized_travelers: "[es]Authorized Travelers[/es]"
   add_user: "[es81]Add User[/es]"
   send_buddy_request: 'Enviar solicitud de amigo'
   add_new_buddy:  "[es82]Add a new buddy[/es]"
@@ -133,6 +154,7 @@ es:
   error_404_mistyped: 'Es posible que hayas escrito mal la dirección o la página puede haber cambiado.'
   error_422: 'El cambio que querías fue rechazado.'
   error_422_detail: "Tal vez trataste de cambiar algo al que no tienes acceso."
+  error_couldnt_plan: '[es157]No trip plan could be created.  This is likely due to a system error, and our staff has been notified. Please try your trip again.[/es]'
 
   # Trip History and Rating
   rating: "Clasificacion *7*"
@@ -161,8 +183,13 @@ es:
   finish_trip_planning_options: "[es133]You can now do one or more of the following to finish your trip planning[/es]"
   arrive_at: 'Llegar a'
   trip_time: 'Hora'
+  apply: 'Applicar'
   cancel: 'Cancelar'
   plan_it: 'Planear el viaje'
+  trip: '[es]Trip[/es]'
+  options: '[es]Options[/es]'
+  review: '[es]Review[/es]'
+  plan: '[es]Plan[/es]'
   from: 'De'
   to: 'A'  
   at_time: 'en'  
@@ -184,6 +211,13 @@ es:
   trip_date: "[es130]Trip Date[/es]"
   rideshare: 'Para Compartir el Viaje'
   walk: 'Caminar'  
+  bus: '[es211]Bus[/es]'
+  drive: '[es212]Drive[/es]'
+  rail: '[es213]Rail[/es]'
+  subway: '[es214]Subway[/es]'
+  vehicle: '[es]Vehicle[/es]'
+  select_a_plan_each_trip_part: '[es]Please select itinerary for each trip part[/es]'
+  route: '[es215]Route[/es]'
   transfer: {
       one: '%{count} conección',
       other: '%{count} conecciones',
@@ -207,10 +241,12 @@ es:
   print: 'Imprimir'
   chat: 'Charlar en línea'
   e_mail: ' Correo electrónico'
+  create: "[es230]Create[/es]"
   created: "[es152]Created[/es]"
   trip_was_successfully_created: 'El viaje fue creado exitosamente.'
   trip_was_successfully_removed: 'El viaje fue eliminada afortunada. *25*'  
   trip_created_no_valid_options: "El viaje fue creado, pero no se encontraron opciones válidas de viaje."
+  was_successfully_updated: '[es]was successfully updated.[/es]'
   hour: {
     one: '%{count} h',
     other: '%{count} h',
@@ -259,8 +295,10 @@ es:
   returning: '[es172]returning[/es]'
   return_after: "[es199]Return after[/es]"
   at: '[es173]at[/es]'
+  wait_at: '[es288]Wait at[/es]'
   fare: "[es198]Fare[/es]"
   flat_fare_unavailable: "[es199]Flat fare unavailable[/es]"
+  rate: "[es]Rate[/es]"
 
   # My Places form
   found_x_places: {
@@ -284,17 +322,24 @@ es:
   updated: "[es242]Updated[/es]"
 
   # new ones
+  book: "[es]Book[/es]"
   inactive: "[es]Inactive[/es]"
   service_id: "[es]Service Id[/es]"
+  booking_service_code: "[es]Booking Service Code[/es]"
   back_to_services: "[es]Back to services[/es]"
   service: "[es]Service[/es]"
   services: "[es]Services[/es]"
+  all_services: "[es]All Services[/es]"
   active: "[es240]Active[/es]"
+  add_service: "[es]Add new Service[/es]"
   select_service: "[es276]Select Service[/es]"
   service_is_inactive: "[es219]This service is currently inactive.[/es]"
   service_contact: "[es220]Service Contact Information[/es]"
   specialized_services: "[es]Specialized Services[/es]"
   view_services: "[es]View Services[/es]"
+  origins: "[es]Origins[/es]"
+  destinations: "[es]Destinations[/es]"
+  residences: "[es]Residences[/es]"
   no_restriction: "[es217]No restriction[/es]"
   contact: "[es224]Contact[/es]"
   title: "[es225]Title[/es]"
@@ -315,8 +360,10 @@ es:
   trip_insufficient_notice_a: "[es275]This trip must be booked '[/es]"
   trip_insufficient_notice_b: "[es294]in advance.[/es]"
   more_information_required: "[es294]More information is needed.[/es]"
+  trip_needs_more_accommodations: "[es360]These accommodations are not met by this service[/es]"
   service_notice_not_required: "[es240]This service does not require advanced notice to book a trip[/es]"
   no_cost_for_service:  "[es281]No cost for this service[/es]"
+  cost_details: "[es362]Cost Details[/es]"
   addl_cost_details: "[es299]Additional Cost Details[/es]"
   click_for_cost_details: '[es]Click for cost details[es]'
   view_trip_details: "[es298]View trip details so that you can call the provider.[/es]"
@@ -375,8 +422,8 @@ es:
   one_click_traveler_revoke_by_from_email: "[es]1-Click traveler revoked by %{by}[/es]"
   you_can_t_be_your_own_buddy: "No puedes ser tu propio amigo."
   you_ve_already_asked_them_to_be_a_buddy: "Ya le has solicitado ser amigo."
-  my_buddies: "[es331]My Buddies[/es]"
-  not_any_buddies: "[es332]You don't have any buddies. Send a buddy request by entering their email address above.[/es]"
+  my_buddies: "[es331]%{owner} Buddies[/es]"
+  not_any_buddies: "[es332]You don't have any buddies.[/es]"
   no_buddies: "[es307]You don't have any travelers that have asked you to be their travel buddy.[/es]"
   address_is_required: "Se require una dirección"
   all_trips: "Todos los viajes *22*"
@@ -410,6 +457,7 @@ es:
   email_addresses: 'Correos electrónicos'
   start: "START: "
   start_time: "[es324]Start Time[/es]"
+  times: "[es456]Times[/es]"
   end_time: "[es325]End Time[/es]"
   walk_time: "es[326]Walk Time[/es]"
   transit_time: "[es327]Transit Time[/es]"
@@ -418,7 +466,6 @@ es:
   on: ' en '
   walking: ' caminando'
   arrive: "ARRIVE: "
-  trip: "Viaje: "
   est: " (est.)"
   myself: "yo mismo"  
   assisted_user_first_name_s_trips: "Viajes de %{name}"
@@ -444,7 +491,9 @@ es:
   edit: "Editar *30*"
   delete: "Borrar *31*"
   save: "Guardar *32*"
+  apply: "[es457]Apply[/es]"
   and: "[es305]and[/es]"
+  new: "[es459]New[es]"
   itinerary: "[es307]Itinerary[/es]"
   itineraries: "[es339]Itineraries[/es]"
   in_str: "[es358]In[/es]"
@@ -453,7 +502,9 @@ es:
   change_role: "[es360]Change Role[/es]"
   select_users: "[es370]Select users[/es]"
   add: "[es371]Add[/es]"
+  back: "[es475]Back[/es]"
   count: "[es385]Count[/es]"
+  contact_info: "[es477]Contact Info[/es]"
   do_not_reply: "[es386]This email is sent from an email address that is not monitored. Please do not reply to this message.[/es]"
   nothing_found_sorry: "[es407]Nothing found - sorry[/es]"
   solicit_feedback: "[es428]Please give us some feedback:[/es]"
@@ -467,7 +518,17 @@ es:
   show: "[es]Show[/es]"
   list: "[es]List[/es]"
   name: "[es]Name[/es]"
+  information: "[es]information[/es]"
+  internal_contact: "[es]Internal Contact[/es]"
+  city: "[es]City[/es]"
+  state: "[es]State[/es]"
+  zip: "[es]Zip[/es]"
 
+  # validation messages
+  valid_time_msg: "[es]must be a valid time[/es]"
+  presence_msg: "[es]can't be blank[/es]"
+  before_msg: "[es]must be before [/es]"
+  
   # Branding
   arc:
     logotext: ''
@@ -481,20 +542,20 @@ es:
     logotext: ''
     site_title: 'Broward 1-Click'
     site_description: 'Aplicación Broward 1-Click'
-  # simple_form:
-  #   labels:
-  #     defaults:
-  #       first_name: 'Nombre'
-  #       last_name: 'Apellido'
-  #       email: 'Correo electrónico'
-  #       password: 'Contraseña'
-  #       remember_me: 'Acuérdate de mí'
-  #       email: 'Correo electrónico'
-  #       password: 'Contraseña'
-  #       retype_your_password: Vuelve a escribir tu contraseña'
-  #       remember_me: ' Acuérdate de mí '
-  #     user:
-  #       first_name: 'Nombre'
+  simple_form:
+    labels:
+      defaults:
+        first_name: 'Nombre'
+        last_name: 'Apellido'
+        email: 'Correo electrónico'
+        password: 'Contraseña'
+        remember_me: 'Acuérdate de mí'
+        email: 'Correo electrónico'
+        password: 'Contraseña'
+        retype_your_password: Vuelve a escribir tu contraseña'
+        remember_me: ' Acuérdate de mí '
+      user:
+         first_name: 'Nombre'
 
   
   date:

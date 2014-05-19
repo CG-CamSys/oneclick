@@ -1,5 +1,4 @@
 Oneclick::Application.routes.draw do
-
   get '/configuration' => 'configuration#configuration'
 
   scope "(:locale)", locale: /en|es/ do
@@ -7,11 +6,11 @@ Oneclick::Application.routes.draw do
     if Oneclick::Application.config.ui_mode == 'kiosk'
       root to: redirect('/kiosk')
     else
-      root :to => "home#index"
+      root to: 'home#index'
     end
 
     authenticated :user do
-      root :to => 'home#index', as: :authenticated_root
+      root :to => 'trips#new', as: :authenticated_root
     end
 
     devise_for :users, controllers: {registrations: "registrations", sessions: "sessions"}
@@ -21,7 +20,7 @@ Oneclick::Application.routes.draw do
     resources :users do
       member do
         get   'profile'
-        post  'update'
+        # post  'update'
       end
 
       resources :characteristics, :only => [:new, :create, :edit, :update] do
@@ -76,11 +75,13 @@ Oneclick::Application.routes.draw do
 
       # users have trips
       resources :trips, :only => [:show, :index, :new, :create, :destroy, :edit, :update] do
+        resources :characteristics, only: [:new, :update], controller: 'characteristics'
         collection do
           post  'set_traveler'
           get   'unset_traveler'
           get   'search'
           post  'geocode'
+          get   'plan_map'
         end
         member do
           get   'repeat'
@@ -101,6 +102,9 @@ Oneclick::Application.routes.draw do
           get   'edit_rating'
           get   'email_feedback'
           get   'show_printer_friendly'
+          get   'example'
+          get   'book'
+          get   'plan'
         end
       end
 
@@ -131,11 +135,13 @@ Oneclick::Application.routes.draw do
 
     namespace :kiosk do
       get '/', to: 'home#index'
+      get 'reset', to: 'home#reset'
+
+      get 'itineraries/:id/print' => 'trips#itinerary_print', as: 'print_itinerary'
 
       resources :locations, only: [:show]
       resources :call, only: [:show, :index] do
         post :outgoing, on: :collection
-        get :test, on: :collection
       end
 
       # TODO can probably remove a lot of these routes
@@ -257,30 +263,25 @@ Oneclick::Application.routes.draw do
       get '/raise' => 'util#raise'
       get '/' => 'admin_home#index'
       resource :feedback
-      resources :travelers, controller: 'agency_user_relationships' do
+      resources 'agency_user_relationships' do
         get   'aid_user'
         get   'agency_revoke'
       end
       resources :agencies do
-        resources :travelers, controller: 'agency_user_relationships' do
-          get   'aid_user'
+        get 'travelers'
+        get "users/:id/agency_assist", to: "users#assist", as: :agency_assist
+        resources 'agency_user_relationships' do
           get   'agency_revoke'
         end
         get 'select_user'
-        resources :users do   #employees, not customers
-          post 'add_to_agency', on: :collection
-          put 'add_to_agency', on: :collection
-        end
         resources :trips
       end
-      resources :provider_orgs do
-        resources :users
-        resources :services
-      end
-      resources :users do #admin users
+      resources :users do
         put 'update_roles', on: :member
       end
       resources :providers do
+        resources :users
+        resources :services
         resources :trips, only: [:index, :show]
       end
     end#admin
@@ -299,8 +300,6 @@ Oneclick::Application.routes.draw do
       end
     end
 
-
-    
     get '/' => 'home#index'
 
     get '/404' => 'errors#error_404', as: 'error_404'
@@ -310,6 +309,11 @@ Oneclick::Application.routes.draw do
 
   end
 
-    resources :translations
+  resources :translations
 
+  unless Oneclick::Application.config.ui_mode == 'kiosk'
+    # get '*not_found' => 'errors#handle404'
+  end
+
+  get 'heartbeat' => Proc.new { [200, {'Content-Type' => 'text/plain'}, ['ok']] }
 end

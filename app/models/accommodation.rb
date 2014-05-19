@@ -3,6 +3,7 @@
 # name: 'Folding wheelchair accessible.'
 # note: 'Do you need a vehicle that has space for a folding wheelchair?'
 # datatype: 'bool'
+# sequence: integer
 #
 # Services have accommodations that they offer; users have accomodations that they require.
 #
@@ -18,5 +19,6 @@ class Accommodation < ActiveRecord::Base
 
   # set the default scope
   default_scope {where('accommodations.active = ?', true)}
-
+  scope :active, -> {where(active: true)}
+  scope :enabled, -> { where.not(datatype: 'disabled') }
 end

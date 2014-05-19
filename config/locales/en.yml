@@ -26,23 +26,33 @@ en:
   find_traveler: "Find Traveler"
   create_traveler: "Create Traveler"
   feedback: "Feedback"
+  agency: "Agency"
   agencies: "Agencies"
+  all_agencies: "All Agencies"
   add_new_agency: "Add a new Agency"
+  create_agency: 'Create Agency'
   add_agency: "Add Agency"
+  agency_profile: "Agency Profile"
   edit_agency_name: 'Edit %{name}'
   update_agency: "Update Agency"
   agency_added: "Agency added"
+  specific_agency_added: "%{agency} added"
   user_created_and_added_to_agency: "User %{user} created and added to agency %{agency}"
   my_agencies: "My Agencies"
   not_any_agencies: "You haven't approved any agencies to help you"
+  no_agency_selected: "You must enter any agencies you want to assist you."
   agency_now_assisting: "%{agency} now assisting"
   parent_agency: "Parent Agency"
   parent: "Parent"
   subagencies: "Sub-agencies"
   new_agency: "New Agency"
+  select_agency: "Select Agency"
   providers: "Providers"
+  all_providers: "All Providers"
+  provider_profile: "Provider Profile"
   provider_orgs: "Provider Organizations"
   new_provider_org: 'New Provider Organization'
+  new_provider: "New Provider"
   org_type: "Org type"
   new_organization: "New Organization"
   editing_orgs: "Editing organization"
@@ -51,11 +61,17 @@ en:
   provider: "Provider"
   provider_contact_info: "Provider Contact Information"
   provided_by: "Provided by"
+  select_provider: "Select Provider"
+  back_to_providers: "Back to providers"
   users: "Users"
+  agents: "Agents"
+  administrators: "Administrators"
   agents_agencies: "Agencies, Providers, Users"
   confirm_msg: "Are you sure?"
   change_role: "Change Role"
+  create_user: "Create User"
   delete_user: "Delete user"
+  user_created: "User Created"
   # Agent and Admin string
   reports: "Reports"
   report_name: "Report Name"
@@ -65,6 +81,8 @@ en:
   summary_type: "Summary Type"
   run: "Run"
   admin: 'Admin'
+  admin_actions: 'Admin'
+  staff_actions: 'Staff'
   send_by_email: 'Send by email'
   send_itinerary_by_email: "Send itinerary by email"
   send_trip_by_email: "Send trip plan by email"
@@ -80,7 +98,7 @@ en:
   welcome: 'Welcome'
   first_name: 'First name'
   last_name: 'Last name'
-  email: 'Email address'
+  email: 'Email'
   preferred_locale: "Preferred Language"
   address: "Address"
   remember_me: 'Remember me'
@@ -95,9 +113,12 @@ en:
   current_password_hint: "Enter your current password to confirm your changes."
   leave_password_blank: "Leave both blank if you don't want to change your password."
   my_information: 'My information'
+  user_information: 'User Info'
   buddies: 'Buddies'
   travelers: 'Travelers'
   traveler: 'Traveler'
+  matching_travelers: "Matching Travelers"
+  authorized_travelers: "Authorized Travelers"
   add_user: "Add User"
   send_buddy_request: 'Send buddy request'
   add_new_buddy:  "Add a new buddy"
@@ -133,6 +154,7 @@ en:
   error_404_mistyped: 'You may have mistyped the address or the page may have moved.'
   error_422: 'The change you wanted was rejected.'
   error_422_detail: "Maybe you tried to change something you didn't have access to."
+  error_couldnt_plan: 'No trip plan could be created.  This is likely due to a system error, and our staff has been notified. Please try your trip again.'
 
   # Trip History and Rating
   rating: "Rating"
@@ -159,8 +181,13 @@ en:
   arrive_by: 'Arrive by'
   arrive_at: 'Arrive at'
   trip_time: 'Time'
+  apply: 'Apply'
   cancel: 'Cancel'
   plan_it: 'Plan it'
+  trip: 'Trip'
+  options: 'Options'
+  review: 'Review'
+  plan: 'Plan'
   from: 'From'
   to: 'To'
   at_time: 'on'
@@ -185,6 +212,13 @@ en:
   trip_date: "Trip Date"
   rideshare: 'Rideshare'
   walk: 'Walk'
+  bus: 'Bus'
+  drive: 'Drive'
+  rail: 'Rail'
+  subway: 'Subway'
+  vehicle: 'Vehicle'
+  select_a_plan_each_trip_part: 'Please select itinerary for each trip part'
+  route: 'Route'
   transfer: {
     one: '%{count} transfer',
     other: '%{count} transfers',
@@ -208,10 +242,12 @@ en:
   print: 'Print'
   chat: 'Chat'
   e_mail: 'Email'
+  create: "Create"
   created: "Created"
   trip_was_successfully_created: 'Trip was successfully created.'
   trip_was_successfully_removed: 'Trip was successfully removed.'
   trip_created_no_valid_options: "Trip created, but no valid trip options could be found."
+  was_successfully_updated: 'was successfully updated.'
   hour: {
     one: '%{count} h',
     other: '%{count} h',
@@ -235,7 +271,7 @@ en:
   time_wrong_format: "Time must be in hh:mm am/pm format."
   trips_cannot_be_entered_for_days: "Trips cannot be entered for days earlier than today."
   trips_cannot_be_entered_for_times: "Trips cannot be entered for past times."
-  return_trip_time_before_start: "Trips cannot return before they are started."
+  return_trip_time_before_start: "A return trip must begin after the departing trip."
   link_to_georgia_commute_options: {
     one:   'Visit %{url} to view 1 possible rideshare.',
     other: 'Visit %{url} to view %{count} possible rideshares.',
@@ -259,9 +295,12 @@ en:
   returning: 'returning'
   return_after: "Return after"
   at: 'at'
+  wait_at: 'Wait at'
   fare: "Fare"
   flat_fare_unavailable: "Flat fare unavailable"
+  rate: "Rate"
 
+  
   # My Places form
   found_x_places: {
     one:    'Found %{count} place in your address book.',
@@ -284,17 +323,25 @@ en:
   updated: "Updated"
 
   # new ones
+  # Services
+  book: "Book"
   inactive: "Inactive"
   service_id: "Service Id"
+  booking_service_code: "Booking Service Code"
   back_to_services: "Back to services"
   service: "Service"
   services: "Services"
+  all_services: "All Services"
   active: "Active"
+  add_service: "Add new Service"
   select_service: "Select Service"
   service_is_inactive: "This service is currently inactive."
   service_contact: "Service Contact Information"
   specialized_services: "Specialized Services"
   view_services: "View Services"
+  origins: "Origins"
+  destinations: "Destinations"
+  residences: "Residences"
   no_restriction: "No restriction"
   contact: "Contact"
   title: "Title"
@@ -315,9 +362,10 @@ en:
   trip_insufficient_notice_a: "This trip must be booked "
   trip_insufficient_notice_b: " in advance."
   more_information_required: "More information is needed."
-  trip_needs_more_accomodations: "These accommodations are not met by this service"
+  trip_needs_more_accommodations: "These accommodations are not met by this service"
   service_notice_not_required: "This service does not require advanced notice to book a trip"
   no_cost_for_service:  "No cost for this service"
+  cost_details: "Cost Details"
   addl_cost_details: "Additional Cost Details"
   click_for_cost_details: 'Click for cost details'
   view_trip_details: "View trip details so that you can call the provider."
@@ -377,8 +425,8 @@ en:
   one_click_traveler_revoke_by_from_email: '1-Click traveler revoked by %{by}'
   you_can_t_be_your_own_buddy: "You can't be your own buddy."
   you_ve_already_asked_them_to_be_a_buddy: "You've already asked them to be a buddy."
-  my_buddies: "My buddies"
-  not_any_buddies: "You don't have any buddies. Send a buddy request by entering their email address above."
+  my_buddies: "%{owner} buddies"
+  not_any_buddies: "You don't have any buddies."
   no_buddies: "You don't have any travelers that have asked you to be their travel buddy."
   address_is_required: "Address is required"
   all_trips: "All trips"
@@ -410,6 +458,7 @@ en:
   email_addresses: 'Email addresses'
   start: "START: "
   start_time: "Start Time"
+  times: "Times"
   end_time: "End Time"
   walk_time: "Walk Time"
   transit_time: "Transit Time"
@@ -417,7 +466,6 @@ en:
   walk_distance_short: "Walk Dist"
   walking: ' walking'
   arrive: "ARRIVE: "
-  trip: "Trip: "
   est: " (est.)"
   myself: "myself"
   assisted_user_first_name_s_trips: "%{name}'s Trips"
@@ -446,7 +494,9 @@ en:
   edit: "Edit"
   delete: "Delete"
   save: "Save"
+  apply: "Apply"
   and: "and"
+  new: "New"
   itinerary: "Itinerary"
   itineraries: "Itineraries"
   in_str: "In"
@@ -455,7 +505,9 @@ en:
   change_role: "Change Role"
   select_users: "Select users"
   add: "Add"
+  back: "Back"
   count: "Count"
+  contact_info: "Contact Info"
   do_not_reply: "This email is sent from an email address that is not monitored. Please do not reply to this message."
   nothing_found_sorry: "Nothing found - sorry"
   solicit_feedback: "Please give us some feedback:"
@@ -469,7 +521,16 @@ en:
   show: "Show"
   list: "List"
   name: "Name"
+  information: "Information"
+  internal_contact: "Internal Contact"
+  city: "City"
+  state: "State"
+  zip: "Zip"
 
+  # validation messages
+  valid_time_msg: "must be a valid time"
+  presence_msg: "can't be blank"
+  before_msg: "must be before "
   
   date:
     abbr_day_names:

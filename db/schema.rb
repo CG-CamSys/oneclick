@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140324202042) do
+ActiveRecord::Schema.define(version: 20140516132915) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -23,6 +23,24 @@ ActiveRecord::Schema.define(version: 20140324202042) do
     t.boolean "requires_verification",            default: false, null: false
     t.boolean "active",                           default: true,  null: false
     t.string  "code"
+    t.integer "sequence",                         default: 0
+  end
+
+  create_table "agencies", force: true do |t|
+    t.string  "name",                   limit: 64
+    t.string  "address",                limit: 100
+    t.string  "city",                   limit: 100
+    t.string  "state",                  limit: 64
+    t.string  "zip",                    limit: 10
+    t.string  "phone",                  limit: 25
+    t.string  "email"
+    t.string  "url"
+    t.integer "parent_id"
+    t.string  "internal_contact_name"
+    t.string  "internal_contact_title"
+    t.string  "internal_contact_phone"
+    t.string  "internal_contact_email", limit: 128
+    t.boolean "active",                             default: true, null: false
   end
 
   create_table "agency_user_relationships", force: true do |t|
@@ -43,6 +61,7 @@ ActiveRecord::Schema.define(version: 20140324202042) do
     t.string  "code"
     t.string  "characteristic_type",   limit: 128
     t.string  "desc",                              default: ""
+    t.integer "sequence",                          default: 0
   end
 
   create_table "coverage_areas", force: true do |t|
@@ -97,6 +116,9 @@ ActiveRecord::Schema.define(version: 20140324202042) do
     t.boolean  "selected"
     t.datetime "start_time"
     t.datetime "end_time"
+    t.boolean  "is_bookable",                                       default: false, null: false
+    t.string   "booking_confirmation"
+    t.boolean  "duration_estimated",                                default: false
   end
 
   create_table "kiosk_locations", force: true do |t|
@@ -110,17 +132,10 @@ ActiveRecord::Schema.define(version: 20140324202042) do
   end
 
   create_table "modes", force: true do |t|
-    t.string  "name",   limit: 64, null: false
-    t.boolean "active",            null: false
+    t.string  "name",           limit: 64,                 null: false
+    t.boolean "active",                                    null: false
     t.string  "code"
-  end
-
-  create_table "organizations", force: true do |t|
-    t.string   "name"
-    t.string   "type"
-    t.integer  "parent_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.boolean "elig_dependent",            default: false
   end
 
   create_table "places", force: true do |t|
@@ -178,19 +193,20 @@ ActiveRecord::Schema.define(version: 20140324202042) do
   end
 
   create_table "providers", force: true do |t|
-    t.string  "name",            limit: 64,                 null: false
-    t.string  "contact",         limit: 64
-    t.string  "external_id",     limit: 25
-    t.boolean "active",                      default: true, null: false
+    t.string  "name",                   limit: 64,                 null: false
+    t.string  "external_id",            limit: 25
+    t.boolean "active",                             default: true, null: false
     t.string  "email"
-    t.string  "contact_title",   limit: 100
-    t.string  "address",         limit: 100
-    t.string  "city",            limit: 100
-    t.string  "state",           limit: 64
-    t.string  "zip",             limit: 10
+    t.string  "address",                limit: 100
+    t.string  "city",                   limit: 100
+    t.string  "state",                  limit: 64
+    t.string  "zip",                    limit: 10
     t.string  "url"
-    t.string  "phone",           limit: 25
-    t.integer "provider_org_id"
+    t.string  "phone",                  limit: 25
+    t.string  "internal_contact_name"
+    t.string  "internal_contact_title"
+    t.string  "internal_contact_phone"
+    t.string  "internal_contact_email", limit: 128
   end
 
   create_table "rates", force: true do |t|
@@ -203,8 +219,8 @@ ActiveRecord::Schema.define(version: 20140324202042) do
     t.datetime "updated_at",    null: false
   end
 
-  add_index "rates", ["rateable_id", "rateable_type"], :name => "index_rates_on_rateable_id_and_rateable_type"
-  add_index "rates", ["rater_id"], :name => "index_rates_on_rater_id"
+  add_index "rates", ["rateable_id", "rateable_type"], name: "index_rates_on_rateable_id_and_rateable_type", using: :btree
+  add_index "rates", ["rater_id"], name: "index_rates_on_rater_id", using: :btree
 
   create_table "relationship_statuses", force: true do |t|
     t.string "name", limit: 64
@@ -229,8 +245,8 @@ ActiveRecord::Schema.define(version: 20140324202042) do
     t.datetime "updated_at",               null: false
   end
 
-  add_index "roles", ["name", "resource_type", "resource_id"], :name => "index_roles_on_name_and_resource_type_and_resource_id"
-  add_index "roles", ["name"], :name => "index_roles_on_name"
+  add_index "roles", ["name", "resource_type", "resource_id"], name: "index_roles_on_name_and_resource_type_and_resource_id", using: :btree
+  add_index "roles", ["name"], name: "index_roles_on_name", using: :btree
 
   create_table "schedules", force: true do |t|
     t.integer  "service_id",                   null: false
@@ -243,11 +259,10 @@ ActiveRecord::Schema.define(version: 20140324202042) do
   end
 
   create_table "service_accommodations", force: true do |t|
-    t.integer "service_id",                                       null: false
-    t.integer "accommodation_id",                                 null: false
-    t.string  "value",                 limit: 64,                 null: false
-    t.boolean "requires_verification",            default: false, null: false
-    t.boolean "active",                           default: true,  null: false
+    t.integer "service_id",                            null: false
+    t.integer "accommodation_id",                      null: false
+    t.boolean "requires_verification", default: false, null: false
+    t.boolean "active",                default: true,  null: false
   end
 
   create_table "service_characteristics", force: true do |t|
@@ -267,10 +282,9 @@ ActiveRecord::Schema.define(version: 20140324202042) do
   end
 
   create_table "service_trip_purpose_maps", force: true do |t|
-    t.integer "service_id",                                      null: false
-    t.integer "trip_purpose_id",                                 null: false
-    t.string  "value",                 limit: 64,                null: false
-    t.boolean "active",                           default: true, null: false
+    t.integer "service_id",                           null: false
+    t.integer "trip_purpose_id",                      null: false
+    t.boolean "active",                default: true, null: false
     t.integer "value_relationship_id"
   end
 
@@ -281,24 +295,36 @@ ActiveRecord::Schema.define(version: 20140324202042) do
   end
 
   create_table "services", force: true do |t|
-    t.string   "name",                         limit: 64,                  null: false
-    t.integer  "provider_id",                                              null: false
-    t.integer  "service_type_id",                                          null: false
-    t.integer  "advanced_notice_minutes",                  default: 0,     null: false
-    t.boolean  "volunteer_drivers_used",                   default: false, null: false
-    t.boolean  "accepting_new_clients",                    default: true,  null: false
-    t.boolean  "wait_list_in_effect",                      default: false, null: false
-    t.boolean  "requires_prior_authorization",             default: false, null: false
-    t.boolean  "active",                                   default: true,  null: false
-    t.datetime "created_at",                                               null: false
-    t.datetime "updated_at",                                               null: false
+    t.string   "name",                         limit: 64,                 null: false
+    t.integer  "provider_id",                                             null: false
+    t.integer  "service_type_id",                                         null: false
+    t.integer  "advanced_notice_minutes",                 default: 0,     null: false
+    t.boolean  "volunteer_drivers_used",                  default: false, null: false
+    t.boolean  "accepting_new_clients",                   default: true,  null: false
+    t.boolean  "wait_list_in_effect",                     default: false, null: false
+    t.boolean  "requires_prior_authorization",            default: false, null: false
+    t.boolean  "active",                                  default: true,  null: false
+    t.datetime "created_at",                                              null: false
+    t.datetime "updated_at",                                              null: false
     t.string   "email"
     t.string   "external_id",                  limit: 25
-    t.string   "contact_title",                limit: 100
-    t.string   "contact",                      limit: 100
     t.string   "phone",                        limit: 25
     t.string   "url"
+    t.string   "booking_service_code"
+    t.integer  "service_window"
+    t.float    "time_factor"
+    t.string   "internal_contact_name"
+    t.string   "internal_contact_email"
+    t.string   "internal_contact_title"
+    t.string   "internal_contact_phone"
   end
+
+  create_table "services_users", id: false, force: true do |t|
+    t.integer "user_id",    null: false
+    t.integer "service_id", null: false
+  end
+
+  add_index "services_users", ["service_id", "user_id"], name: "index_services_users_on_service_id_and_user_id", using: :btree
 
   create_table "translations", force: true do |t|
     t.string   "key"
@@ -325,7 +351,7 @@ ActiveRecord::Schema.define(version: 20140324202042) do
     t.datetime "scheduled_time"
   end
 
-  add_index "trip_parts", ["trip_id", "sequence"], :name => "index_trip_parts_on_trip_id_and_sequence"
+  add_index "trip_parts", ["trip_id", "sequence"], name: "index_trip_parts_on_trip_id_and_sequence", using: :btree
 
   create_table "trip_places", force: true do |t|
     t.integer  "trip_id"
@@ -344,6 +370,7 @@ ActiveRecord::Schema.define(version: 20140324202042) do
     t.string   "zip",          limit: 10
     t.string   "county",       limit: 128
     t.string   "result_types"
+    t.string   "name",         limit: 256
   end
 
   create_table "trip_purposes", force: true do |t|
@@ -372,6 +399,11 @@ ActiveRecord::Schema.define(version: 20140324202042) do
     t.integer  "rating"
     t.date     "scheduled_date"
     t.datetime "scheduled_time"
+  end
+
+  create_table "trips_desired_modes", force: true do |t|
+    t.integer "trip_id",         null: false
+    t.integer "desired_mode_id", null: false
   end
 
   create_table "user_accommodations", force: true do |t|
@@ -420,6 +452,13 @@ ActiveRecord::Schema.define(version: 20140324202042) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "user_services", force: true do |t|
+    t.integer "user_profile_id",                  null: false
+    t.integer "service_id",                       null: false
+    t.string  "external_user_id",                 null: false
+    t.boolean "disabled",         default: false, null: false
+  end
+
   create_table "users", force: true do |t|
     t.string   "nickname",               limit: 64
     t.string   "prefix",                 limit: 4
@@ -439,14 +478,16 @@ ActiveRecord::Schema.define(version: 20140324202042) do
     t.datetime "created_at",                                        null: false
     t.datetime "updated_at",                                        null: false
     t.integer  "agency_id"
-    t.integer  "provider_org_id"
     t.string   "preferred_locale",                   default: "en"
     t.string   "authentication_token"
+    t.integer  "provider_id"
+    t.string   "title",                  limit: 64
+    t.string   "phone",                  limit: 25
   end
 
-  add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token"
-  add_index "users", ["email"], :name => "index_users_on_email", :unique => true
-  add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
+  add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", using: :btree
+  add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
+  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
   create_table "value_relationships", force: true do |t|
     t.string   "relationship", limit: 64

@@ -1,24 +1,52 @@
-.row-fluid
-  .span12
-    %h1
-      %i{class: "icon #{CsHelpers::ACTION_ICONS[:plan_a_trip]}"}
-      = t(:plan_a_trip)
-      
--if @trip_proxy.errors.any?
-  .row-fluid
-    .span12
-      %h4
-        %div{:class => "alert alert-error"}
-          %a.close{"data-dismiss" => "alert"} ×
-          %div= t(:correct_errors_to_create_a_trip)
+= render partial: 'shared/trip_plan_breadcrumbs'
+.row
+  .col-sm-7.col-xs-12
+    - Rails.logger.info "\n#{@trip_proxy.ai}\n"
+    - Rails.logger.info "\n#{@trip_proxy.errors}\n"
+    = simple_form_for @trip_proxy, :url => @trip_proxy.id.nil? ? user_trips_path : user_trip_path, :method => @trip_proxy.id.nil? ? 'post' : 'put', :html => {:class => "plan-a-trip form-horizontal no-bottom-margin", :style => "margin-top:10px;margin-bottom:0px;"}, wrapper: :horizontal_form, wrapper_mappings: {check_boxes: :horizontal_radio_and_checkboxes, radio_buttons: :plan_trip_radio}  do |f|
+      .col-xs-12.page-action-button-container
 
+        = button_tag :type => 'submit', :class => "btn btn-default pull-right action-button",
+          tabindex: 2 do
+          =t(:plan)
+      .col-xs-12.panel.panel-default
+        .panel-body
+          = f.hidden_field :mode
+          = f.hidden_field :from_place_object, :id => "from_place_object"
+          = f.hidden_field :to_place_object, :id => "to_place_object"
+          = f.hidden_field :map_center, id: "map_center"
 
-.row-fluid{:style => "margin-top:20px;"}
-  %div{class: (cms_snippet_content('plan-a-trip_html').empty? ? 'span12' : 'span9')}  
-    .row-fluid.well.well-small
-      #trip_form.span6
-        = render 'trip_form'
-      #trip_map.span6
-        = render 'trip_map'  
-  - unless cms_snippet_content('plan-a-trip_html').empty?
-    .span3= cms_snippet_content('plan-a-trip_html')
+          #tripOptions
+            .inline-radio
+              = f.input :is_round_trip, as: :radio_buttons, label: t(:trip), collection: [[t(:round_trip), 1], [t(:one_way), 0]],
+                checked: (@trip_proxy.is_round_trip ? "1" : "0"),
+                input_html: { tabindex: 1 }
+
+              :javascript
+                $(function () {
+                  $('#tripOptions :radio').change(function() {
+                    if(this.value === '0') {
+                      $('#returnDatetimeOptions').hide();
+                    } else {
+                      $('#returnDatetimeOptions').show();
+                    }
+                  });
+                });
+
+          = f.input :modes, as: :check_boxes, collection: @modes, label_method: :first, value_method: :last, checked: @selected_modes,
+          input_html: { tabindex: 1 }
+
+          = f.input :trip_purpose_id, :collection =>  TripPurpose.ordered_by_localized_name, :selected => @trip_proxy.trip_purpose_id, :value => :id, :label_method => lambda { |v| t(v.name)},
+          input_html: { tabindex: 1, class: 'form-control' }
+
+          = render partial: 'location_input', locals: {dir: 'from', f: f}
+          = render partial: 'location_input', locals: {dir: 'to', f: f}
+
+          .form-group
+            = render partial: 'date_time_input', locals: {dir: 'outbound', f: f}
+
+          #returnDatetimeOptions{style: (@trip_proxy.is_round_trip ? '' : 'display: none;')}
+            .form-group
+              = render partial: 'date_time_input', locals: {dir: 'return', f: f}
+
+  = render partial: 'shared/splash'

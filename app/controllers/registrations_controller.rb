@@ -38,7 +38,8 @@ class RegistrationsController < Devise::RegistrationsController
     guest_user.last_name = resource.last_name
     guest_user.email = resource.email
     guest_user.encrypted_password = resource.encrypted_password
-
+    guest_user.preferred_locale = resource.preferred_locale
+    
     setup_form
     if resource.valid? and guest_user.save
       guest_user.add_role :registered_traveler
@@ -58,6 +59,8 @@ class RegistrationsController < Devise::RegistrationsController
 
   def setup_form
 
+    @default_locale = params[:locale] || 'en'
+    
     if session[:inline]
       get_traveler
       @create_inline = true
@@ -74,7 +77,8 @@ class RegistrationsController < Devise::RegistrationsController
     @user_characteristics_proxy = UserCharacteristicsProxy.new(@traveler)
     @user_programs_proxy = UserProgramsProxy.new(@traveler)
     @user_accommodations_proxy = UserAccommodationsProxy.new(@traveler)
-    super
+    @user = @traveler
+    render 'edit'
   end
 
   def edit
@@ -83,7 +87,9 @@ class RegistrationsController < Devise::RegistrationsController
     @user_characteristics_proxy = UserCharacteristicsProxy.new(@traveler)
     @user_programs_proxy = UserProgramsProxy.new(@traveler)
     @user_accommodations_proxy = UserAccommodationsProxy.new(@traveler)
-    super
+    @user = @traveler
+    
+    render 'edit'
   end
 
   protected

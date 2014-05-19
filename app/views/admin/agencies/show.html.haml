@@ -1,17 +1,148 @@
-%p
-  %b Name:
-  = @agency.name
-%p
-  %b Parent:
-  - if @agency.parent
-    = link_to @agency.parent.name, [:admin, @agency.parent]
-  - else
-    = ''
-%p
-  %b Sub-agencies:
-  - @agency.sub_agencies.each do |agency|
-    = link_to agency.name, [:admin, agency]
+.row
+  .col-sm-6.pull-left
+    = link_to t(:all_agencies), admin_agencies_path
+    %h2= @agency.name
+    -unless @agency.active
+      %p= t(:inactive)
+  .col-sm-3.pull-right.form-group
+    - if can? :update, @agency
+      = link_to edit_admin_agency_path(@agency), {class: 'btn action-button btn-default', role: 'button'} do
+        = icon_label(:edit)
+    - if can? :destroy, @agency
+      = button_to t(:delete), { action: "destroy", id: @agency.id }, method: :delete, data: { confirm: t(:confirm_msg) }, class: 'btn action-button btn-default', form_class: "form-horizontal pull-right"
 
-= link_to 'Edit', edit_admin_agency_path(@agency)
-\|
-= link_to 'List', admin_agencies_path
+
+.row
+  .col-sm-6
+    .panel.panel-default
+      .panel-heading
+        %h3.panel-title= t(:contact_info)
+      .panel-body
+        %table.table.table-condensed
+          %tr
+            %td.text-right
+              = t(:address) + ":"
+            %td.text-left
+              %b= @agency.address.to_s
+            %td.text-left
+              %b= @agency.city.to_s
+            %td.text-left
+              %b= @agency.state.to_s
+            %td.text-left
+              %b= @agency.zip.to_s
+          %tr
+            %td.text-right
+              = t(:phone)+ ":  "
+            %td.text-left{colspan: 4}
+              %b= @agency.phone.to_s
+          %tr
+            %td.text-right
+              = t(:email)+ ":  "
+            %td.text-left{colspan: 4}
+              %b= mail_to @agency.email.to_s
+          %tr
+            %td.text-right
+              = t(:url)+ ":  "
+            %td.text-left{colspan: 4}
+              - if @agency.url
+                %b= link_to @agency.url, @agency.url
+          %tr
+            %td.text-right
+              = t(:parent_agency) + ":  "
+            %td.text-left{colspan: 4}
+              %b= @agency.parent.name if @agency.parent
+  .col-sm-6
+    .panel.panel-default
+      .panel-heading
+        %h4.panel-title= t(:internal_contact)
+      .panel-body
+        %table.table.table-condensed
+          %tr
+            %td.text-right
+              = t(:name) + ": "
+            %td.text-left
+              %b= @agency.internal_contact_name
+          %tr
+            %td.text-right
+              = t(:title)+": "
+            %td.text-left
+              %b= @agency.internal_contact_title
+          %tr
+            %td.text-right
+              = t(:phone)+ ": "
+            %td.text-left
+              %b= @agency.internal_contact_phone
+          %tr
+            %td.text-right
+              = t(:email)+ ":  "
+            %td.text-left
+              %b= mail_to @agency.internal_contact_email
+          - if @contact
+            %tr
+              %td.text-right
+                = t(:user) + ": "
+              %td.text-left
+                %b= @contact.name
+.panel.panel-default#staff
+  .panel-heading
+    %h3= t(:staff_actions)
+  .panel-body
+    %h4= t(:administrators)
+    %table.ALTtable.table-condensed#admin_table
+      %thead
+        %tr
+          %th= t(:name)
+          %th= t(:title)
+          %th= t(:phone)
+          %th= t(:email)
+      %tbody
+        - @admins.each do |s|
+          %tr
+            %td= s.name.to_s
+            %td= s.title.to_s
+            %td= s.phone.to_s
+            %td= mail_to s.email.to_s
+
+    %h4= t(:agents)
+    %table.ALTtable.table-condensed#agent_table
+      %thead
+        %tr
+          %th= t(:name)
+          %th= t(:title)
+          %th= t(:phone)
+          %th= t(:email)
+      %tbody
+        - @agents.each do |s|
+          %tr
+            %td
+              = s.name.to_s
+            %td
+              = s.title.to_s
+            %td
+              = s.phone.to_s
+            %td
+              = mail_to s.email.to_s
+
+:javascript
+  $(document).ready(function() {
+    $('#agent_table').dataTable( {
+          "oLanguage": {
+              "sLengthMenu": "Display _MENU_ agents per page",
+              "sZeroRecords": "Nothing found - sorry",
+              "sInfo": "Showing _START_ to _END_ of _TOTAL_ agencies",
+              "sInfoEmpty": "Showing 0 to 0 of 0 agencies",
+              "sInfoFiltered": "(filtered from _MAX_ total agencies)"
+          },
+          "sDom": "<'row'<'col-sm-6'l>r>t<'row'<'col-sm-6'i><'col-sm-6'p>>",
+      } );
+    $('#admin_table').dataTable( {
+          "oLanguage": {
+              "sLengthMenu": "Display _MENU_ agents per page",
+              "sZeroRecords": "Nothing found - sorry",
+              "sInfo": "Showing _START_ to _END_ of _TOTAL_ agencies",
+              "sInfoEmpty": "Showing 0 to 0 of 0 agencies",
+              "sInfoFiltered": "(filtered from _MAX_ total agencies)"
+          },
+          "sDom": "<'row'<'col-sm-6'l>r>t<'row'<'col-sm-6'i><'col-sm-6'p>>",
+      } );
+  } );

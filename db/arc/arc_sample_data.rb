@@ -54,12 +54,45 @@ def add_users_and_places
     end
     u.add_role :registered_traveler
   end
+
+  # create GeoCoverages for zip codes to be found later
+  ['30305', '30306', '30308', '30309', '30319', '30324', '30326', '30327', '30328' ,'30329',
+   '30338', '30339', '30340', '30341' ,'30342', '30345', '30363', '30063', '30067', '30068',
+   '30084', '30356', '30350', '30060', '30030', '30033', '30084', '30075', '30076', '30022',
+   '30092', '30080'].each do |z|
+    GeoCoverage.create(value: z, coverage_type: 'zipcode')
+  end
+
+    # add counties
+  ['Cherokee', 'DeKalb', 'Cobb', 'Fayette', 'Fulton', 'Rockdale'].each do |c|
+    GeoCoverage.create(value: c, coverage_type: 'county_name')
+  end
+end
+
+def add_ancillary_services
+  providers = [
+    {name: 'MARTA', url: 'http://www.itsmarta.com'},
+    {name: 'GRTA', url: 'http://www.grta.org'},
+    {name: 'CCT', url: 'http://dot.cobbcountyga.gov/cct/'},
+  ]
+
+  s = ServiceType.where(code: 'transit').first
+  providers.each do |p|
+    provider = Provider.create! p.reject{|k| k==:url}
+    provider.services.create! p.merge(active: false, service_type: s)
+  end
+  provider = Provider.create!({name: 'Taxi services'})
+  provider.services.create!({name: 'Taxi services', active: false,
+    service_type: ServiceType.where(code: 'taxi').first})
+  provider = Provider.create!({name: 'Georgia Commute Options'})
+  provider.services.create!({name: 'Georgia Commute Options', active: false,
+      service_type: ServiceType.where(code: 'rideshare').first, url: 'https://www.mygacommuteoptions.com'})
 end
 
 def add_providers_and_services
   providers = [
       {name: 'LIFESPAN Resources, Inc.', contact: 'Lauri Stokes', external_id: "esp#1"},
-      {name: 'Fayette County', contact: '', external_id: "esp#6"},
+      {name: 'Fayette County', contact: 'Maurice Ravel', external_id: "esp#6"},
       {name: 'Fulton County Office of Aging', contact: 'Ken Van Hoose', external_id: "esp#7"},
       {name: 'Jewish Family & Career Services', contact: 'Gary Miller', external_id: "esp#3"},
       {name: 'Cobb Senior Services', contact: 'Pam Breeden', external_id: "esp#20"},
@@ -112,8 +145,16 @@ def add_providers_and_services
       next
     end
 
+    contact = provider.delete(:contact)
+    (first_name, last_name) = contact.split(/ /, 2)
     p = Provider.create! provider
     p.save
+
+    u = User.create! first_name: first_name, last_name: last_name,
+      email: contact.downcase.gsub(' ', '_').gsub(%r{\W}, '') + '@camsys.com', password: 'welcome1'
+    up = UserProfile.create! user: u
+    # p.users << u
+    u.add_role :internal_contact, p
 
     case p.external_id
 
@@ -126,23 +167,23 @@ def add_providers_and_services
         end
         #Trip purpose requirements
         [medical, dialysis, cancer].each do |n|
-          ServiceTripPurposeMap.create(service: service, trip_purpose: n, value: 'true')
+          ServiceTripPurposeMap.create(service: service, trip_purpose: n)
         end
 
         #Add geographic restrictions
         ['30327', '30342', '30319', '30326', '30305', '30324', '30309', '30306', '30363'].each do |z|
-          c = GeoCoverage.new(value: z, coverage_type: 'zipcode')
+          c = GeoCoverage.find_by(value: z, coverage_type: 'zipcode')
           ServiceCoverageMap.create(service: service, geo_coverage: c, rule: 'origin')
         end
         ['30327', '30342', '30319', '30326', '30305', '30324', '30309', '30306', '30363'].each do |z|
-          c = GeoCoverage.new(value: z, coverage_type: 'zipcode')
+          c = GeoCoverage.find_by(value: z, coverage_type: 'zipcode')
           ServiceCoverageMap.create(service: service, geo_coverage: c, rule: 'destination')
         end
 
 
         #Traveler Accommodations Requirements
         [door_to_door, curb_to_curb, folding_wheelchair_accessible].each do |n|
-          ServiceAccommodation.create(service: service, accommodation: n, value: 'true')
+          ServiceAccommodation.create(service: service, accommodation: n)
         end
 
 
@@ -156,12 +197,12 @@ def add_providers_and_services
 
         #Trip Purpose Requirements
         [medical, dialysis, cancer].each do |n|
-          ServiceTripPurposeMap.create(service: service, trip_purpose: n, value: 'true')
+          ServiceTripPurposeMap.create(service: service, trip_purpose: n)
         end
 
         #Add geographic restrictions
         ['Fayette'].each do |z|
-          c = GeoCoverage.new(value: z, coverage_type: 'county_name')
+          c = GeoCoverage.find_by(value: z, coverage_type: 'county_name')
           ServiceCoverageMap.create(service: service, geo_coverage: c, rule: 'origin')
         end
 
@@ -170,7 +211,7 @@ def add_providers_and_services
 
         #Traveler Accommodations Requirements
         [door_to_door, curb_to_curb, driver_assistance_available, motorized_wheelchair_accessible, lift_equipped].each do |n|
-          ServiceAccommodation.create(service: service, accommodation: n, value: 'true')
+          ServiceAccommodation.create(service: service, accommodation: n)
         end
 
       when "esp#7" #Fulton County office of Aging
@@ -182,12 +223,12 @@ def add_providers_and_services
         end
         #Trip Purpose Requirements
         [medical, dialysis, cancer].each do |n|
-          ServiceTripPurposeMap.create(service: service, trip_purpose: n, value: 'true')
+          ServiceTripPurposeMap.create(service: service, trip_purpose: n)
         end
 
         #Add geographic restrictions
         ['Fulton'].each do |z|
-          c = GeoCoverage.new(value: z, coverage_type: 'county_name')
+          c = GeoCoverage.find_by(value: z, coverage_type: 'county_name')
           ServiceCoverageMap.create(service: service, geo_coverage: c, rule: 'origin')
         end
 
@@ -197,7 +238,7 @@ def add_providers_and_services
 
         #Traveler Accommodations Provided
         [folding_wheelchair_accessible, driver_assistance_available, motorized_wheelchair_accessible, curb_to_curb, door_to_door, lift_equipped].each do |n|
-          ServiceAccommodation.create(service: service, accommodation: n, value: 'true')
+          ServiceAccommodation.create(service: service, accommodation: n)
         end
 
         #Create service #11 DARTS
@@ -208,12 +249,12 @@ def add_providers_and_services
         end
         #Trip Purpose Requirements
         [work, training, medical, dialysis, cancer, personal, general].each do |n|
-          ServiceTripPurposeMap.create(service: service, trip_purpose: n, value: 'true')
+          ServiceTripPurposeMap.create(service: service, trip_purpose: n)
         end
 
         #Add geographic restrictions
         ['Fulton'].each do |z|
-          c = GeoCoverage.new(value: z, coverage_type: 'county_name')
+          c = GeoCoverage.find_by(value: z, coverage_type: 'county_name')
           ServiceCoverageMap.create(service: service, geo_coverage: c, rule: 'origin')
         end
 
@@ -222,7 +263,7 @@ def add_providers_and_services
 
         #Traveler Accommodations Provided
         [folding_wheelchair_accessible, driver_assistance_available, door_to_door, curb_to_curb, lift_equipped].each do |n|
-          ServiceAccommodation.create(service: service, accommodation: n, value: 'true')
+          ServiceAccommodation.create(service: service, accommodation: n)
         end
 
       when "esp#3" #Jewish Family & Career Center
@@ -235,23 +276,23 @@ def add_providers_and_services
 
         #Trip Purpose Requirements
         [medical, dialysis, cancer].each do |n|
-          ServiceTripPurposeMap.create(service: service, trip_purpose: n, value: 'true')
+          ServiceTripPurposeMap.create(service: service, trip_purpose: n)
         end
 
         #Add geographic restrictions
         ['30305', '30306', '30308', '30309', '30319', '30324', '30326', '30327', '30328' ,'30329', '30338', '30339', '30340', '30341' ,'30342', '30345', '30063', '30067', '30068', '30084', '30356', '30350', '30060', '30030', '30033', '30084', '30075', '30076', '30022', '30092', '30080'].each do |z|
-          c = GeoCoverage.new(value: z, coverage_type: 'zipcode')
+          c = GeoCoverage.find_by(value: z, coverage_type: 'zipcode')
           ServiceCoverageMap.create(service: service, geo_coverage: c, rule: 'origin')
         end
 
         ['30305', '30306', '30308', '30309', '30319', '30324', '30326', '30327', '30328' ,'30329', '30338', '30339', '30340', '30341' ,'30342', '30345', '30063', '30067', '30068', '30084', '30356', '30350', '30060', '30030', '30033', '30084', '30075', '30076', '30022', '30092', '30080'].each do |z|
-          c = GeoCoverage.new(value: z, coverage_type: 'zipcode')
+          c = GeoCoverage.find_by(value: z, coverage_type: 'zipcode')
           ServiceCoverageMap.create(service: service, geo_coverage: c, rule: 'destination')
         end
 
         #Traveler Accommodations Requirements
         [door_to_door, curb_to_curb, driver_assistance_available, folding_wheelchair_accessible, motorized_wheelchair_accessible, lift_equipped].each do |n|
-          ServiceAccommodation.create(service: service, accommodation: n, value: 'true')
+          ServiceAccommodation.create(service: service, accommodation: n)
         end
 
       when "esp#20" #Cobb Senior Services
@@ -264,12 +305,12 @@ def add_providers_and_services
 
         #Trip Purpose Requirements
         [work, training, medical, dialysis, cancer, personal, general].each do |n|
-          ServiceTripPurposeMap.create(service: service, trip_purpose: n, value: 'true')
+          ServiceTripPurposeMap.create(service: service, trip_purpose: n)
         end
 
         #Add geographic restrictions
         ['Cobb'].each do |z|
-          c = GeoCoverage.new(value: z, coverage_type: 'county_name')
+          c = GeoCoverage.find_by(value: z, coverage_type: 'county_name')
           ServiceCoverageMap.create(service: service, geo_coverage: c, rule: 'origin')
         end
 
@@ -278,7 +319,7 @@ def add_providers_and_services
 
         #Traveler Accommodations Requirements
         [door_to_door, curb_to_curb, driver_assistance_available, folding_wheelchair_accessible, motorized_wheelchair_accessible, lift_equipped].each do |n|
-          ServiceAccommodation.create(service: service, accommodation: n, value: 'true')
+          ServiceAccommodation.create(service: service, accommodation: n)
         end
 
       when "esp#15" #Cobb Community Transit
@@ -292,17 +333,17 @@ def add_providers_and_services
 
         #Trip Purpose Requirements
         [work, training, medical, dialysis, cancer, personal, general].each do |n|
-          ServiceTripPurposeMap.create(service: service, trip_purpose: n, value: 'true')
+          ServiceTripPurposeMap.create(service: service, trip_purpose: n)
         end
 
         #Add geographic restrictions
         ['Cobb'].each do |z|
-          c = GeoCoverage.new(value: z, coverage_type: 'county_name')
+          c = GeoCoverage.find_by(value: z, coverage_type: 'county_name')
           ServiceCoverageMap.create(service: service, geo_coverage: c, rule: 'origin')
         end
 
         ['Cobb'].each do |z|
-          c = GeoCoverage.new(value: z, coverage_type: 'county_name')
+          c = GeoCoverage.find_by(value: z, coverage_type: 'county_name')
           ServiceCoverageMap.create(service: service, geo_coverage: c, rule: 'destination')
         end
 
@@ -311,7 +352,7 @@ def add_providers_and_services
 
         #Traveler Accommodations Requirements
         [curb_to_curb, folding_wheelchair_accessible, motorized_wheelchair_accessible, lift_equipped].each do |n|
-          ServiceAccommodation.create(service: service, accommodation: n, value: 'true')
+          ServiceAccommodation.create(service: service, accommodation: n)
         end
 
       when "esp#22" #Mountain Area Transportation Services
@@ -324,12 +365,12 @@ def add_providers_and_services
 
         #Trip Purpose Requirements
         [work, training, medical, dialysis, cancer, personal, general].each do |n|
-          ServiceTripPurposeMap.create(service: service, trip_purpose: n, value: 'true')
+          ServiceTripPurposeMap.create(service: service, trip_purpose: n)
         end
 
         #Add geographic restrictions
         ['Cherokee'].each do |z|
-          c = GeoCoverage.new(value: z, coverage_type: 'county_name')
+          c = GeoCoverage.find_by(value: z, coverage_type: 'county_name')
           ServiceCoverageMap.create(service: service, geo_coverage: c, rule: 'origin')
         end
 
@@ -338,7 +379,7 @@ def add_providers_and_services
 
         #Traveler Accommodations Requirements
         [curb_to_curb, door_to_door, folding_wheelchair_accessible, lift_equipped].each do |n|
-          ServiceAccommodation.create(service: service, accommodation: n, value: 'true')
+          ServiceAccommodation.create(service: service, accommodation: n)
         end
 
       when "esp#34" #I care transportation service.
@@ -351,17 +392,17 @@ def add_providers_and_services
 
         #Trip Purpose Requirements
         [medical, dialysis, cancer].each do |n|
-          ServiceTripPurposeMap.create(service: service, trip_purpose: n, value: 'true')
+          ServiceTripPurposeMap.create(service: service, trip_purpose: n)
         end
 
         #Add geographic restrictions
         ['DeKalb'].each do |z|
-          c = GeoCoverage.new(value: z, coverage_type: 'county_name')
+          c = GeoCoverage.find_by(value: z, coverage_type: 'county_name')
           ServiceCoverageMap.create(service: service, geo_coverage: c, rule: 'origin')
         end
 
         ['DeKalb'].each do |z|
-          c = GeoCoverage.new(value: z, coverage_type: 'county_name')
+          c = GeoCoverage.find_by(value: z, coverage_type: 'county_name')
           ServiceCoverageMap.create(service: service, geo_coverage: c, rule: 'destination')
         end
 
@@ -371,7 +412,7 @@ def add_providers_and_services
 
         #Traveler Accommodations Requirements
         [curb_to_curb].each do |n|
-          ServiceAccommodation.create(service: service, accommodation: n, value: 'true')
+          ServiceAccommodation.create(service: service, accommodation: n)
         end
 
       when "esp#8" #Rockdale County Senior Services
@@ -384,17 +425,17 @@ def add_providers_and_services
 
         #Trip Purpose Requirements
         [work, training, medical, dialysis, cancer, personal, general].each do |n|
-          ServiceTripPurposeMap.create(service: service, trip_purpose: n, value: 'true')
+          ServiceTripPurposeMap.create(service: service, trip_purpose: n)
         end
 
         #Add geographic restrictions
         ['Rockdale'].each do |z|
-          c = GeoCoverage.new(value: z, coverage_type: 'county_name')
+          c = GeoCoverage.find_by(value: z, coverage_type: 'county_name')
           ServiceCoverageMap.create(service: service, geo_coverage: c, rule: 'origin')
         end
 
         ['Rockdale'].each do |z|
-          c = GeoCoverage.new(value: z, coverage_type: 'county_name')
+          c = GeoCoverage.find_by(value: z, coverage_type: 'county_name')
           ServiceCoverageMap.create(service: service, geo_coverage: c, rule: 'destination')
         end
 
@@ -403,7 +444,7 @@ def add_providers_and_services
 
         #Traveler Accommodations Requirements
         [curb_to_curb, door_to_door, driver_assistance_available, folding_wheelchair_accessible, motorized_wheelchair_accessible, lift_equipped].each do |n|
-          ServiceAccommodation.create(service: service, accommodation: n, value: 'true')
+          ServiceAccommodation.create(service: service, accommodation: n)
         end
 
     end
@@ -567,30 +608,9 @@ def add_companion
 end
 
 def setup_cms
-       text = <<EOT
-<h2 style="text-align: justify;">1-Click/ARC helps you find options to get from here to there, using public transit,
- door-to-door services, and specialized transportation.  Give it a try, and
- <a href="mailto://OneClick@camsys.com">tell us</a> what you think.</h2>
-EOT
-      Translation.find_or_create_by(:key => 'home-top_html').update_attributes(:value => text)
-      Translation.find_or_create_by(:key => 'home-top-logged-in_html').update_attributes(:value => text)
-      text = <<EOT
-1-Click/ARC was funded by the
- <a href="http://www.fta.dot.gov/grants/13094_13528.html" target=_blank>Veterans Transportation
- Community Living Initiative</a>.
-EOT
-      Translation.find_or_create_by(:key => 'home-bottom-left_html').update_attributes(:value => text)
-      Translation.find_or_create_by(:key => 'home-bottom-left-logged-in_html').update_attributes(:value => text)
-      text = <<EOT
-<span style="float: right;">1-Click/ARC is sponsored basey the
-<a href="http://www.atlantaregional.com/" target=_blank>Atlanta Regional Commission</a>.</span>
-EOT
-      Translation.find_or_create_by(:key => 'home-bottom-right_html').update_attributes(:value => text)
-      Translation.find_or_create_by(:key => 'home-bottom-right-logged-in_html').update_attributes(:value => text)
-      text = <<EOT
-Tell us about your trip.  The more information you give us, the more options we can find!
-EOT
-      Translation.find_or_create_by(:key  => 'plan-a-trip_html').update_attributes(:value => text)
+    %w{en es}.each do |locale|
+      Translation.where(key: 'splash', locale: locale).first_or_create(value: File.open(File.join('db', 'arc', 'splash.html')).read)
+    end
 end
 
 def create_agencies_and_agency_users
@@ -616,6 +636,7 @@ def create_agencies_and_agency_users
     up = UserProfile.create! user: u
     agency.users << u
     u.add_role :agency_administrator, agency
+    u.add_role :internal_contact, agency
 
     # agency agent
     u = User.create! first_name: a + ' Agent', last_name: 'Agent',
@@ -631,6 +652,7 @@ end
 puts 'Adding ARC Sample Data'
 add_users_and_places
 add_providers_and_services
+add_ancillary_services
 add_fares
 add_esp_ids
 #add_companion

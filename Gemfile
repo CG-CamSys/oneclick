@@ -1,14 +1,15 @@
 source 'https://rubygems.org'
-ruby '1.9.3'
+ruby '2.1.1'
 gem 'rails', '4.0.3'
 # See http://stackoverflow.com/questions/22391116/nomethoderror-in-pageshome-undefined-method-environment-for-nilnilclass
 gem 'sprockets', '2.11.0'
-gem 'sass-rails'
+# gem 'sass-rails', '~> 4.0.3'
+gem 'sass-rails', github: 'camsys/sass-rails', tag: 'v4.0.3a'
+gem 'bootstrap-sass', '~> 3.1.1.0'
 gem 'coffee-rails'
 gem 'uglifier', '>= 1.0.3'
 gem 'bootstrap-combobox'
 gem 'jquery-rails'
-gem 'bootstrap-sass', '~> 2.3.2.0'
 gem 'cancan'
 gem 'devise'
 gem 'figaro'
@@ -17,8 +18,10 @@ gem 'haml-rails'
 gem 'pg'
 # See https://github.com/EppO/rolify/issues/221
 gem 'rolify', git: 'https://github.com/EppO/rolify.git', ref: '0b00fa41224dc4e33b059cd0cd31cd42b022b03b'
-gem 'simple_form'
+gem 'simple_form', '~> 3.1.0.rc1', github: 'plataformatec/simple_form'
 gem 'thin'
+gem 'puma'
+gem "rack-timeout"
 gem 'awesome_print'
 gem 'chronic'
 gem 'mechanize'
@@ -41,6 +44,13 @@ gem 'font-awesome-rails'
 gem 'twitter-typeahead-rails', git: 'https://github.com/Qureana/twitter-typeahead-rails'
 gem 'handlebars_assets'
 gem 'simple_token_authentication'
+gem 'Indirizzo'
+gem 'momentjs-rails', '~> 2.5.0'
+gem 'bootstrap3-datetimepicker-rails', '~> 3.0.0'
+gem 'active_model_serializers'
+gem 'jquery-datatables-rails'
+gem 'active_attr'
+gem 'twitter-bootstrap-rails-confirm', github: 'bluerail/twitter-bootstrap-rails-confirm', branch: 'bootstrap3'
 
 group :development do
   gem 'activerecord-postgis-adapter'
@@ -48,7 +58,7 @@ group :development do
   # gem 'ffi-geos'
   #gem 'mysql2'
   gem 'better_errors'
-  gem 'binding_of_caller', :platforms=>[:mri_19, :rbx]
+  gem 'binding_of_caller'
   gem 'guard', '~> 1.8.3'
   gem 'guard-bundler'
   gem 'guard-cucumber'
@@ -71,10 +81,15 @@ group :development do
   gem "letter_opener"
   gem 'yard'
   gem 'RedCloth' # Needed by yard
+  gem 'foreman'
+  gem 'debugger'
 end
 
-group :test do
+group :development, :test do
   gem 'factory_girl_rails'
+end
+  
+group :test do
   gem 'rspec-core'
   gem 'rspec-rails'
   gem 'capybara'

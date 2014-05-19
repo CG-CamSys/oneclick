@@ -50,8 +50,8 @@ module Oneclick
     # config.autoload_paths += %W(#{config.root}/extras)
     config.autoload_paths += %W(#{config.root}/lib)
 
-    # add the reports folder to the list of classes to be autoloaded
     config.autoload_paths += %W(#{Rails.root}/app/reports)
+    config.autoload_paths += %W(#{Rails.root}/app/services)
 
     # Only load the plugins named here, in the order given (default is alphabetical).
     # :all can be used as a placeholder for all plugins not explicitly named.
@@ -88,19 +88,27 @@ module Oneclick
     # For heroku; see http://blog.nathanhumbert.com/2012/01/rails-32-on-heroku-tip.html
     config.assets.initialize_on_precompile = false
 
-    # Add in here any css or js that is *not* specified in application.css.scss or
-    # application.js (e.g. will typically be referenced directly in a view or a
-    # template
-    config.assets.precompile += %w{tadaaapickr.pack.min.js trips.js places.js typeahead.js-bootstrap.css}
-
-    config.assets.paths << Rails.root.join('app', 'assets', 'fonts')
+    config.assets.precompile += %w(
+      kiosk/_base.css
+      kiosk/style.css
+      kiosk/pa.css
+      default/arc.css
+      default/pa.css
+      default/broward.css
+      default/tadaaapickr.en.js
+      default/typeahead.js-bootstrap.css
+    )
 
     # Version of your assets, change this if you want to expire all your assets
-    config.assets.version = '1.3'
+    config.assets.version = '1.4'
 
     # See http://work.stevegrossi.com/2013/04/06/dynamic-error-pages-with-rails-3-2/
     config.exceptions_app = self.routes
-
+    config.brand = ENV['BRAND'] || 'arc'
+    config.ui_mode = ENV['UI_MODE'] || 'desktop'
+    if config.ui_mode=='desktop'
+      config.sass.load_paths << File.expand_path("./app/assets/stylesheets/default/#{config.brand}")
+    end
   end
 
 end

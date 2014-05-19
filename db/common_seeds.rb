@@ -23,14 +23,19 @@ end
     {name: 'Rejected Trips', description: 'Displays a report showing trips that were rejected by a user.', view_name: 'trips_report', class_name: 'RejectedTripsReport', active: 1}
 ].each do |rep|
   Report.create!(rep)
-  Translation.create!(key: rep[:class_name], locale: :en, value: rep[:class_name])
-  Translation.create!(key: rep[:class_name], locale: :es, value: "[es]#{rep[:class_name]}[/es]")
+  Translation.find_or_create_by!(key: rep[:class_name], locale: :en, value: rep[:class_name])
+  Translation.find_or_create_by!(key: rep[:class_name], locale: :es, value: "[es]#{rep[:class_name]}[/es]")
 end
 
 # Create Admin User
 User.find_by_email(admin[:email]).destroy rescue nil
-u = User.create! first_name: 'sys', last_name: 'admin', email: 'email@camsys.com', password: 'welcome1'
-up = UserProfile.create! user: u
+u = User.find_or_create_by!(email: 'email@camsys.com') do |u|
+  u.first_name = 'sys'
+  u.last_name = 'admin' 
+  u.password = u.password_confirmation ='welcome1'
+  
+end
+up = UserProfile.find_or_create_by! user: u
 u.add_role :system_administrator
 
 ### Internationalized Records ###
@@ -41,12 +46,8 @@ u.add_role :system_administrator
     { klass: TripStatus, active: 1, name: 'In Progress',code: 'trip_status_in_progress'},
     { klass: TripStatus, active: 1, name: 'Completed',code: 'trip_status_completed'},
     { klass: TripStatus, active: 1, name: 'Errored',code: 'trip_status_errored'},
-# load the modes and internationalize their names
-    { klass: Mode, active: 1, name: 'Transit', code: 'mode_transit'},
-    { klass: Mode, active: 1, name: 'Paratransit', code: 'mode_paratransit'},
-    { klass: Mode, active: 1, name: 'Taxi', code: 'mode_taxi'},
-    { klass: Mode, active: 1, name: 'Rideshare', code: 'mode_rideshare'},
-    #Create relationship statuses
+
+ #Create relationship statuses
     { klass: RelationshipStatus, name: 'Requested', code: 'relationship_status_requested'},
     { klass: RelationshipStatus, name: 'Pending', code: 'relationship_status_pending'},
     { klass: RelationshipStatus, name: 'Confirmed', code: 'relationship_status_confirmed'},

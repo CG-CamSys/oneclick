@@ -1,10 +1,139 @@
-%p
-  %b Name:
-  = @provider.name
+.row
+  .col-sm-6.pull-left
+    = link_to t(:all_providers), admin_providers_path
+    %h2
+      = @provider.name
+    - unless @provider.active
+      %p= t(:inactive)
+  .col-sm-3.pull-right.form-group
+    - if can? :update, @provider
+      = link_to edit_admin_provider_path(@provider), {class: 'btn action-button btn-default', role: 'button'} do
+        = icon_label(:edit)
 
-%p
-  %pre= @provider.inspect
+    - if can?(:create, Service) && can?(:update, @provider)
+      = link_to new_service_path(provider_id: @provider), {class: 'btn action-button btn-default', role: 'button'} do
+        = icon_label(:add_service)
 
-= link_to 'Edit', edit_admin_provider_path(@provider)
-\|
-= link_to 'List', admin_providers_path
+    - if can? :destroy, @provider
+      = button_to t(:delete), { action: "destroy", id: @provider.id }, method: :delete,
+      data: { confirm: t(:confirm_msg) }, class: "btn action-button btn-default",
+      form_class: "form-horizontal pull-right"
+
+.row
+  .col-sm-6
+    .panel.panel-default
+      .panel-heading
+        %h4.panel-title= t(:provider_contact_info)
+      .panel-body              
+        %table.table.table-condensed
+          %tr
+            %td.text-right
+              = t(:address) + ":"
+            %td.text-left
+              %b= @provider.address.to_s
+            %td.text-left
+              %b= @provider.city.to_s
+            %td.text-left
+              %b= @provider.state.to_s
+            %td.text-left
+              %b= @provider.zip.to_s
+          %tr
+            %td.text-right
+              = t(:phone)+ ":  "
+            %td.text-left{colspan: 4}
+              %b= @provider.phone.to_s
+          %tr
+            %td.text-right
+              = t(:email)+ ":  "
+            %td.text-left{colspan: 4}
+              %b= mail_to @provider.email.to_s
+          %tr
+            %td.text-right
+              = t(:url)+ ":  "
+            %td.text-left{colspan: 4}
+              - if @provider.url
+                %b= link_to @provider.url, @provider.url
+
+  .col-sm-6
+    .panel.panel-default
+      .panel-heading
+        %h4.panel-title= t(:internal_contact)
+      .panel-body
+        %table.table.table-condensed
+          %tr
+            %td.text-right
+              = t(:name) + ": "
+            %td.text-left
+              %b= @provider.internal_contact_name
+          %tr
+            %td.text-right
+              = t(:title)+": "
+            %td.text-left
+              %b= @provider.internal_contact_title
+          %tr
+            %td.text-right
+              = t(:phone)+ ": "
+            %td.text-left
+              %b= @provider.internal_contact_phone
+          %tr
+            %td.text-right
+              = t(:email)+ ":  "
+            %td.text-left
+              %b= mail_to @provider.internal_contact_email
+          - if @contact
+            %tr
+              %td.text-right
+                = t(:user) + ": "
+              %td.text-left
+                %b= link_to @contact.name, admin_user_path(@contact)
+              
+
+.panel.panel-default
+  .panel-heading
+    %h4.panel-title= t(:staff_actions)
+  .panel-body
+    %table.ALTtable.table-condensed
+      %tr
+        %th.text-left
+          = t(:name)
+        %th.text-left
+          = t(:title)
+        %th.text-left
+          = t(:phone)
+        %th.text-left
+          = t(:email)
+
+      - if @staff.count > 0
+        - @staff.each do |s|
+          %tr
+            %td.text-left
+              %b= s.name.to_s
+            %td.text-left
+              %b= s.title.to_s
+            %td.text-left
+              %b= s.phone.to_s
+            %td.text-left
+              %b= mail_to s.email.to_s
+      - else
+        %tr
+          %td= t(:nothing_found_sorry)
+
+.panel.panel-default
+  .panel-heading
+    %h4.panel-title= t(:services)
+  .panel-body
+    = render 'services/table'
+
+:javascript
+  $(document).ready(function() {
+    $('#admin_services_table').dataTable( {
+          "oLanguage": {
+              "sLengthMenu": "Display _MENU_ agencies per page",
+              "sZeroRecords": "Nothing found - sorry",
+              "sInfo": "Showing _START_ to _END_ of _TOTAL_ agencies",
+              "sInfoEmpty": "Showing 0 to 0 of 0 agencies",
+              "sInfoFiltered": "(filtered from _MAX_ total agencies)"
+          },
+          "sDom": "<'row'<'col-sm-6'l>r>t<'row'<'col-sm-6'i><'col-sm-6'p>>",
+      } );
+  } );

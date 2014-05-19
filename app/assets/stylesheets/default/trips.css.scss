@@ -1,0 +1,420 @@
+.place_picker {
+  // width: 20em;
+}
+
+.twitter-typeahead {
+  display: table-cell !important;
+}
+
+.tt-dropdown-menu {
+  max-height: 20em;
+  overflow-y: scroll;
+  width: 100%;
+}
+
+.tt-suggestion.tt-is-under-cursor a {
+  cursor: pointer;
+  color: blue;
+}
+
+/* override jQuery UI slider to not load image resource but only use bg color*/
+.ui-widget-content {
+  background: white;
+}
+.ui-widget-header {
+  background: #ccc;
+}
+.ui-slider {
+  .ui-state-default {
+    background: #e6e6e6;
+  }
+}
+
+@media(max-width:767px){
+  .form-group .control-label {
+    text-align: left;
+  }
+  
+  .tick-label-hidden-xs {
+    visibility: hidden !important;
+  }
+}
+
+@media(min-width:768px){
+  .form-group .control-label {
+    text-align: right;
+  }
+
+  @media(max-width:1170px){
+    .tick-label-hidden-sm-md {
+      visibility: hidden !important;
+    }
+  }
+}
+
+
+@media(min-width:1170px){
+  .tick-label-hidden-lg {
+    visibility: hidden !important;
+  }
+
+  .tick-label-visible-lg {
+    visibility: visible !important;
+  }
+}
+
+.page-action-button-container {
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-bottom: 10px;
+  padding-left: 0px;
+  padding-right: 0px; 
+}
+
+.action-button {
+  &:not(:last-of-type) {
+    margin-left: 5px;
+  }
+  // background: #eeeeee; /* Old browsers */
+  // background: -moz-linear-gradient(top,  #ffffff 0%, #AFAFAF 100%); /* FF3.6+ */
+  // background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#AFAFAF)); /* Chrome,Safari4+ */
+  // background: -webkit-linear-gradient(top,  #ffffff 0%,#AFAFAF 100%); /* Chrome10+,Safari5.1+ */
+  // background: -o-linear-gradient(top,  #ffffff 0%,#AFAFAF 100%); /* Opera 11.10+ */
+  // background: -ms-linear-gradient(top,  #ffffff 0%,#AFAFAF 100%); /* IE10+ */
+  // background: linear-gradient(to bottom,  #ffffff 0%,#AFAFAF 100%); /* W3C */
+  // filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#AFAFAF',GradientType=0 ); /* IE6-9 */
+  min-width: 40px;
+  // height: 25px;
+  // border-radius: 8px;
+  font-weight: bold;
+  // padding: 2px;
+  // font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
+  // font-size: 14px;
+  // color: #333;
+}
+
+.action-button:hover, .action-button:focus {
+  // background-position: 0;
+  // color: inherit;
+}
+
+.dropdown-toggle {
+  cursor: pointer;
+}
+
+.dropdown-menu a {
+  cursor: pointer;
+}
+
+.btn .fa-map-marker {
+  color: #499bea;
+}
+
+/*breadcrumbs*/
+$breadcrumb-height: 30px;
+$breadcrumb-font-size: 16px;
+
+.breadcrumb-page {
+  margin: 3px 0px;
+  min-width: 100px;
+  height: $breadcrumb-height;
+  text-align: center;
+  padding: 0px 10px;
+}
+
+.current-page {
+  background-image: image-url('active.png');
+  background-size: 100% 100%;
+  font-weight: bold;
+  font-size: $breadcrumb-font-size;
+  color: white;
+  line-height: $breadcrumb-height;
+}
+
+.prev-page {
+  background-image: image-url('inactive.png');
+  background-size: 100% 100%;
+
+  a{
+    font-weight: bold;
+    color: black;
+    font-size: $breadcrumb-font-size;
+    line-height: $breadcrumb-height;
+  }
+
+  a:hover {
+    text-decoration: none;
+    cursor: pointer;
+  }
+}
+
+.next-page {
+  background-image: image-url('inactive.png');
+  background-size: 100% 100%;
+  font-weight: bold;
+  color: black;
+  font-size: $breadcrumb-font-size;
+  line-height: $breadcrumb-height;
+}
+
+#wizards{
+  padding: 0px;
+  margin-bottom: 5px;
+  background-color: transparent;
+}
+
+#wizards>li+li:before{
+  visibility: hidden;
+  padding: 0px;
+  content: '';
+}
+
+/*highlight vertical line style(either left or right side of each chart)*/
+.highlight-left-border {
+  border-left: 2px black solid;
+}
+
+.highlight-right-border {
+  border-right: 2px black solid;
+}
+
+.regular-left-border {
+  border-left: 1px black solid;
+}
+
+.regular-right-border {
+  border-right: 1px black solid;
+}
+
+$period-nav-button-width: 40px;
+.prev-period {
+  width: $period-nav-button-width;
+  height: 20px;
+  background-image: image-url('prevPeriod.png');
+  background-color: transparent;
+  text-align: center;
+  color: black;
+  border: none;
+}
+
+.next-period {
+  width: $period-nav-button-width;
+  height: 20px;
+  background-image: image-url('nextPeriod.png');
+  background-color: transparent;
+  text-align: center;
+  color: black;
+  border: none;
+}
+
+/* in sm+ mode, one period-nav button in same container, so apply margin to sorter component that make them vertically align in containers */
+/* in xs mode, as space is so limited, not apply margin so sorter can take whatever space left in its container */
+@media(max-width:767px){
+  .sm-sorter-margin-left {
+    margin-left: 0px;
+  }
+
+  .sm-sorter-margin-right {
+    margin-right: 0px;
+  }
+}
+
+@media(min-width:768px){
+  .sm-sorter-margin-left {
+    margin-left: $period-nav-button-width * -1;
+  }
+
+  .sm-sorter-margin-right {
+    margin-right: -$period-nav-button-width * -1;
+  }
+}
+
+.single-trip-part {
+  padding: 0px;
+}
+
+.single-plan-header{
+  background-color: transparante;
+  border: none;
+  padding: 2px;
+}
+
+$single-plan-height: 50px;
+.single-plan-review{
+  background-color: white;
+  border-radius: 5px;
+  border: 2px whitesmoke solid;
+  height: $single-plan-height;
+}
+
+.single-plan-selected {
+  border: 2px black solid;
+}
+
+.single-plan-unselected {
+  border: 2px whitesmoke solid;
+}
+
+.select-column {
+  text-align: right;
+  line-height: $single-plan-height;
+}
+
+.single-plan-select {
+}
+
+.single-plan-question {
+}
+
+/*Review page timeline chart styles*/
+.chart {
+  background: none;
+}
+ 
+.chart rect {
+  stroke: none;
+}
+
+.chart line {
+  stroke: black;
+}
+
+.axis text {
+  font: 10px sans-serif;
+}
+
+.chart-tooltip {   
+  position: absolute;           
+  text-align: center;           
+  width: 200px;                  
+  height: auto;                 
+  padding: 2px;             
+  font: 12px sans-serif;        
+  background: white;   
+  border: 1px black solid;      
+  border-radius: 5px;           
+  pointer-events: none;         
+}
+
+.slider-tip {
+    opacity:1;
+    bottom:120%;
+}
+
+.travel-legend-container {
+  margin-right: 5px; 
+  display: inline-block; 
+}
+
+$legend-height: 20px;
+.travel-legend {
+  width: 35px;
+  height: $legend-height;
+  display: inline-block;
+  margin-right: 2px;
+  border: 1px black solid;
+}
+
+.travel-legend-text {
+  float: right;
+  line-height: $legend-height
+}
+
+.travel-legend-walk {
+  background-color: #499bea;
+}
+
+.travel-legend-wait {
+  background-color: #7f7979;
+}
+
+.travel-legend-transfer {
+  background-color: #FEC800;
+}
+
+.travel-legend-vehicle {
+  background-color: #FF9900;
+}
+
+.travel-type-walk {
+  fill: #499bea;
+}
+
+.travel-type-wait {
+  fill: #7f7979;
+}
+
+.travel-type-transfer {
+  fill: #FEC800;
+}
+
+.travel-type-vehicle {
+  fill: #FF9900;
+}
+
+/*styles for trip mode service*/
+.trip-mode-icon {
+  background-repeat: no-repeat;
+  width: 50px;
+  height: $single-plan-height;
+  float: left;
+  background-position: center;
+
+  a {
+    display: block;
+    height: $single-plan-height;
+  }
+}
+
+.trip-mode-cost {
+  text-align: center;
+  width: 100%;
+}
+
+.mode_transit {
+  background-image: image-url('transit.png');
+}
+
+.mode_paratransit {
+  background-image: image-url('paratransit.png');
+}
+
+.mode_ferry {
+  background-image: image-url('ferry.png');
+}
+
+.mode_helicopter {
+  background-image: image-url('helicopter.png');
+}
+
+.mode_plane {
+  background-image: image-url('plane.png');
+}
+
+.mode_rail {
+  background-image: image-url('rail.png');
+}
+
+.mode_auto {
+  background-image: image-url('auto.png');
+}
+
+.mode_taxi {
+  background-image: image-url('taxi.png');
+}
+
+.mode_streetcar {
+  background-image: image-url('streetcar.png');
+}
+
+.mode_walk {
+  background-image: image-url('walk.png');
+}
+
+.mode_bicycle {
+  background-image: image-url('bicycle.png');
+}
+
+.mode_rideshare {
+  background-image: image-url('rideshare.png');
+}

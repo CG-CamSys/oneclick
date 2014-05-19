@@ -1,14 +1,8 @@
-.row-fluid
-  .span12
-    %h1
-      %i.fa.fa-info-circle
-      %span#characteristics_header
-        = render partial: 'header', locals: {total_steps: @total_steps}
+= render partial: 'shared/trip_plan_breadcrumbs'
 
-.row-fluid
-  .span12
-    = render partial: 'trips/trip_header', locals: {trip: @trip}
+.row
+  .col-sm-7.col-xs-12
+    = render partial: 'form', :locals => {:path => user_characteristic_path(@traveler, @user_characteristics_proxy.id, inline: 1), :inline => true}
 
-.row-fluid
-  .well
-    = render partial: 'characteristics/form',  :locals => {:path => user_characteristic_path(@traveler, @user_characteristics_proxy.id, inline: 1), :inline => true}
+  / end of options column
+  = render partial: 'shared/splash'

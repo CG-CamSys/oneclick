@@ -6,13 +6,14 @@ module ApplicationHelper
   include LocaleHelpers
   
   ICON_DICTIONARY = {
-      TripLeg::WALK => 'travelcon-walk',
-      TripLeg::TRAM => 'travelcon-subway',
-      TripLeg::SUBWAY => 'travelcon-subway',
-      TripLeg::RAIL => 'travelcon-rail',
-      TripLeg::BUS => 'travelcon-bus',
-      TripLeg::FERRY => 'travelcon-boat'
-      }
+    Leg::TripLeg::WALK => 'travelcon-walk',
+    Leg::TripLeg::TRAM => 'travelcon-subway',
+    Leg::TripLeg::SUBWAY => 'travelcon-subway',
+    Leg::TripLeg::RAIL => 'travelcon-rail',
+    Leg::TripLeg::BUS => 'travelcon-bus',
+    Leg::TripLeg::FERRY => 'travelcon-boat',
+    Leg::TripLeg::CAR => 'travelcon-car'
+  }
 
   # Returns the name of the logo image based on the oneclick configuration
   def get_logo
@@ -53,7 +54,7 @@ module ApplicationHelper
     TripPurpose.all.each do |tp|
       elems << {
         :id => tp.id,
-        :value => tp
+        :value => t(tp.name)
       }
     end
     return elems
@@ -146,24 +147,6 @@ module ApplicationHelper
     return l datetime, :format => :long unless datetime.nil?
   end
 
-  # Standardized date formatter for the app. Use this wherever you need to display a date
-  # in the UI. The formatted displays dates as Day of Week, Month Day eg. Tuesday, June 5
-  # if the date is from a previous year, the year is appended eg Tuesday, June 5 2012
-  def format_date(date)
-    if date.nil?
-      return ""
-    end
-    if date.year == Date.today.year
-      return l date.to_date, :format => :oneclick_short unless date.nil?
-    else
-      return l date.to_date, :format => :oneclick_long unless date.nil?
-    end
-  end
-
-  def format_time(time)
-    return l time, :format => :oneclick_short unless time.nil?
-  end
-
   # TODO These next 2 methods are very similar to methods in CsHelper,should possible be consolidated
   # Returns the correct partial for a trip itinerary
   def get_trip_partial(itinerary)
@@ -171,8 +154,8 @@ module ApplicationHelper
     return if itinerary.nil?
     
     mode_code = get_pseudomode_for_itinerary(itinerary)
-
-    partial = if mode_code.in? ['transit', 'rail', 'bus', 'railbus']
+    #is this not a switch case?  Saves a few evaluations that way...
+    partial = if mode_code.in? ['transit', 'rail', 'bus', 'railbus', 'drivetransit']
       'transit_details'
     elsif mode_code == 'paratransit'
       'paratransit_details'
@@ -223,6 +206,8 @@ module ApplicationHelper
       'fa-group'      
     elsif mode_code == 'walk'
       'icon-accessibility-sign'
+    elsif mode_code == 'drivetransit'
+      'icon-bus-sign'
     end
     return icon_name
   end
@@ -235,7 +220,7 @@ module ApplicationHelper
     return '' if (resource.errors.empty?) or (resource.errors[:base].empty?)
     messages = resource.errors[:base].map { |msg| content_tag(:p, msg) }.join
     html = <<-HTML
-    <div class="alert alert-error alert-block">
+    <div class="alert alert-danger alert-block">
       <button type="button" class="close" data-dismiss="alert">&#215;</button>
       #{messages}
     </div>
@@ -295,6 +280,10 @@ module ApplicationHelper
   # Allow controller to override what controller css class they want to use
   def controller_css_class
     controller_name
+  end
+
+  def controller_and_action
+    (controller.controller_name + controller.action_name.capitalize).underscore
   end
 
   def tel_link num

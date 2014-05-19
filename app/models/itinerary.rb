@@ -11,6 +11,7 @@ class Itinerary < ActiveRecord::Base
 
   # You should usually *always* used the valid scope
   scope :valid, -> {where('mode_id is not null and server_status=200')}
+  scope :selected, -> {where('selected=true')}
   scope :invalid, -> {where('mode_id is null or server_status!=200')}
   scope :visible, -> {where('hidden=false')}
   scope :hidden, -> {where('hidden=true')}
@@ -39,17 +40,11 @@ class Itinerary < ActiveRecord::Base
     return mode.code == 'mode_transit' ? true : false
   end
 
-  # This one is selected if no other valid ones in the trip_part are visible.
-  # See also TripPart#selected?
-  def selected?
-    trip_part.selected?
-  end
-  
   # returns true if this itinerary is a walk-only trip. These are a special case of Transit
   # trips that only include a WALK leg
   def is_walk
     legs = get_legs
-    return legs.size == 1 && legs.first.mode == TripLeg::WALK
+    return legs.size == 1 && legs.first.mode == Leg::TripLeg::WALK
   end
 
   # Determines whether we are using rail, bus and rail, or just bus for the transit trips
@@ -76,6 +71,8 @@ class Itinerary < ActiveRecord::Base
         when 'rail'
           rail = true
           next
+        when 'car'
+          return 'drivetransit'
         else
           return 'transit'
       end
@@ -90,6 +87,7 @@ class Itinerary < ActiveRecord::Base
     else
       return 'transit'
     end
+
   end
   
   # parses the legs and returns an array of TripLeg. If there are no legs then an
@@ -125,6 +123,10 @@ class Itinerary < ActiveRecord::Base
     [(missing_information ? 1 : 0), 
     (accommodation_mismatch ? 1 : 0),
     ((date_mismatch or time_mismatch or too_late) ? 1 : 0)].sum
+  end
+
+  def service_name
+    service.name rescue nil
   end
 
   protected

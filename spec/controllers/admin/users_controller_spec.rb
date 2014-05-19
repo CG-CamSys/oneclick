@@ -1,51 +1,81 @@
 require 'spec_helper'
 
 describe Admin::UsersController do
+  include Devise::TestHelpers
+  before (:all) do
+    User.delete_all
+    FactoryGirl.create(:admin)
+    @agency = FactoryGirl.create(:arc_mobility_mgmt_agency)
+    create_list(:user, 25)
+    @agency_admin = FactoryGirl.create(:agency_admin)
+    create_list(:agency_agent, 10)
+  end
+
+  after(:all) do
+    User.delete_all
+  end
+
+  describe "index action" do
+    describe "for sys admin" do
+      before(:each) do
+        login_as_using_find_by(email: 'admin@example.com')
+      end
+      describe "with no params" do
+        it "returns all users if some exist" do
+          get :index
+          assigns(:users).count.should eql(37) #1 sys admin, 1 agency admin, 10 agents and 25 users
+        end
+      end
+      describe "with email param" do
+        it "returns one record exactly with matching email" do
+          pending "currently filtering lives client-side"
+          u = User.last
+          get :index, text: u.email
+          assigns(:users).count.should eql(1)
+        end
+      end
+    end
+  end
 
   describe "create action" do
     before(:each) do
-      FactoryGirl.create(:arc_mobility_mgmt_agency)
-      request.env["HTTP_REFERER"] = new_admin_agency_user_path(Agency.first.id)
-      login_as_using_find_by(email: 'email@camsys.com')
+      request.env["HTTP_REFERER"] = new_admin_user_path(Agency.first.id)
     end
-
-    # TODO This can't work without more user parameters
-    # it "should use the current users agency if it exists" do
-    #     params = {:user =>  {:agency => Agency.find_by(name: "ARC Mobility Management") } }
-    #     get 'create', params
-    #     expect(assigns(:agency).name).to eq("ARC Mobility Management")
-    # end
 
     it "should create a user with an agency_user_relationship if current_user has an agency" do
+      pending "https://www.pivotaltracker.com/story/show/70102276"
+      login_as_using_find_by(email: @agency_admin.email)
       params = {
         user: {
-          first_name: "Test",
+          first_name: "Valid",
           last_name: "Test",
           email: "AdminUserController@example.com",
-          agency: Agency.find_by(name: "ARC Mobility Management") 
+          agency: Agency.find_by(name: "ARC Mobility Management"),
+          password: "abcdefgh",
+          password_confirmation: "abcdefgh"
           }
       }
       get 'create', params
+      created_user = User.last
       expect(assigns(:user)).to be_valid
+      expect(assigns(:agency_user_relationship)).to be_valid
     end
 
-    # TODO Unless I did the merge wrong, this request was okay...
     it "should not create a user and return to the creation form if there's something wrong with the request" do
+      login_as_using_find_by(email: 'admin@example.com')
       params = {
         user: {
-          first_name: "Test",
+          first_name: "Invalid",
           last_name: "Test",
           email: "AdminUserController@example.com",
           agency: Agency.find_by(name: "ARC Mobility Management") 
+          #missing password information
           }
       }
       get 'create', params
-      expect(assigns(:user)).to be_valid
-      # expect(assigns(:user)).not_to be_valid
-      # expect response.status.should eq 302
+      expect(assigns(:user)).not_to be_valid
+      expect(assigns(:user).errors).not_to be_empty
+      expect response.status.should eq 200
     end
-
   end
-
-
 end

@@ -61,9 +61,9 @@ module TripsHelper
 
   def outbound_section_class trip
     if trip.both_parts_selected?
-      'span6'
+      'col-sm-6'
     else
-      (trip.outbound_part.selected? ? 'span3' : 'span12')
+      (trip.outbound_part.selected? ? 'col-sm-3' : 'col-sm-12')
     end
   end
 
@@ -75,6 +75,55 @@ module TripsHelper
     end
     list << ['Me: '+  current_user.email, current_user.email]
     list
+  end
+
+  ACTIONS_TO_TABS = HashWithIndifferentAccess.new(
+    trips_new: :trip,
+    trips_edit: :trip,
+    trips_create: :trip,
+    trips_update: :trip,
+    characteristics_new: :options,
+    trips_show: :review,
+    trips_plan: :plan,
+    )
+
+  TABS_TO_ACTIONS = ACTIONS_TO_TABS.invert
+
+  TABS = [:trip, :options, :review, :plan]
+
+  def visited_tabs
+    TABS.slice(0, TABS.index(ACTIONS_TO_TABS[controller_and_action]))
+  end
+
+  def active_tab
+    ACTIONS_TO_TABS[controller_and_action]
+  end
+
+  def breadcrumb_class tab
+    if tab==active_tab
+      'current-page'
+    else
+      'next-page'
+    end
+  end
+
+  def breadcrumb_tab_navigable tab
+    visited_tabs.include? tab
+  end
+
+  def breadcrumb_path tab
+    case tab
+    when :trip
+      edit_user_trip_path(@traveler, @trip)
+    when :options
+      new_user_trip_characteristic_path(@traveler, @trip)
+    when :review
+      user_trip_path(@traveler, @trip)
+    when :plan
+      '/trip'
+    else
+      raise "unhandled tab #{tab}"
+    end
   end
 
 end

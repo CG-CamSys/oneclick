@@ -11,8 +11,8 @@ module CsHelpers
     :my_places => 'fa fa-map-marker',
     :help_and_support => 'fa fa-question-sign',
     :find_traveler => 'fa fa-search',
-    :create_traveler =>'fa fa-user',
     :agents_agencies => 'fa fa-sitemap',
+    :create_agency => 'fa fa-plus-square',
     :providers => 'fa fa-umbrella',
     :reports => 'fa fa-bar-chart-o',
     :trips => 'fa fa-tags',
@@ -22,19 +22,46 @@ module CsHelpers
 
   }
 
-  def admin_menu
+  def admin_actions
     [
-      {label: t(:create_traveler), target: create_travelers_path, icon: ACTION_ICONS[:create_traveler], access: :admin_create_traveler},
-      {label: t(:find_traveler), target: find_travelers_path, icon: ACTION_ICONS[:find_traveler], access: :admin_find_traveler},
+      {label: t(:users), target: admin_users_path, icon: ACTION_ICONS[:users], access: :admin_users},
+    ]
+  end
+
+  def staff_actions
+    [
+      {label: t(:travelers), target: find_travelers_path, icon: ACTION_ICONS[:find_traveler], access: :staff_travelers},
+      {label: t(:agency_profile), target: agency_profile_path, icon: ACTION_ICONS[:find_traveler], access: :show_agency}, #TODO find icon
+      {label: t(:provider_profile), target: provider_profile_path, icon: ACTION_ICONS[:find_traveler], access: :show_provider}, #TODO find icon
       {label: t(:trips), target: create_trips_path, icon: ACTION_ICONS[:trips], access: :admin_trips},
       {label: t(:agencies), target: admin_agencies_path, icon: ACTION_ICONS[:agents_agencies], access: :admin_agencies},
-      {label: t(:users), target: admin_users_path, icon: ACTION_ICONS[:users], access: :admin_users},
-      {label: t(:providers), target: admin_provider_orgs_path, icon: ACTION_ICONS[:providers], access: :admin_providers},
+      {label: t(:providers), target: admin_providers_path, icon: ACTION_ICONS[:providers], access: :admin_providers},
       {label: t(:services), target: services_path, icon: ACTION_ICONS[:services], access: :admin_services},
-      {label: t(:reports), target: admin_reports_path, icon: ACTION_ICONS[:reports], access: :admin_reports},
-      # {label: t(:feedback), target: admin_feedback_path, icon: ACTION_ICONS[:feedback], access: :admin_feedback},
+      {label: t(:reports), target: admin_reports_path, icon: ACTION_ICONS[:reports], access: :admin_reports}
     ]  
   end
+
+  def traveler_actions options = {}
+    a = if user_signed_in?
+      [
+        {label: t(:plan_a_trip), target: new_user_trip_path(get_traveler, locale: I18n.locale), icon: ACTION_ICONS[:plan_a_trip]},
+        {label: t(:my_travel_profile), target: user_path(get_traveler), locale: I18n.locale, icon: ACTION_ICONS[:travel_profile]},
+        {label: t(:my_trips), target: user_trips_path(get_traveler, locale: I18n.locale), icon: ACTION_ICONS[:my_trips]},
+        {label: t(:my_places), target: user_places_path(get_traveler, locale: I18n.locale), icon: ACTION_ICONS[:my_places]},
+      ]
+    else
+      [
+        {label: t(:plan_a_trip), target: new_user_trip_path(current_or_guest_user), icon: ACTION_ICONS[:plan_a_trip]},
+        {label: t(:log_in), target: new_user_session_path, icon: ACTION_ICONS[:log_in], not_on_homepage: true},
+        {label: t(:create_an_account), target: new_user_registration_path, icon: ACTION_ICONS[:create_an_account], not_on_homepage: true}
+      ]
+    end
+    if options[:with_logout]
+      a << {label: t(:logout), target: destroy_user_session_path, icon: 'fa-sign-out', divider_before: true, method: :delete}
+    end
+    a
+  end
+
 
   def has_agency_specific_role?
     [:agency_administrator, :agent].any? do |r|
@@ -43,11 +70,19 @@ module CsHelpers
   end
 
   def find_travelers_path
-    has_agency_specific_role? ? admin_agency_travelers_path(current_user.agency) : admin_travelers_path
+    admin_agency_travelers_path(current_user.agency) if has_agency_specific_role?
   end
 
   def create_travelers_path
-    has_agency_specific_role? ? new_admin_agency_user_path(current_user.agency) : new_admin_user_path
+    new_admin_agency_user_path(current_user.agency) if has_agency_specific_role?
+  end
+
+  def agency_profile_path
+    admin_agency_path(current_user.agency) if has_agency_specific_role?
+  end
+
+  def provider_profile_path
+    admin_provider_path(current_user.provider) if current_user.has_role? :provider_staff, :any
   end
 
   def create_trips_path
@@ -123,36 +158,10 @@ module CsHelpers
     # Cache the value the first time it's gotten.
     @cached_guest_user ||= User.find(session[:guest_user_id] ||= create_guest_user.id)
 
-    rescue ActiveRecord::RecordNotFound # if session[:guest_user_id] invalid
-      session[:guest_user_id] = nil
-      guest_user
-    end
-
-    def actions options = {}
-      a = if user_signed_in?
-        [
-          {label: t(:plan_a_trip), target: new_user_trip_path(get_traveler, locale: I18n.locale), icon: ACTION_ICONS[:plan_a_trip]},
-          {label: t(:my_travel_profile), target: edit_user_registration_path(locale: I18n.locale), icon: ACTION_ICONS[:travel_profile]},
-          {label: t(:my_trips), target: user_trips_path(get_traveler, locale: I18n.locale), icon: ACTION_ICONS[:my_trips]},
-          {label: t(:my_places), target: user_places_path(get_traveler, locale: I18n.locale), icon: ACTION_ICONS[:my_places]},
-        ]
-      else
-        [
-          {label: t(:plan_a_trip), target: new_user_trip_path(current_or_guest_user), icon: ACTION_ICONS[:plan_a_trip]},
-          {label: t(:log_in), target: new_user_session_path, icon: ACTION_ICONS[:log_in], not_on_homepage: true},
-          {label: t(:create_an_account), target: new_user_registration_path, icon: ACTION_ICONS[:create_an_account], not_on_homepage: true}
-        ]
-      end
-      if options[:with_logout]
-        a << {label: t(:logout), target: destroy_user_session_path, icon: 'fa-sign-out', divider_before: true,
-          method: :delete}
-        #     = link_to , :method=>'delete' do
-        # %i.fa.fa-sign-out
-        # = t(:logout)
-      end
-      a
-    end
-
+  rescue ActiveRecord::RecordNotFound # if session[:guest_user_id] invalid
+    session[:guest_user_id] = nil
+    guest_user
+  end
 
   # TODO Unclear whether this will need to be more flexible depending on how clients want to do their domains
   # may have to vary by environment
@@ -171,6 +180,25 @@ module CsHelpers
   def format_exception e
     [e.message, e.backtrace].flatten.join("\n")
   end
+
+  # Standardized date formatter for the app. Use this wherever you need to display a date
+  # in the UI. The formatted displays dates as Day of Week, Month Day eg. Tuesday, June 5
+  # if the date is from a previous year, the year is appended eg Tuesday, June 5 2012
+  def format_date(date)
+    if date.nil?
+      return ""
+    end
+    if date.year == Date.today.year
+      return I18n.l date.to_date, :format => :oneclick_short unless date.nil?
+    else
+      return I18n.l date.to_date, :format => :oneclick_long unless date.nil?
+    end
+  end
+
+  def format_time(time)
+    return I18n.l time, :format => :oneclick_short unless time.nil?
+  end
+
 
   # Retuens a pseudo-mode for an itinerary. The pseudo-mode is used to determine
   # the correct icon, title, and partial for an itinerary
@@ -192,7 +220,7 @@ module CsHelpers
   def get_trip_summary_title(itinerary)
 
     return if itinerary.nil?
-    
+
     mode_code = get_pseudomode_for_itinerary(itinerary)
     title = if mode_code == 'rail'
       "Rail"
@@ -200,6 +228,8 @@ module CsHelpers
       "Rail and Bus"
     elsif mode_code == 'bus'
       "Bus"
+    elsif mode_code == 'drivetransit'
+      "Drive to Transit"
     elsif mode_code == 'transit'
       I18n.t(:transit)
     elsif mode_code == 'paratransit'
@@ -300,10 +330,12 @@ module CsHelpers
     end
   end
 
-end
-
-class String
-  def to_sample_email suffix
-    downcase.gsub(/[^a-z\s]/, '').gsub(/\s/, '_') + '_' + suffix + '@camsys.com'
+  def new_user_trip_characteristic_path_for_ui_mode traveler, trip
+    unless ui_mode_kiosk?
+      new_user_trip_characteristic_path traveler, trip
+    else
+      raise "new_user_trip_characteristic_path not defined for kiosk yet"
+    end
   end
+
 end

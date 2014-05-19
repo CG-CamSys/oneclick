@@ -5,10 +5,11 @@ class CharacteristicsController < TravelerAwareController
     @user_characteristics_proxy = UserCharacteristicsProxy.new(User.find(params[:user_id]))
     @user_characteristics_proxy.update_maps(params[:user_characteristics_proxy])
 
-    if params['inline'] == '1'
-      @path = new_user_program_path_for_ui_mode(@traveler, inline: 1)
-    else
-      @path = new_user_program_path_for_ui_mode(@traveler)
+    if params['inline'] == '1' || params[:trip_id]
+      @trip = Trip.find(session[:current_trip_id] || params[:trip_id])
+      session[:current_trip_id] =  nil
+      @trip.create_itineraries
+      @path = user_trip_path_for_ui_mode(@traveler, @trip)
     end
 
     #if we are in the 'wizard' don't flash a notice. This logic checks to see if
@@ -27,7 +28,7 @@ class CharacteristicsController < TravelerAwareController
   def new
     @user_characteristics_proxy = UserCharacteristicsProxy.new(@traveler)
 
-    @trip_id = session[:current_trip_id]
+    @trip_id = session[:current_trip_id] || params[:trip_id]
     @trip = Trip.find(@trip_id)
     @total_steps = (@traveler.has_disability? ? 3 : 2)
 
@@ -36,6 +37,7 @@ class CharacteristicsController < TravelerAwareController
     end
   end
 
+  # TODO Not used anymore
   def header
     @total_steps = (params[:state] == 'user_characteristics_proxy_disabled_true' ? 3 : 2)
     Rails.logger.info  "total_steps: #{@total_steps}"

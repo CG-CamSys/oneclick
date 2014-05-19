@@ -4,9 +4,20 @@ Oneclick::Application.config.ui_mode = ENV['UI_MODE'] || 'desktop'
 
 # defaults for all brands
 Oneclick::Application.config.enable_rideshare = false
-ENV['SMTP_MAIL_ADDR'] = "smtp.gmail.com"
-ENV['SMTP_MAIL_PORT'] = '587'
-ENV['SMTP_MAIL_DOMAIN'] = "gmail.com"
+ENV['SMTP_MAIL_ADDR'] ||= "smtp.gmail.com"
+ENV['SMTP_MAIL_PORT'] ||= '587'
+ENV['SMTP_MAIL_DOMAIN'] ||= "gmail.com"
+# Kiosk session timeouts
+ENV['SESSION_TIMEOUT'] ||= '10'
+ENV['SESSION_ALERT_TIMEOUT'] ||= '30'
+
+Oneclick::Application.config.default_zoom = nil
+Oneclick::Application.config.max_offset_from_desired = 3.hours
+Oneclick::Application.config.duration_factor = 2.0
+Oneclick::Application.config.minimum_paratransit_duration = 2.hours
+Oneclick::Application.config.show_update_services = false
+
+Oneclick::Application.config.google_places_api_key = 'AIzaSyCvKyNoBzQNrBRuSRkipWye0pdj__HjrmU'
 
 case ENV['BRAND'] || 'arc'
 when 'arc'
@@ -14,7 +25,7 @@ when 'arc'
   Oneclick::Application.config.geocoder_components = 'administrative_area:GA|country:US'
   Oneclick::Application.config.map_bounds = [[33.457797,-84.754028], [34.090199,-83.921814]]
   Oneclick::Application.config.geocoder_bounds = [[33.737147,-84.406634], [33.764125,-84.370361]]  
-  Oneclick::Application.config.open_trip_planner = "http://arc-otp-2.camsys-apps.com"
+  Oneclick::Application.config.open_trip_planner = "http://otpv1-arc.camsys-apps.com:8080/otp/routers/atl/plan?"
   Oneclick::Application.config.taxi_fare_finder_api_key = "SIefr5akieS5"
   Oneclick::Application.config.taxi_fare_finder_api_city = "Atlanta"
   Oneclick::Application.config.enable_rideshare = true
@@ -29,13 +40,15 @@ when 'arc'
   ENV['GOOGLE_GEOCODER_TIMEOUT']= "5"
   honeybadger_api_key = 'ba642a71'
   Oneclick::Application.config.poi_file = 'db/arc_poi_data/CommFacil_20131015.txt'
+  Oneclick::Application.config.show_update_services = true
+  Oneclick::Application.config.default_county = ''
 
-when 'broward'  
+when 'broward'
   Oneclick::Application.config.ui_logo = 'broward/Broward_211_Get_Connected_get_answers.jpg'
   Oneclick::Application.config.geocoder_components = 'administrative_area:FL|country:US'
   Oneclick::Application.config.map_bounds = [[26.427309, -80.347081], [25.602294, -80.061728]]
   Oneclick::Application.config.geocoder_bounds = [[26.427309, -80.347081], [25.602294, -80.061728]]
-  Oneclick::Application.config.open_trip_planner = "http://otp-broward.camsys-apps.com"
+  Oneclick::Application.config.open_trip_planner = "http://otpv1-arc.camsys-apps.com:8082/otp/routers/broward/plan?"
   Oneclick::Application.config.taxi_fare_finder_api_key = "SIefr5akieS5"
   Oneclick::Application.config.taxi_fare_finder_api_city = "Miami"
   Oneclick::Application.config.name = 'OneClick'
@@ -48,13 +61,16 @@ when 'broward'
   ENV['GOOGLE_GEOCODER_TIMEOUT']=  "5"
   honeybadger_api_key = '789c7911'
   Oneclick::Application.config.poi_file = 'db/broward_poi_data/broward-poi-from-arcgis.csv'
+  Oneclick::Application.config.default_county = 'Broward'
 
 when 'pa'
   Oneclick::Application.config.ui_logo = 'pa/penndotLogo.jpg'
   Oneclick::Application.config.geocoder_components = 'administrative_area:PA|country:US'
-  Oneclick::Application.config.map_bounds = [[41.970622, -80.461542], [39.734653, -75.007294]]
-  Oneclick::Application.config.geocoder_bounds = [[41.970622, -80.461542], [39.734653, -75.007294]]
-  Oneclick::Application.config.open_trip_planner = "http://otp-pa.camsys-apps.com:8080"
+  # TODO Do we maybe need different bounds for kiosk vs. default?
+  Oneclick::Application.config.map_bounds      = [[40.0262999543423,  -76.56372070312499], [39.87970800405549, -76.90189361572266]]
+  Oneclick::Application.config.geocoder_bounds = [[40.0262999543423,  -76.56372070312499], [39.87970800405549, -76.90189361572266]]
+  Oneclick::Application.config.default_zoom = 12
+  Oneclick::Application.config.open_trip_planner = "http://otpv1-arc.camsys-apps.com:8081/otp/routers/pa/plan?"
   Oneclick::Application.config.taxi_fare_finder_api_key = "SIefr5akieS5"
   Oneclick::Application.config.taxi_fare_finder_api_city = "Harrisburg-PA"
   Oneclick::Application.config.name = '1-Click/PA'
@@ -66,7 +82,13 @@ when 'pa'
   ENV['GOOGLE_GEOCODER_CHANNEL']=  "ARC_ONECLICK"
   ENV['GOOGLE_GEOCODER_TIMEOUT']=  "5"
   honeybadger_api_key = 'f49faffa'
-  Oneclick::Application.config.poi_file = 'db/pa/pa-poi-from-arc.csv'
+  Oneclick::Application.config.poi_file = 'db/pa/pa-poi-from-arcgis.csv'
+  Oneclick::Application.config.default_county = 'York'
+
+  ##Ecolane Variables
+  Oneclick::Application.config.ecolane_system_id = "ococtest"
+  Oneclick::Application.config.ecolane_x_ecolane_token = ENV['X_ECOLANE_TOKEN']
+  Oneclick::Application.config.ecolane_base_url = "https://rabbit-test.ecolane.com"
 
 end
 
@@ -89,15 +111,15 @@ ENV['SMTP_MAIL_PASSWORD'] =       "CatDogMonkey"
 Honeybadger.configure do |config|
   config.api_key = honeybadger_api_key
   # Do this if you want to send honeybadger notices from development:
-  # config.development_environments = ['test', 'cucumber']
+  config.development_environments = ['test', 'cucumber']
 end
 
 # General UI configuration settings
 Oneclick::Application.config.ui_typeahead_delay = 300       # milliseconds delay between keystrokes before a query is sent to the server to retrieve a typeahead list
 Oneclick::Application.config.ui_typeahead_min_chars = 4     # minimum number of characters to initiate a query
-Oneclick::Application.config.ui_typeahead_list_length = 10  # max number of items displayed in the typeahead list  
-Oneclick::Application.config.ui_search_poi_items = 10       # max number of matching POIs to return in a search 
-Oneclick::Application.config.ui_min_geocode_chars = 5       # Minimum number of characters (not including whitespace) before sending to the geocoder 
+Oneclick::Application.config.ui_typeahead_list_length = 10  # max number of items displayed in the typeahead list
+Oneclick::Application.config.ui_search_poi_items = 10       # max number of matching POIs to return in a search
+Oneclick::Application.config.ui_min_geocode_chars = 5       # Minimum number of characters (not including whitespace) before sending to the geocoder
 
 Oneclick::Application.config.address_cache_expire_seconds = 3600 # seconds to keep addresses returned from the geocoder in the cache
 Oneclick::Application.config.return_trip_delay_mins = 120   # minutes needed at last trip place before scheduling the return trip
@@ -112,3 +134,16 @@ ROLES = [
   'Agency Agent',
   'Provider Staff'
 ]
+
+Oneclick::Application.config.session_timeout       = ENV['SESSION_TIMEOUT']
+Oneclick::Application.config.session_alert_timeout = ENV['SESSION_ALERT_TIMEOUT']
+
+# See https://github.com/mojombo/chronic#time-zones
+Chronic.time_class = Time.zone
+
+class String
+  def to_sample_email suffix
+    downcase.gsub(/[^a-z\s]/, '').gsub(/\s/, '_') + '_' + suffix + '@camsys.com'
+  end
+end
+

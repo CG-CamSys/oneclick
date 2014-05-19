@@ -24,10 +24,12 @@ class TripPlace < GeocodedAddress
   def from_trip_proxy_place json_string, sequence, manual_entry = '', map_center = ''
     self.sequence = sequence
     j = JSON.parse(json_string) rescue {'type_name' => 'MANUAL_ENTRY'}
+    j['county'] = Oneclick::Application.config.default_county if j['county'].blank?
     case j['type_name']
     when 'PLACES_TYPE'
       self.update_attributes(
         place_id: j['id'],
+        name: j['name'],
         address1: j['address1'],
         address2: j['address2'],
         city: j['city'],
@@ -37,9 +39,22 @@ class TripPlace < GeocodedAddress
         lat: j['lat'],
         lon: j['lon'],
         raw_address: j['full_address'])
+    when 'CACHED_ADDRESS_TYPE'
+      self.update_attributes(
+        name: j['name'],
+        address1: j['address1'],
+        address2: j['address2'],
+        city: j['city'],
+        state: j['state'],
+        zip: j['zip'],
+        county: j['county'],
+        lat: j['lat'],
+        lon: j['lon'],
+        raw_address: j['raw_address'])
     when 'POI_TYPE'
       self.update_attributes(
         poi_id: j['id'],
+        name: j['name'],
         address1: j['address1'],
         address2: j['address2'],
         city: j['city'],
@@ -52,6 +67,7 @@ class TripPlace < GeocodedAddress
     when 'PLACES_AUTOCOMPLETE_TYPE'
       details = get_places_autocomplete_details(j['id'])
       d = cleanup_google_details(details.body['result'])
+      d['county'] = Oneclick::Application.config.default_county if d['county'].blank?
       self.update_attributes(
         address1: d['address1'],
         city: d['city'],
@@ -73,6 +89,7 @@ class TripPlace < GeocodedAddress
       # TODO Copied from above, should be refactored
       details = get_places_autocomplete_details(first_result['reference'])
       d = cleanup_google_details(details.body['result'])
+      d['county'] = Oneclick::Application.config.default_county if d['county'].blank?
       self.update_attributes(
         address1: d['address1'],
         city: d['city'],
@@ -87,9 +104,6 @@ class TripPlace < GeocodedAddress
     else
       raise "TripPlace.new_from_trip_proxy_place doesn't know how to handle type '#{j['type_name']}'"
     end
-    Rails.logger.info "FROM trip_prox_place"
-    Rails.logger.info self.ai
-    Rails.logger.info ""
     self
   end
 
@@ -102,10 +116,10 @@ class TripPlace < GeocodedAddress
     return get_location
   end
   
-  def type
-    return TYPES[0] unless poi.nil?
-    return TYPES[1] unless place.nil?
-    return TYPES[2]
+  def type_name
+    return 'POI_TYPE' unless poi.nil?
+    return 'PLACE_TYPE' unless place.nil?
+    return 'CACHED_ADDRESS_TYPE'
   end
   
   # discover the address for this trip place from its
@@ -118,9 +132,15 @@ class TripPlace < GeocodedAddress
   end
   
   def name
-    return to_s
+    n = read_attribute(:name)
+    n.blank? ? to_s : n
   end
-  
+
+  def name2
+    n = read_attribute(:name)
+    n.blank? ? get_address(2) : n
+  end
+    
   def county_name
     return poi.county_name unless poi.nil?
     return place.county_name unless place.nil?
